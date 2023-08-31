@@ -1,11 +1,16 @@
 package com.prgrms.nabmart.domain.item.domain;
 
 import com.prgrms.nabmart.domain.BaseTimeEntity;
+import com.prgrms.nabmart.domain.category.domain.MainCategory;
+import com.prgrms.nabmart.domain.category.domain.SubCategory;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,6 +45,26 @@ public class Item extends BaseTimeEntity {
     @ColumnDefault("10")
     @Column(nullable = false)
     private int maxBuyQuantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "main_category_id")
+    private MainCategory mainCategory;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_category_id")
+    private SubCategory subCategory;
+
+    public Item(String name, int price, String description, int quantity, int discount,
+        int maxBuyQuantity, MainCategory mainCategory, SubCategory subCategory) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.quantity = quantity;
+        this.discount = discount;
+        this.maxBuyQuantity = maxBuyQuantity;
+        this.mainCategory = mainCategory;
+        this.subCategory = subCategory;
+    }
 
     @Builder
     public Item(String name, int price, String description, int quantity, int discount,
