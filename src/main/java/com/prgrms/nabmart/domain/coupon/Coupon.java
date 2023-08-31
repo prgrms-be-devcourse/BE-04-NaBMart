@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 public class Coupon extends BaseTimeEntity {
 
     @Id
@@ -30,6 +30,7 @@ public class Coupon extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column
     private String description;
 
     @Column(nullable = false)
