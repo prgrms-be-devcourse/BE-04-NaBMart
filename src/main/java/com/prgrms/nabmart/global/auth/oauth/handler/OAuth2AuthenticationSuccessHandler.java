@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.UserService;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
+import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthUserInfo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import java.io.IOException;
 public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private final UserService userService;
+    private final TokenProvider tokenProvider;
 
     @Override
     public void onAuthenticationSuccess(
@@ -42,6 +44,8 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
                     oAuthUserInfo.oAuthUserId(),
                     UserRole.ROLE_USER);
             RegisterUserResponse user = userService.getOrRegisterUser(registerUserCommand);
+            String accessToken = tokenProvider.createToken(user);
+
 
         } else {
             super.onAuthenticationSuccess(request, response, authentication);
