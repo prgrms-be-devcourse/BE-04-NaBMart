@@ -17,7 +17,7 @@ spring:
             client-authentication-method: client_secret_post
           kakao:
             client-name: kakao
-            client-id: ${KAKAO-CLIENT_ID}
+            client-id: ${KAKAO-CLIENT-ID}
             client-secret: ${KAKAO-CLIENT-SECRET}
             scope: profile_nickname
             redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
