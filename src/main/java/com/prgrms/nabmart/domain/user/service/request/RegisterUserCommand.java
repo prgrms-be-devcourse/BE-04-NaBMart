@@ -10,4 +10,16 @@ public record RegisterUserCommand(
         String providerId,
         UserRole userRole) {
 
+    public static RegisterUserCommand of(
+            String nickname,
+            String provider,
+            String providerId,
+            UserRole userRole) {
+        return RegisterUserCommand.builder()
+                .nickname(nickname)
+                .provider(provider)
+                .providerId(providerId)
+                .userRole(userRole)
+                .build();
+    }
 }
