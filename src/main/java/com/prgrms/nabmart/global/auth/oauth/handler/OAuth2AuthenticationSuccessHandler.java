@@ -45,10 +45,15 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
                     UserRole.ROLE_USER);
             RegisterUserResponse user = userService.getOrRegisterUser(registerUserCommand);
             String accessToken = tokenProvider.createToken(user);
-
-
+            sendAccessToken(response, accessToken);
         } else {
             super.onAuthenticationSuccess(request, response, authentication);
         }
+    }
+
+    private void sendAccessToken(HttpServletResponse response, String accessToken) throws IOException {
+        response.setContentType("application/json");
+        response.setContentLength(accessToken.getBytes().length);
+        response.getWriter().write(accessToken);
     }
 }
