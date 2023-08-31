@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.config;
+package com.prgrms.nabmart.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
