@@ -50,8 +50,12 @@ public class Item extends BaseTimeEntity {
     @JoinColumn(name = "main_category_id")
     private MainCategory mainCategory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_category_id")
+    private SubCategory subCategory;
+
     public Item(String name, int price, String description, int quantity, int discount,
-        int maxBuyQuantity, MainCategory mainCategory) {
+        int maxBuyQuantity, MainCategory mainCategory, SubCategory subCategory) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -59,6 +63,7 @@ public class Item extends BaseTimeEntity {
         this.discount = discount;
         this.maxBuyQuantity = maxBuyQuantity;
         this.mainCategory = mainCategory;
+        this.subCategory = subCategory;
     }
 
     @Builder
