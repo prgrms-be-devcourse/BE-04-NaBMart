@@ -1,14 +1,15 @@
-package com.prgrms.nabmart.domain.coupon;
+package com.prgrms.nabmart.domain.order;
 
 import com.prgrms.nabmart.domain.BaseTimeEntity;
-import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.item.domain.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import java.time.LocalDate;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,26 +21,20 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Coupon extends BaseTimeEntity {
+public class OrderItem extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long CouponId;
+    private Long OrderItemId;
 
     @Column(nullable = false)
-    private Integer discount;
+    private Integer quantity;
 
-    @Column(nullable = false)
-    private String name;
-
-    private String description;
-
-    @Column(nullable = false)
-    private Integer minOrderPrice;
-
-    @Column(nullable = false)
-    private LocalDate endAt;
-
-    @OneToOne(mappedBy = "coupon")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
 }
