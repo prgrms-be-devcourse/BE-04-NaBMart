@@ -36,7 +36,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
             OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
             String registrationId = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
             OAuthUserInfo oAuthUserInfo = OAuthProvider.getOAuthProvider(registrationId)
-                    .getNickname(oAuth2User.getAttributes());
+                    .getOAuthUserInfo(oAuth2User.getAttributes());
 
             RegisterUserCommand registerUserCommand = RegisterUserCommand.of(
                     oAuthUserInfo.nickname(),

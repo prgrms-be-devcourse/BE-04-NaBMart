@@ -42,7 +42,7 @@ public enum OAuthProvider {
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 소셜 로그인입니다."));
     }
 
-    public OAuthUserInfo getNickname(Map<String, Object> attributes) {
+    public OAuthUserInfo getOAuthUserInfo(Map<String, Object> attributes) {
         return this.extractUserInfo.apply(attributes);
     }
 }
