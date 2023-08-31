@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.event.domain;
 
+import com.prgrms.nabmart.domain.item.domain.Item;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
