@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.cart;
 
+import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "cart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cart {
+public class Cart extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
