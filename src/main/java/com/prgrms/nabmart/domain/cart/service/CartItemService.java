@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.cart.service;
 
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.cart.CartItem;
+import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
@@ -23,7 +24,10 @@ public class CartItemService {
     @Transactional
     public Long registerCartItem(RegisterCartItemCommand registerCartItemCommand) {
         Cart foundCart = cartRepository.findById(registerCartItemCommand.cartId())
-            .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(() -> new NotExistsCartException(
+                "cartId로 Cart를 찾을 수 없습니다. cartId : " + registerCartItemCommand.cartId()
+            ));
+        // TODO : ItemException 확인 후 없으면 Exception 생성
         Item foundItem = itemRepository.findById(registerCartItemCommand.itemId())
             .orElseThrow(NoSuchElementException::new);
 

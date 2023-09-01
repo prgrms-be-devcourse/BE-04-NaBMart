@@ -3,6 +3,8 @@ package com.prgrms.nabmart.domain.cart;
 import static java.util.Objects.isNull;
 
 import com.prgrms.nabmart.domain.BaseTimeEntity;
+import com.prgrms.nabmart.domain.cart.exception.InvalidCartQuantityException;
+import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,19 +57,20 @@ public class CartItem extends BaseTimeEntity {
 
     public void validateCart(Cart cart) {
         if (isNull(cart)) {
-            throw new IllegalArgumentException("장바구니는 필수값입니다.");
+            throw new NotExistsCartException("Cart 가 존재하지 않습니다.");
         }
     }
 
     public void validateItem(Item item) {
         if (isNull(item)) {
-            throw new IllegalArgumentException("상품은 필수값입니다.");
+            // TODO : ItemException 확인 후 없으면 Exception 생성
+            throw new IllegalArgumentException("Item 이 존재하지 않습니다.");
         }
     }
 
     public void validateQuantity(int quantity) {
         if (quantity < MIN_QUANTITY) {
-            throw new IllegalArgumentException("수량은 음수가 될 수 없습니다.");
+            throw new InvalidCartQuantityException("수량은 음수가 될 수 없습니다.");
         }
     }
 }

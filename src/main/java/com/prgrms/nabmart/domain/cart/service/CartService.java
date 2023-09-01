@@ -19,6 +19,7 @@ public class CartService {
 
     @Transactional
     public Long registerCart(RegisterCartCommand registerCartCommand) {
+        // TODO : UserException 확인 후 없으면 Exception 생성
         User foundUser = userRepository.findById(registerCartCommand.userId())
             .orElseThrow(EntityNotFoundException::new);
 

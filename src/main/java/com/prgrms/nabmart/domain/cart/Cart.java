@@ -34,9 +34,10 @@ public class Cart extends BaseTimeEntity {
         validateUser(user);
         this.user = user;
     }
-    
+
     public void validateUser(User user) {
         if (isNull(user)) {
+            // TODO : UserException 확인 후 없으면 Exception 생성
             throw new IllegalArgumentException("구매자는 필수값입니다.");
         }
     }
