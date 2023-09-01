@@ -22,7 +22,7 @@ public class MainCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mainCategoryId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "mainCategory")
