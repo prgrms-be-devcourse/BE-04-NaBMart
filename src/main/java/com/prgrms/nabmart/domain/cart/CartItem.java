@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,6 +46,7 @@ public class CartItem extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isChecked;
 
+    @Builder
     public CartItem(Cart cart, Item item, int quantity) {
         validateCart(cart);
         validateItem(item);

@@ -31,7 +31,11 @@ public class CartItemService {
         Item foundItem = itemRepository.findById(registerCartItemCommand.itemId())
             .orElseThrow(NoSuchElementException::new);
 
-        CartItem cartItem = new CartItem(foundCart, foundItem, registerCartItemCommand.quantity());
+        CartItem cartItem = CartItem.builder()
+            .cart(foundCart)
+            .item(foundItem)
+            .quantity(registerCartItemCommand.quantity())
+            .build();
 
         CartItem savedCartItem = cartItemRepository.save(cartItem);
 
