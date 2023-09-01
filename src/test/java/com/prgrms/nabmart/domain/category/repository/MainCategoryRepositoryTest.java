@@ -45,5 +45,19 @@ public class MainCategoryRepositoryTest {
             assertThatThrownBy(() -> mainCategoryRepository.save(mainCategory))
                 .isInstanceOf(DataIntegrityViolationException.class);
         }
+
+        @Test
+        @DisplayName("예외: 이미 존재하는 카테고리")
+        public void throwExceptionWhenNameIsDuplicated() {
+            // Given
+            String categoryName = "test category";
+            MainCategory mainCategory = new MainCategory(categoryName);
+            mainCategoryRepository.save(mainCategory);
+
+            // When & Then
+            MainCategory duplicateCategory = new MainCategory(categoryName);
+            assertThatThrownBy(() -> mainCategoryRepository.save(duplicateCategory))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        }
     }
 }
