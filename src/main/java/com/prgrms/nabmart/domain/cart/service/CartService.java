@@ -18,7 +18,7 @@ public class CartService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long registerCart(RegisterCartCommand command) {
+    public Long registerCart(final RegisterCartCommand command) {
         User foundUser = userRepository.findById(command.userId())
             .orElseThrow(EntityNotFoundException::new);
 

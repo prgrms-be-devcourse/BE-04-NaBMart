@@ -20,9 +20,8 @@ public class CartItemService {
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
 
-
     @Transactional
-    public Long registerCartItem(RegisterCartItemCommand command) {
+    public Long registerCartItem(final RegisterCartItemCommand command) {
         Cart foundCart = cartRepository.findById(command.cartId())
             .orElseThrow(NoSuchElementException::new);
         Item foundItem = itemRepository.findById(command.itemId())

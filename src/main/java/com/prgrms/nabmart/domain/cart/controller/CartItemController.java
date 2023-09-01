@@ -21,14 +21,14 @@ public class CartItemController {
 
     @PostMapping("/cart-items")
     public ResponseEntity<Void> registerCartItem(
-        @RequestBody RegisterCartItemRequest request
+        @RequestBody final RegisterCartItemRequest request
     ) {
         RegisterCartItemCommand command = RegisterCartItemCommand.of(request.cartId(),
             request.itemId(), request.quantity());
 
         Long cartItemId = cartItemService.registerCartItem(command);
 
-        URI location = URI.create(BASE_URL + cartItemId);
+        URI location = URI.create(BASE_URL + "/" + cartItemId);
 
         return ResponseEntity.created(location).build();
     }
