@@ -31,9 +31,9 @@ public class JavaJwtTokenProvider implements TokenProvider {
     private final JWTVerifier jwtVerifier;
 
     public JavaJwtTokenProvider(
-            @Value("${jwt.issuer}") String issuer,
-            @Value("${jwt.client-secret}") String clientSecret,
-            @Value("${jwt.expiry-seconds}") int expirySeconds) {
+            @Value("${jwt.issuer}") final String issuer,
+            @Value("${jwt.client-secret}") final String clientSecret,
+            @Value("${jwt.expiry-seconds}") final int expirySeconds) {
         this.issuer = issuer;
         this.clientSecret = clientSecret;
         this.expirySeconds = expirySeconds;
@@ -44,7 +44,7 @@ public class JavaJwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createToken(RegisterUserResponse userResponse) {
+    public String createToken(final RegisterUserResponse userResponse) {
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + expirySeconds * 1000L);
         return JWT.create()
@@ -57,7 +57,7 @@ public class JavaJwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public Claims validateToken(String accessToken) {
+    public Claims validateToken(final String accessToken) {
         try {
             DecodedJWT decodedJWT = jwtVerifier.verify(accessToken);
             Long userId = getUserId(decodedJWT);
@@ -75,7 +75,7 @@ public class JavaJwtTokenProvider implements TokenProvider {
         throw new InvalidJwtException("유효하지 않은 토큰입니다.");
     }
 
-    private Long getUserId(DecodedJWT decodedJWT) {
+    private Long getUserId(final DecodedJWT decodedJWT) {
         Claim claim = decodedJWT.getClaim(USER_ID);
         if (!claim.isNull()) {
             return claim.asLong();
@@ -83,7 +83,7 @@ public class JavaJwtTokenProvider implements TokenProvider {
         throw new MissingClaimException(USER_ID);
     }
 
-    private List<String> getAuthorities(DecodedJWT decodedJWT) {
+    private List<String> getAuthorities(final DecodedJWT decodedJWT) {
         Claim claim = decodedJWT.getClaim(ROLE);
         if (!claim.isNull()) {
             String role = claim.asString();

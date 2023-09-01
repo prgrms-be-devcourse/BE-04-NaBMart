@@ -51,7 +51,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         }
     }
 
-    private void sendAccessToken(HttpServletResponse response, String accessToken) throws IOException {
+    private void sendAccessToken(final HttpServletResponse response, final String accessToken) throws IOException {
         response.setContentType("application/json");
         response.setContentLength(accessToken.getBytes().length);
         response.getWriter().write(accessToken);

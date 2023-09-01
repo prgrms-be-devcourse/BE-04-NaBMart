@@ -5,7 +5,7 @@ import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
 
 public interface TokenProvider {
 
-    String createToken(RegisterUserResponse userResponse);
+    String createToken(final RegisterUserResponse userResponse);
 
-    Claims validateToken(String accessToken);
+    Claims validateToken(final String accessToken);
 }

@@ -37,13 +37,13 @@ public enum OAuthProvider {
     private final String name;
     private final Function<Map<String, Object>, OAuthUserInfo> extractUserInfo;
 
-    public static OAuthProvider getOAuthProvider(String provider) {
+    public static OAuthProvider getOAuthProvider(final String provider) {
         OAuthProvider oAuthProvider = PROVIDERS.get(provider);
         return Optional.ofNullable(oAuthProvider)
                 .orElseThrow(() -> new InvalidProviderException("지원하지 않는 소셜 로그인입니다."));
     }
 
-    public OAuthUserInfo getOAuthUserInfo(Map<String, Object> attributes) {
+    public OAuthUserInfo getOAuthUserInfo(final Map<String, Object> attributes) {
         return this.extractUserInfo.apply(attributes);
     }
 }

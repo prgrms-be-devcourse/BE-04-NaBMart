@@ -18,14 +18,14 @@ public class JwtAuthenticationProvider {
 
     private final TokenProvider tokenProvider;
 
-    public Authentication authenticate(String accessToken) {
+    public Authentication authenticate(final String accessToken) {
         Claims claims = tokenProvider.validateToken(accessToken);
         JwtAuthentication jwtAuthentication = new JwtAuthentication(claims.userId(), accessToken);
         List<GrantedAuthority> authorities = getAuthorities(claims.authorities());
         return new UsernamePasswordAuthenticationToken(jwtAuthentication, accessToken, authorities);
     }
 
-    private List<GrantedAuthority> getAuthorities(List<String> authorities) {
+    private List<GrantedAuthority> getAuthorities(final List<String> authorities) {
         return authorities.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
