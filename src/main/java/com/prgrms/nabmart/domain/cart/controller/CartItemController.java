@@ -21,10 +21,11 @@ public class CartItemController {
 
     @PostMapping("/cart-items")
     public ResponseEntity<Void> registerCartItem(
-        @RequestBody final RegisterCartItemRequest request
+        @RequestBody final RegisterCartItemRequest registerCartItemRequest
     ) {
-        RegisterCartItemCommand command = RegisterCartItemCommand.of(request.cartId(),
-            request.itemId(), request.quantity());
+        RegisterCartItemCommand command = RegisterCartItemCommand.of(
+            registerCartItemRequest.cartId(),
+            registerCartItemRequest.itemId(), registerCartItemRequest.quantity());
 
         Long cartItemId = cartItemService.registerCartItem(command);
 

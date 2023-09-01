@@ -21,13 +21,13 @@ public class CartItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Long registerCartItem(final RegisterCartItemCommand command) {
-        Cart foundCart = cartRepository.findById(command.cartId())
+    public Long registerCartItem(RegisterCartItemCommand registerCartItemCommand) {
+        Cart foundCart = cartRepository.findById(registerCartItemCommand.cartId())
             .orElseThrow(NoSuchElementException::new);
-        Item foundItem = itemRepository.findById(command.itemId())
+        Item foundItem = itemRepository.findById(registerCartItemCommand.itemId())
             .orElseThrow(NoSuchElementException::new);
 
-        CartItem cartItem = new CartItem(foundCart, foundItem, command.quantity());
+        CartItem cartItem = new CartItem(foundCart, foundItem, registerCartItemCommand.quantity());
 
         CartItem savedCartItem = cartItemRepository.save(cartItem);
 

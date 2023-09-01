@@ -18,8 +18,8 @@ public class CartService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long registerCart(final RegisterCartCommand command) {
-        User foundUser = userRepository.findById(command.userId())
+    public Long registerCart(RegisterCartCommand registerCartCommand) {
+        User foundUser = userRepository.findById(registerCartCommand.userId())
             .orElseThrow(EntityNotFoundException::new);
 
         Cart savedCart = cartRepository.save(new Cart(foundUser));
