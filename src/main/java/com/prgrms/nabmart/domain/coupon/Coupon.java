@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.coupon;
 
 import com.prgrms.nabmart.domain.BaseTimeEntity;
+import com.prgrms.nabmart.domain.coupon.exception.CouponValidationException;
 import com.prgrms.nabmart.domain.order.Order;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,21 +11,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Getter
 @Entity
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Coupon extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long CouponId;
+    private Long couponId;
 
     @Column(nullable = false)
     private Integer discount;
@@ -42,4 +41,22 @@ public class Coupon extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "coupon")
     private Order order;
+
+    @Builder
+    public Coupon(Integer discount, String name, String description, Integer minOrderPrice,
+        LocalDate endAt) {
+        validateEndAt(endAt);
+        this.discount = discount;
+        this.name = name;
+        this.description = description;
+        this.minOrderPrice = minOrderPrice;
+        this.endAt = endAt;
+    }
+
+    private void validateEndAt(LocalDate endAt) {
+        LocalDate currentDate = LocalDate.now();
+        if (endAt.isBefore(currentDate)) {
+            throw new CouponValidationException("쿠폰 종료일은 현재 날짜보다 이전일 수 없습니다.");
+        }
+    }
 }
