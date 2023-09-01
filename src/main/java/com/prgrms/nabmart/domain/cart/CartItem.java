@@ -35,9 +35,13 @@ public class CartItem {
     @Column(nullable = false)
     private int quantity;
 
-    public CartItem(Cart cart, Item item, int quantity) {
+    @Column(nullable = false)
+    private boolean isChecked;
+
+    public CartItem(Cart cart, Item item, int quantity, boolean isChecked) {
         this.cart = cart;
         this.item = item;
         this.quantity = quantity;
+        this.isChecked = false;
     }
 }
