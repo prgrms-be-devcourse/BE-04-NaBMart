@@ -1,21 +1,20 @@
 package com.prgrms.nabmart.global.auth.jwt.filter;
 
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+
 import com.prgrms.nabmart.global.auth.jwt.JavaJwtTokenProvider;
 import com.prgrms.nabmart.global.auth.jwt.JwtAuthenticationProvider;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.io.IOException;
-
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
 
 class JwtAuthenticationFilterTest {
 
