@@ -23,7 +23,7 @@ public class MainCategoryRepositoryTest {
 
         @Test
         @DisplayName("성공")
-        public void saveMainCategory_Success() {
+        public void success() {
             // Given
             String categoryName = "test category";
             MainCategory mainCategory = new MainCategory(categoryName);
@@ -37,7 +37,7 @@ public class MainCategoryRepositoryTest {
 
         @Test
         @DisplayName("예외: 이름이 null")
-        public void saveMainCategory_WithNullName_ShouldThrowException() {
+        public void throwExceptionWhenNameIsBlank() {
             // Given
             MainCategory mainCategory = new MainCategory(null);
 
