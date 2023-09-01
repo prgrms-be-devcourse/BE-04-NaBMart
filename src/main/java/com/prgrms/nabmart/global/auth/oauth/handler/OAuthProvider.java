@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.global.auth.oauth.handler;
 
+import com.prgrms.nabmart.global.auth.exception.InvalidProviderException;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthUserInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public enum OAuthProvider {
     public static OAuthProvider getOAuthProvider(String provider) {
         OAuthProvider oAuthProvider = PROVIDERS.get(provider);
         return Optional.ofNullable(oAuthProvider)
-                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 소셜 로그인입니다."));
+                .orElseThrow(() -> new InvalidProviderException("지원하지 않는 소셜 로그인입니다."));
     }
 
     public OAuthUserInfo getOAuthUserInfo(Map<String, Object> attributes) {

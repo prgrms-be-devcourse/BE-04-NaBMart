@@ -9,6 +9,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
+import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -71,7 +72,7 @@ public class JavaJwtTokenProvider implements TokenProvider {
         } catch (JWTVerificationException ex) {
             log.info("JWTVerificationException: 유효하지 않은 토큰입니다.");
         }
-        throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        throw new InvalidJwtException("유효하지 않은 토큰입니다.");
     }
 
     private Long getUserId(DecodedJWT decodedJWT) {
