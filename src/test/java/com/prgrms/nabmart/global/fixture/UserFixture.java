@@ -14,7 +14,11 @@ public final class UserFixture {
     }
 
     public static User user() {
-        return new User(NICKNAME, PROVIDER, PROVIDER_ID, USER_ROLE);
+        return User.builder()
+            .nickname(NICKNAME)
+            .provider(PROVIDER)
+            .providerId(PROVIDER_ID)
+            .userRole(UserRole.ROLE_USER)
+            .build();
     }
-
 }

@@ -18,12 +18,12 @@ public class UserService {
     public RegisterUserResponse getOrRegisterUser(RegisterUserCommand registerUserCommand) {
         User findUser = userRepository.findByProviderAndProviderId(registerUserCommand.provider(), registerUserCommand.providerId())
                 .orElseGet(() -> {
-                    User user = new User(
-                            registerUserCommand.nickname(),
-                            registerUserCommand.provider(),
-                            registerUserCommand.providerId(),
-                            registerUserCommand.userRole()
-                    );
+                    User user = User.builder()
+                        .nickname(registerUserCommand.nickname())
+                        .provider(registerUserCommand.provider())
+                        .providerId(registerUserCommand.providerId())
+                        .userRole(registerUserCommand.userRole())
+                        .build();
                     userRepository.save(user);
                     return user;
                 });

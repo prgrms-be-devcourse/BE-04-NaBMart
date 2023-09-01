@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.user;
 
 import com.prgrms.nabmart.domain.user.exception.InvalidNicknameException;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,7 +31,12 @@ public class User {
     @Column(nullable = false)
     private UserRole userRole;
 
-    public User(String nickname, String provider, String providerId, UserRole userRole) {
+    @Builder
+    public User(
+        final String nickname,
+        final String provider,
+        final String providerId,
+        final UserRole userRole) {
         validateNickname(nickname);
         this.nickname = nickname;
         this.provider = provider;
