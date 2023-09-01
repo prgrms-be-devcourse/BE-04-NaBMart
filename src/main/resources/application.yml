@@ -9,16 +9,16 @@ spring:
         registration:
           naver:
             client-name: naver
-            client-id: ${NAVER-CLIENT-ID}
-            client-secret: ${NAVER-CLIENT-SECRET}
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             scope: nickname
             redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
           kakao:
             client-name: kakao
-            client-id: ${KAKAO-CLIENT-ID}
-            client-secret: ${KAKAO-CLIENT-SECRET}
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             scope: profile_nickname
             redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
@@ -37,5 +37,5 @@ spring:
 
 jwt:
   issuer: ${ISSUER}
-  client-secret: ${CLIENT-SECRET}
+  client-secret: ${CLIENT_SECRET}
   expiry-seconds: 60

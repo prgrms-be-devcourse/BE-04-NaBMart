@@ -1,5 +1,7 @@
 package com.prgrms.nabmart.global.config;
 
+import com.prgrms.nabmart.global.auth.jwt.JwtAuthenticationProvider;
+import com.prgrms.nabmart.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.prgrms.nabmart.global.auth.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -16,7 +19,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
-            OAuth2AuthenticationSuccessHandler authenticationSuccessHandler) throws Exception {
+            OAuth2AuthenticationSuccessHandler authenticationSuccessHandler,
+            JwtAuthenticationProvider jwtAuthenticationProvider) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll())
@@ -29,7 +33,8 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(auth -> auth
-                        .successHandler(authenticationSuccessHandler));
+                        .successHandler(authenticationSuccessHandler))
+                .addFilterAfter(new JwtAuthenticationFilter(jwtAuthenticationProvider), SecurityContextHolderFilter.class);
         return http.build();
     }
 }

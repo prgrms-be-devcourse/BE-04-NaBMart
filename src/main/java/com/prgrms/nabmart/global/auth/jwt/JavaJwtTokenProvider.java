@@ -3,12 +3,20 @@ package com.prgrms.nabmart.global.auth.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.*;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
+import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
+@Slf4j
 @Component
 public class JavaJwtTokenProvider implements TokenProvider {
 
@@ -45,5 +53,41 @@ public class JavaJwtTokenProvider implements TokenProvider {
                 .withClaim(USER_ID, userResponse.userId())
                 .withClaim(ROLE, userResponse.userRole().getValue())
                 .sign(algorithm);
+    }
+
+    @Override
+    public Claims validateToken(String accessToken) {
+        try {
+            DecodedJWT decodedJWT = jwtVerifier.verify(accessToken);
+            Long userId = getUserId(decodedJWT);
+            List<String> authorities = getAuthorities(decodedJWT);
+            return new Claims(userId, authorities);
+        } catch (AlgorithmMismatchException ex) {
+            log.info("AlgorithmMismatchException: 토큰의 서명이 유효하지 않습니다.");
+        } catch (SignatureVerificationException ex) {
+            log.info("SignatureVerificationException: 토큰의 서명이 유효하지 않습니다.");
+        } catch (TokenExpiredException ex) {
+            log.info("TokenExpiredException: 토큰이 만료되었습니다.");
+        } catch (JWTVerificationException ex) {
+            log.info("JWTVerificationException: 유효하지 않은 토큰입니다.");
+        }
+        throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+    }
+
+    private Long getUserId(DecodedJWT decodedJWT) {
+        Claim claim = decodedJWT.getClaim(USER_ID);
+        if (!claim.isNull()) {
+            return claim.asLong();
+        }
+        throw new MissingClaimException(USER_ID);
+    }
+
+    private List<String> getAuthorities(DecodedJWT decodedJWT) {
+        Claim claim = decodedJWT.getClaim(ROLE);
+        if (!claim.isNull()) {
+            String role = claim.asString();
+            return UserRole.valueOf(role).getAuthorities();
+        }
+        throw new MissingClaimException(ROLE);
     }
 }
