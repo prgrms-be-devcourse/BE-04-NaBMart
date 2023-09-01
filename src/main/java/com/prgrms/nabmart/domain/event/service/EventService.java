@@ -1,7 +1,7 @@
 package com.prgrms.nabmart.domain.event.service;
 
 import com.prgrms.nabmart.domain.event.domain.Event;
-import com.prgrms.nabmart.domain.event.dto.RegisterEventCommand;
+import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

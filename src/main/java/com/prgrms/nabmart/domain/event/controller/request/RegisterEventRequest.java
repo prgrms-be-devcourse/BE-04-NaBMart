@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.domain.event.dto;
+package com.prgrms.nabmart.domain.event.controller.request;
 
 import jakarta.validation.constraints.NotNull;
 

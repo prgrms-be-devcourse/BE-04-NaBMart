@@ -1,7 +1,7 @@
 package com.prgrms.nabmart.domain.event.controller;
 
-import com.prgrms.nabmart.domain.event.dto.RegisterEventCommand;
-import com.prgrms.nabmart.domain.event.dto.RegisterEventRequest;
+import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
+import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.servlet.http.HttpServletResponse;
