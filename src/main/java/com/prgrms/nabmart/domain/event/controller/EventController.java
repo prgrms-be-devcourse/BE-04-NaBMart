@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.event.controller;
 
-import com.prgrms.nabmart.domain.event.domain.RegisterEventRequest;
+import com.prgrms.nabmart.domain.event.dto.RegisterEventCommand;
+import com.prgrms.nabmart.domain.event.dto.RegisterEventRequest;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +28,9 @@ public class EventController {
         @RequestBody @Valid final RegisterEventRequest registerEventRequest,
         HttpServletResponse response
     ) {
-        Long eventId = eventService.registerEvent(userId, registerEventRequest);
+        RegisterEventCommand registerEventCommand = RegisterEventCommand.of(
+            registerEventRequest.title(), registerEventRequest.description());
+        Long eventId = eventService.registerEvent(registerEventCommand);
         response.setHeader("Location", "/v1/events/" + eventId);
     }
 
