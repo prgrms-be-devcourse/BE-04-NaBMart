@@ -18,6 +18,9 @@ class NabmartApplicationTests {
 		properties.setProperty("NAVER_CLIENT_SECRET", "naverClientSecret");
 		properties.setProperty("KAKAO_CLIENT_ID", "kakaoClientId");
 		properties.setProperty("KAKAO_CLIENT_SECRET", "kakaoClientSecret");
+		properties.setProperty("REDIRECT_URI",
+			"http://localhost:8080/login/oauth2/code/{registrationId}");
+		properties.setProperty("EXPIRY_SECONDS", "60");
 	}
 
 	@Test
