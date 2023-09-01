@@ -1,17 +1,15 @@
 package com.prgrms.nabmart.domain.event.controller;
 
-import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
 import com.prgrms.nabmart.domain.event.service.EventService;
-import com.prgrms.nabmart.global.auth.LoginUser;
-import jakarta.servlet.http.HttpServletResponse;
+import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,19 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/events")
 public class EventController {
 
+    private static final String BASE_URL = "/api/v1/events/";
     private final EventService eventService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerEvent(
-        @LoginUser Long userId,
-        @RequestBody @Valid final RegisterEventRequest registerEventRequest,
-        HttpServletResponse response
-    ) {
-        RegisterEventCommand registerEventCommand = RegisterEventCommand.of(
+    public ResponseEntity<Void> registerEvent(
+        @RequestBody @Valid RegisterEventRequest registerEventRequest) {
+        RegisterEventCommand registerEventCommand = RegisterEventCommand.from(
             registerEventRequest.title(), registerEventRequest.description());
         Long eventId = eventService.registerEvent(registerEventCommand);
-        response.setHeader("Location", "/v1/events/" + eventId);
+        URI location = URI.create(BASE_URL + eventId);
+        return ResponseEntity.created(location).build();
     }
-
 }
