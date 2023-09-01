@@ -25,8 +25,9 @@ public class CouponController {
     private final CouponService couponService;
 
     @PostMapping
-    public ResponseEntity<Void> createCoupon(@Valid @RequestBody RegisterCouponRequest request) {
-        RegisterCouponCommand command = RegisterCouponCommand.from(request);
+    public ResponseEntity<Void> createCoupon(
+        @Valid @RequestBody RegisterCouponRequest registerCouponRequest) {
+        RegisterCouponCommand command = RegisterCouponCommand.from(registerCouponRequest);
         Long couponId = couponService.createCoupon(command);
         URI location = URI.create("/v1/coupons" + "/" + couponId);
         return ResponseEntity.created(location).build();
