@@ -24,7 +24,7 @@ public class CartItemController {
         @RequestBody RegisterCartItemRequest request
     ) {
         RegisterCartItemCommand command = RegisterCartItemCommand.of(request.cartId(),
-            request.itemId(), request.quantity(), request.isChecked());
+            request.itemId(), request.quantity());
 
         Long cartItemId = cartItemService.registerCartItem(command);
 

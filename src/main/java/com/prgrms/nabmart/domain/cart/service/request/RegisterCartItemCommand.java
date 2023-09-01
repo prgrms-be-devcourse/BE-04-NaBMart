@@ -5,11 +5,9 @@ import lombok.AllArgsConstructor;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public record RegisterCartItemCommand(Long cartId, Long itemId, Integer quantity,
-                                      Boolean isChecked) {
+public record RegisterCartItemCommand(Long cartId, Long itemId, Integer quantity) {
 
-    public static RegisterCartItemCommand of(Long cartId, Long itemId, Integer quantity,
-        Boolean isChecked) {
-        return new RegisterCartItemCommand(cartId, itemId, quantity, isChecked);
+    public static RegisterCartItemCommand of(Long cartId, Long itemId, Integer quantity) {
+        return new RegisterCartItemCommand(cartId, itemId, quantity);
     }
 }
