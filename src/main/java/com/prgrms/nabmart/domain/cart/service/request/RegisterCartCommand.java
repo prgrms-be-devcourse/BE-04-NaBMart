@@ -1,14 +1,14 @@
 package com.prgrms.nabmart.domain.cart.service.request;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
+
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public record RegisterCartCommand(Long userId) {
+public record RegisterCartCommand(
+    @NotNull(message = "구매자 아이디는 필수 입력 항목입니다.") @Positive(message = "구매자 아이디는 양수입니다.") Long userId
+) {
 
-    public static RegisterCartCommand of(Long userId) {
-        return new RegisterCartCommand(userId);
-    }
 }
