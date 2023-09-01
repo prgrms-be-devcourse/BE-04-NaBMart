@@ -1,5 +1,7 @@
 package com.prgrms.nabmart.domain.cart;
 
+import static java.util.Objects.isNull;
+
 import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import jakarta.persistence.Column;
@@ -21,6 +23,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CartItem extends BaseTimeEntity {
 
+    private static final int MIN_QUANTITY = 0;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartItemId;
@@ -40,9 +44,30 @@ public class CartItem extends BaseTimeEntity {
     private boolean isChecked;
 
     public CartItem(Cart cart, Item item, int quantity) {
+        validateCart(cart);
+        validateItem(item);
+        validateQuantity(quantity);
         this.cart = cart;
         this.item = item;
         this.quantity = quantity;
         this.isChecked = true;
+    }
+
+    public void validateCart(Cart cart) {
+        if (isNull(cart)) {
+            throw new IllegalArgumentException("장바구니는 필수값입니다.");
+        }
+    }
+
+    public void validateItem(Item item) {
+        if (isNull(item)) {
+            throw new IllegalArgumentException("상품은 필수값입니다.");
+        }
+    }
+
+    public void validateQuantity(int quantity) {
+        if (quantity < MIN_QUANTITY) {
+            throw new IllegalArgumentException("수량은 음수가 될 수 없습니다.");
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.prgrms.nabmart.domain.cart;
 
+import static java.util.Objects.isNull;
+
 import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.user.User;
 import jakarta.persistence.Entity;
@@ -29,6 +31,13 @@ public class Cart extends BaseTimeEntity {
     private User user;
 
     public Cart(User user) {
+        validateUser(user);
         this.user = user;
+    }
+    
+    public void validateUser(User user) {
+        if (isNull(user)) {
+            throw new IllegalArgumentException("구매자는 필수값입니다.");
+        }
     }
 }
