@@ -64,7 +64,7 @@ public class JavaJwtTokenProvider implements TokenProvider {
             List<String> authorities = getAuthorities(decodedJWT);
             return new Claims(userId, authorities);
         } catch (AlgorithmMismatchException ex) {
-            log.info("AlgorithmMismatchException: 토큰의 서명이 유효하지 않습니다.");
+            log.info("AlgorithmMismatchException: 토큰의 알고리즘이 유효하지 않습니다.");
         } catch (SignatureVerificationException ex) {
             log.info("SignatureVerificationException: 토큰의 서명이 유효하지 않습니다.");
         } catch (TokenExpiredException ex) {
