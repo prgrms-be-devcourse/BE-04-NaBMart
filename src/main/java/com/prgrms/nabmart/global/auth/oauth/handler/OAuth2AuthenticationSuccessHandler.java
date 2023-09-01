@@ -22,27 +22,28 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class OAuth2AuthenticationSuccessHandler extends
+    SavedRequestAwareAuthenticationSuccessHandler {
 
     private final UserService userService;
     private final TokenProvider tokenProvider;
 
     @Override
     public void onAuthenticationSuccess(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Authentication authentication) throws ServletException, IOException {
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Authentication authentication) throws ServletException, IOException {
         if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
             OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
             String registrationId = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
             OAuthUserInfo oAuthUserInfo = OAuthProvider.getOAuthProvider(registrationId)
-                    .getOAuthUserInfo(oAuth2User.getAttributes());
+                .getOAuthUserInfo(oAuth2User.getAttributes());
 
             RegisterUserCommand registerUserCommand = RegisterUserCommand.of(
-                    oAuthUserInfo.nickname(),
-                    registrationId,
-                    oAuthUserInfo.oAuthUserId(),
-                    UserRole.ROLE_USER);
+                oAuthUserInfo.nickname(),
+                registrationId,
+                oAuthUserInfo.oAuthUserId(),
+                UserRole.ROLE_USER);
             RegisterUserResponse user = userService.getOrRegisterUser(registerUserCommand);
             String accessToken = tokenProvider.createToken(user);
             sendAccessToken(response, accessToken);
@@ -51,7 +52,9 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         }
     }
 
-    private void sendAccessToken(final HttpServletResponse response, final String accessToken) throws IOException {
+    private void sendAccessToken(
+        final HttpServletResponse response,
+        final String accessToken) throws IOException {
         response.setContentType("application/json");
         response.setContentLength(accessToken.getBytes().length);
         response.getWriter().write(accessToken);

@@ -27,7 +27,7 @@ public class JwtAuthenticationProvider {
 
     private List<GrantedAuthority> getAuthorities(final List<String> authorities) {
         return authorities.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+            .map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
     }
 }

@@ -31,8 +31,8 @@ public enum OAuthProvider {
     });
 
     private static final Map<String, OAuthProvider> PROVIDERS =
-            Collections.unmodifiableMap(Stream.of(values())
-                    .collect(Collectors.toMap(OAuthProvider::getName, Function.identity())));
+        Collections.unmodifiableMap(Stream.of(values())
+            .collect(Collectors.toMap(OAuthProvider::getName, Function.identity())));
 
     private final String name;
     private final Function<Map<String, Object>, OAuthUserInfo> extractUserInfo;
@@ -40,7 +40,7 @@ public enum OAuthProvider {
     public static OAuthProvider getOAuthProvider(final String provider) {
         OAuthProvider oAuthProvider = PROVIDERS.get(provider);
         return Optional.ofNullable(oAuthProvider)
-                .orElseThrow(() -> new InvalidProviderException("지원하지 않는 소셜 로그인입니다."));
+            .orElseThrow(() -> new InvalidProviderException("지원하지 않는 소셜 로그인입니다."));
     }
 
     public OAuthUserInfo getOAuthUserInfo(final Map<String, Object> attributes) {

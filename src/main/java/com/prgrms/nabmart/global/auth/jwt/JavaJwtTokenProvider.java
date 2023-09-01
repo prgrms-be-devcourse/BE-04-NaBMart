@@ -31,16 +31,16 @@ public class JavaJwtTokenProvider implements TokenProvider {
     private final JWTVerifier jwtVerifier;
 
     public JavaJwtTokenProvider(
-            @Value("${jwt.issuer}") final String issuer,
-            @Value("${jwt.client-secret}") final String clientSecret,
-            @Value("${jwt.expiry-seconds}") final int expirySeconds) {
+        @Value("${jwt.issuer}") final String issuer,
+        @Value("${jwt.client-secret}") final String clientSecret,
+        @Value("${jwt.expiry-seconds}") final int expirySeconds) {
         this.issuer = issuer;
         this.clientSecret = clientSecret;
         this.expirySeconds = expirySeconds;
         this.algorithm = Algorithm.HMAC512(clientSecret);
         this.jwtVerifier = JWT.require(algorithm)
-                .withIssuer(issuer)
-                .build();
+            .withIssuer(issuer)
+            .build();
     }
 
     @Override
@@ -48,12 +48,12 @@ public class JavaJwtTokenProvider implements TokenProvider {
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + expirySeconds * 1000L);
         return JWT.create()
-                .withIssuer(issuer)
-                .withIssuedAt(now)
-                .withExpiresAt(expiresAt)
-                .withClaim(USER_ID, userResponse.userId())
-                .withClaim(ROLE, userResponse.userRole().getValue())
-                .sign(algorithm);
+            .withIssuer(issuer)
+            .withIssuedAt(now)
+            .withExpiresAt(expiresAt)
+            .withClaim(USER_ID, userResponse.userId())
+            .withClaim(ROLE, userResponse.userRole().getValue())
+            .sign(algorithm);
     }
 
     @Override

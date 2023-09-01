@@ -18,23 +18,24 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(
-            HttpSecurity http,
-            OAuth2AuthenticationSuccessHandler authenticationSuccessHandler,
-            JwtAuthenticationProvider jwtAuthenticationProvider) throws Exception {
+        HttpSecurity http,
+        OAuth2AuthenticationSuccessHandler authenticationSuccessHandler,
+        JwtAuthenticationProvider jwtAuthenticationProvider) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
-                .headers(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
-                .rememberMe(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login(auth -> auth
-                        .successHandler(authenticationSuccessHandler))
-                .addFilterAfter(new JwtAuthenticationFilter(jwtAuthenticationProvider), SecurityContextHolderFilter.class);
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll())
+            .csrf(AbstractHttpConfigurer::disable)
+            .headers(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .logout(AbstractHttpConfigurer::disable)
+            .rememberMe(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .oauth2Login(auth -> auth
+                .successHandler(authenticationSuccessHandler))
+            .addFilterAfter(new JwtAuthenticationFilter(jwtAuthenticationProvider),
+                SecurityContextHolderFilter.class);
         return http.build();
     }
 }
