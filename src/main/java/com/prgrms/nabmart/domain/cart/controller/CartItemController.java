@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.cart.controller;
 import com.prgrms.nabmart.domain.cart.controller.request.RegisterCartItemRequest;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class CartItemController {
 
     @PostMapping("/cart-items")
     public ResponseEntity<Void> registerCartItem(
-        @RequestBody final RegisterCartItemRequest registerCartItemRequest
+        @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest
     ) {
         RegisterCartItemCommand command = RegisterCartItemCommand.of(
             registerCartItemRequest.cartId(),

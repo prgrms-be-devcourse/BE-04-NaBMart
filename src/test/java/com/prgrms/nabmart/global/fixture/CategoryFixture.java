@@ -6,7 +6,7 @@ import com.prgrms.nabmart.domain.category.domain.SubCategory;
 public final class CategoryFixture {
 
     private static final String MAIN_CATEGORY_NAME = "대카테고리";
-    private static final String SUB_CATEGORY_NAME = "대카테고리";
+    private static final String SUB_CATEGORY_NAME = "소카테고리";
 
     private CategoryFixture() {
     }

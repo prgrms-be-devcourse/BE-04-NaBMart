@@ -54,6 +54,7 @@ public class Item extends BaseTimeEntity {
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
+    @Builder
     public Item(String name, int price, String description, int quantity, int discount,
         int maxBuyQuantity, MainCategory mainCategory, SubCategory subCategory) {
         this.name = name;
