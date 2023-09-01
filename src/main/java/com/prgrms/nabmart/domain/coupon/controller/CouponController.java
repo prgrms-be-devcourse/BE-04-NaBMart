@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,11 @@ public class CouponController {
     private final CouponService couponService;
 
     @PostMapping
-    public ResponseEntity<Long> createCoupon(@Valid @RequestBody RegisterCouponRequest request) {
+    public ResponseEntity<Void> createCoupon(@Valid @RequestBody RegisterCouponRequest request) {
         RegisterCouponCommand command = RegisterCouponCommand.from(request);
-        return ResponseEntity.ok(couponService.createCoupon(command));
+        Long couponId = couponService.createCoupon(command);
+        URI location = URI.create("/v1/coupons" + "/" + couponId);
+        return ResponseEntity.created(location).build();
     }
 
     @ExceptionHandler(CouponException.class)
