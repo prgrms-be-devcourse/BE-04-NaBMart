@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +28,7 @@ public class EventController {
         HttpServletResponse response
     ) {
         Long eventId = eventService.registerEvent(userId, registerEventRequest);
-        response.setHeader("Location", "api/v1/events/" + eventId);
+        response.setHeader("Location", "/v1/events/" + eventId);
     }
 
 }
