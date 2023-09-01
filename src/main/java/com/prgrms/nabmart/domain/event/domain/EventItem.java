@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.event.domain;
 
+import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,22 +16,22 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EventItem {
+public class EventItem extends BaseTimeEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long eventItemId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long eventItemId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "event_id")
-  private Event event;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "item_id")
-  private Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
 
-  public EventItem(Event event, Item item) {
-    this.event = event;
-    this.item = item;
-  }
+    public EventItem(Event event, Item item) {
+        this.event = event;
+        this.item = item;
+    }
 }
