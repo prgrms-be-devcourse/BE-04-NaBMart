@@ -28,8 +28,7 @@ public class CartItemService {
         Item foundItem = itemRepository.findById(command.itemId())
             .orElseThrow(NoSuchElementException::new);
 
-        CartItem cartItem = new CartItem(foundCart, foundItem, command.quantity(),
-            command.isChecked());
+        CartItem cartItem = new CartItem(foundCart, foundItem, command.quantity());
 
         CartItem savedCartItem = cartItemRepository.save(cartItem);
 

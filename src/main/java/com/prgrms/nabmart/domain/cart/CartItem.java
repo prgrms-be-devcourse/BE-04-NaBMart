@@ -39,10 +39,10 @@ public class CartItem extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isChecked;
 
-    public CartItem(Cart cart, Item item, int quantity, boolean isChecked) {
+    public CartItem(Cart cart, Item item, int quantity) {
         this.cart = cart;
         this.item = item;
         this.quantity = quantity;
-        this.isChecked = false;
+        this.isChecked = true;
     }
 }
