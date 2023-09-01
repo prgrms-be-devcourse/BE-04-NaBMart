@@ -1,16 +1,18 @@
 package com.prgrms.nabmart.domain.user;
 
+import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.user.exception.InvalidNicknameException;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
 
     private static final int NICKNAME_LENGTH = 200;
 
