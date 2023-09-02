@@ -18,7 +18,7 @@ public class MainCategoryRepositoryTest {
     private MainCategoryRepository mainCategoryRepository;
 
     @Nested
-    @DisplayName("save 메서드")
+    @DisplayName("save 메서드 실행 시")
     class SaveMethod {
 
         @Test
