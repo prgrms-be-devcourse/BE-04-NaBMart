@@ -7,7 +7,7 @@ import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.prgrms.nabmart.domain.user.UserRole;
-import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
+import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
 import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class JavaJwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createToken(final RegisterUserResponse userResponse) {
+    public String createToken(final AuthUserResponse userResponse) {
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + expirySeconds * 1000L);
         return JWT.create()

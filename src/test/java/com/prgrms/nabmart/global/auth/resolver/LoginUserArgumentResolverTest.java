@@ -4,8 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import com.prgrms.nabmart.domain.user.UserRole;
-import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
+import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
 import com.prgrms.nabmart.global.fixture.AuthFixture;
@@ -34,7 +33,7 @@ class LoginUserArgumentResolverTest {
 
     MockMvc mvc;
     TokenProvider tokenProvider;
-    RegisterUserResponse registerUserResponse;
+    AuthUserResponse registerUserResponse;
 
     @BeforeEach
     void setUp() {
@@ -42,7 +41,7 @@ class LoginUserArgumentResolverTest {
             .setCustomArgumentResolvers(new LoginUserArgumentResolver())
             .build();
         tokenProvider = AuthFixture.tokenProvider();
-        registerUserResponse = new RegisterUserResponse(1L, UserRole.ROLE_USER);
+        registerUserResponse = AuthFixture.authUserResponse();
 
         Authentication authentication = AuthFixture.usernamePasswordAuthenticationToken();
         SecurityContextHolder.getContext().setAuthentication(authentication);

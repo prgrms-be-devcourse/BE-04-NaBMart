@@ -8,7 +8,7 @@ import static org.mockito.Mockito.times;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
+import com.prgrms.nabmart.domain.user.service.request.RegisterOAuthUserCommnad;
 import com.prgrms.nabmart.global.fixture.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,11 +33,11 @@ class UserServiceTest {
     @DisplayName("getOrRegisterUser 메서드 실행 시")
     class GetOrRegisterUserTest {
 
-        RegisterUserCommand registerUserCommand;
+        RegisterOAuthUserCommnad registerUserCommand;
 
         @BeforeEach
         void setUp() {
-            registerUserCommand = RegisterUserCommand.builder()
+            registerUserCommand = RegisterOAuthUserCommnad.builder()
                     .nickname("닉네임")
                     .provider("kakao")
                     .providerId("kakaoProviderId")
