@@ -41,6 +41,7 @@ public class OAuth2AuthenticationSuccessHandler extends
 
             RegisterUserCommand registerUserCommand = RegisterUserCommand.of(
                 oAuthUserInfo.nickname(),
+                oAuthUserInfo.email(),
                 registrationId,
                 oAuthUserInfo.oAuthUserId(),
                 UserRole.ROLE_USER);

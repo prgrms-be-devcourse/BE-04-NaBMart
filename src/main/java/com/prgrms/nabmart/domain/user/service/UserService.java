@@ -16,17 +16,21 @@ public class UserService {
 
     @Transactional
     public RegisterUserResponse getOrRegisterUser(RegisterUserCommand registerUserCommand) {
-        User findUser = userRepository.findByProviderAndProviderId(registerUserCommand.provider(), registerUserCommand.providerId())
-                .orElseGet(() -> {
-                    User user = User.builder()
-                        .nickname(registerUserCommand.nickname())
-                        .provider(registerUserCommand.provider())
-                        .providerId(registerUserCommand.providerId())
-                        .userRole(registerUserCommand.userRole())
-                        .build();
-                    userRepository.save(user);
-                    return user;
-                });
+        User findUser = userRepository.findByProviderAndProviderId(
+                registerUserCommand.provider(),
+                registerUserCommand.providerId()
+            )
+            .orElseGet(() -> {
+                User user = User.builder()
+                    .nickname(registerUserCommand.nickname())
+                    .email(registerUserCommand.email())
+                    .provider(registerUserCommand.provider())
+                    .providerId(registerUserCommand.providerId())
+                    .userRole(registerUserCommand.userRole())
+                    .build();
+                userRepository.save(user);
+                return user;
+            });
         return RegisterUserResponse.from(findUser);
     }
 }
