@@ -48,7 +48,7 @@ public class CategoryControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("{\"name\":\"TestCategory\"}"))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/main-categories/1"));
+                .andExpect(header().string("Location", "/api/v1/main-categories/1"));
 
             verify(categoryService, times(1)).saveMainCategory(command);
         }
