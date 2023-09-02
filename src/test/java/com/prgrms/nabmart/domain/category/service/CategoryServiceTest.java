@@ -2,7 +2,6 @@ package com.prgrms.nabmart.domain.category.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,22 +10,22 @@ import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.exception.DuplicateCategoryNameException;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
 
-    private CategoryService categoryService;
+    @Mock
     private MainCategoryRepository mainCategoryRepository;
 
-    @BeforeEach
-    void setUp() {
-        mainCategoryRepository = mock(MainCategoryRepository.class);
-        categoryService = new CategoryService(mainCategoryRepository);
-    }
+    @InjectMocks
+    private CategoryService categoryService;
 
     @Nested
     @DisplayName("saveMainCategory 메서드 실행 시")
@@ -34,7 +33,6 @@ public class CategoryServiceTest {
 
         @Test
         @DisplayName("성공")
-        @Transactional
         public void success() {
             // Given
             RegisterMainCategoryCommand command = new RegisterMainCategoryCommand("TestCategory");
