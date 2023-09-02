@@ -21,13 +21,16 @@ public enum OAuthProvider {
         Map<String, String> properties = (Map<String, String>) attributes.get("properties");
         String oAuthUserId = String.valueOf(attributes.get("id"));
         String nickname = properties.get("nickname");
-        return new OAuthUserInfo(oAuthUserId, nickname);
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        String email = String.valueOf(kakaoAccount.get("email"));
+        return new OAuthUserInfo(oAuthUserId, nickname, email);
     }),
     NAVER("naver", attributes -> {
         Map<String, String> response = (Map<String, String>) attributes.get("response");
         String oAuthUserId = response.get("id");
         String nickname = response.get("nickname");
-        return new OAuthUserInfo(oAuthUserId, nickname);
+        String email = response.get("email");
+        return new OAuthUserInfo(oAuthUserId, nickname, email);
     });
 
     private static final Map<String, OAuthProvider> PROVIDERS =
