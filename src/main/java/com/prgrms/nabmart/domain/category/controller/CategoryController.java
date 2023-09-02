@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private static final String BASE_URL = "/main-categories/";
+    private static final String BASE_URL = "/api/v1/main-categories/";
 
     @PostMapping("/main-categories")
     public ResponseEntity<Void> saveMainCategory(
