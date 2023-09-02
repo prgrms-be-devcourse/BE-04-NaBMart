@@ -22,7 +22,8 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<Void> registerEvent(
-        @RequestBody @Valid RegisterEventRequest registerEventRequest) {
+        @RequestBody @Valid RegisterEventRequest registerEventRequest
+    ) {
         RegisterEventCommand registerEventCommand = RegisterEventCommand.from(
             registerEventRequest.title(), registerEventRequest.description());
         Long eventId = eventService.registerEvent(registerEventCommand);
