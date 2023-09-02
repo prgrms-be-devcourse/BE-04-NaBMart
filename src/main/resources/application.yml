@@ -3,6 +3,11 @@ spring:
     include:
       - local
 
+  sql:
+    init:
+      schema-locations: classpath:org/springframework/security/oauth2/client/oauth2-client-schema.sql
+      encoding: UTF-8
+
   security:
     oauth2:
       client:
