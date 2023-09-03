@@ -6,7 +6,7 @@ import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
-import com.prgrms.nabmart.domain.user.service.request.RegisterOAuthUserCommnad;
+import com.prgrms.nabmart.domain.user.service.request.RegisterOAuthUserCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +18,14 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public AuthUserResponse getOrRegisterUser(final RegisterOAuthUserCommnad registerUserCommand) {
+    public AuthUserResponse getOrRegisterUser(final RegisterOAuthUserCommand registerUserCommand) {
         User findUser = userRepository.findByProviderAndProviderId(
                 registerUserCommand.provider(),
                 registerUserCommand.providerId())
             .orElseGet(() -> {
                 User user = User.builder()
                     .nickname(registerUserCommand.nickname())
+                    .email(registerUserCommand.email())
                     .provider(registerUserCommand.provider())
                     .providerId(registerUserCommand.providerId())
                     .userRole(registerUserCommand.userRole())

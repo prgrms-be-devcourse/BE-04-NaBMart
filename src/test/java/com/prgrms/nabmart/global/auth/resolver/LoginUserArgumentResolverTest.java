@@ -33,7 +33,7 @@ class LoginUserArgumentResolverTest {
 
     MockMvc mvc;
     TokenProvider tokenProvider;
-    AuthUserResponse registerUserResponse;
+    AuthUserResponse authUserResponse;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +41,7 @@ class LoginUserArgumentResolverTest {
             .setCustomArgumentResolvers(new LoginUserArgumentResolver())
             .build();
         tokenProvider = AuthFixture.tokenProvider();
-        registerUserResponse = AuthFixture.authUserResponse();
+        authUserResponse = AuthFixture.authUserResponse();
 
         Authentication authentication = AuthFixture.usernamePasswordAuthenticationToken();
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -55,7 +55,7 @@ class LoginUserArgumentResolverTest {
         @DisplayName("성공: authentication 객체에서 userId를 추출하여 인자로 전달")
         void success() throws Exception {
             //given
-            String token = tokenProvider.createToken(registerUserResponse);
+            String token = tokenProvider.createToken(authUserResponse);
 
             //when
             ResultActions resultActions = mvc.perform(get("/resolvers")

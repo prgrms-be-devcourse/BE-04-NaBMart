@@ -16,7 +16,7 @@ spring:
             client-name: naver
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
-            scope: nickname
+            scope: nickname, email
             redirect-uri: ${REDIRECT_URI}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
@@ -24,7 +24,7 @@ spring:
             client-name: kakao
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
-            scope: profile_nickname
+            scope: profile_nickname, account_email
             redirect-uri: ${REDIRECT_URI}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
