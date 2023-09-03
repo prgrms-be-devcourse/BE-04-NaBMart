@@ -10,6 +10,7 @@ import com.prgrms.nabmart.domain.category.domain.SubCategory;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.fixture.CartFixture;
+import com.prgrms.nabmart.global.fixture.CartItemFixture;
 import com.prgrms.nabmart.global.fixture.CategoryFixture;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import com.prgrms.nabmart.global.fixture.UserFixture;
@@ -36,6 +37,7 @@ class CartItemTest {
         givenSubCategory = CategoryFixture.subCategory(givenMainCategory);
         givenItem = ItemFixture.item(givenMainCategory, givenSubCategory);
         givenQuantity = 10;
+        givenCartItem = CartItemFixture.cartItem(givenCart, givenItem, givenQuantity);
     }
 
     @Nested
@@ -48,11 +50,6 @@ class CartItemTest {
             // given
 
             // when
-            givenCartItem = CartItem.builder()
-                .cart(givenCart)
-                .item(givenItem)
-                .quantity(givenQuantity)
-                .build();
 
             // then
             assertThat(givenCartItem.getCart()).isEqualTo(givenCart);
