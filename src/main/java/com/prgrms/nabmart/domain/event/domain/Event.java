@@ -1,6 +1,10 @@
 package com.prgrms.nabmart.domain.event.domain;
 
+import static java.util.Objects.isNull;
+
 import com.prgrms.nabmart.domain.BaseTimeEntity;
+import com.prgrms.nabmart.domain.event.exception.InvalidEventDescriptionException;
+import com.prgrms.nabmart.domain.event.exception.InvalidEventTitleException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +30,21 @@ public class Event extends BaseTimeEntity {
     private String description;
 
     public Event(String title, String description) {
+        validateTitle(title);
+        validateDescription(description);
         this.title = title;
         this.description = description;
+    }
+
+    private void validateTitle(String title) {
+        if (isNull(title)) {
+            throw new InvalidEventTitleException("이벤트 제목이 존재하지 않습니다.");
+        }
+    }
+
+    private void validateDescription(String description) {
+        if (isNull(description)) {
+            throw new InvalidEventDescriptionException("이벤트 설명이 존재하지 않습니다.");
+        }
     }
 }
