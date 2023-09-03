@@ -1,7 +1,11 @@
 package com.prgrms.nabmart.domain.event.domain;
 
+import static java.util.Objects.isNull;
+
 import com.prgrms.nabmart.domain.BaseTimeEntity;
+import com.prgrms.nabmart.domain.event.exception.NotExistsEventException;
 import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,7 +35,21 @@ public class EventItem extends BaseTimeEntity {
     private Item item;
 
     public EventItem(Event event, Item item) {
+        validateEvent(event);
+        validateItem(item);
         this.event = event;
         this.item = item;
+    }
+
+    public void validateEvent(Event event) {
+        if (isNull(event)) {
+            throw new NotExistsEventException("Event가 존재하지 않습니다.");
+        }
+    }
+
+    private void validateItem(Item item) {
+        if (isNull(item)) {
+            throw new NotExistsItemException("Item이 존재하지 않습니다.");
+        }
     }
 }
