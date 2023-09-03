@@ -21,7 +21,7 @@ class CartTest {
     }
 
     @Nested
-    @DisplayName("장바구니 생성 시 ")
+    @DisplayName("장바구니 생성 시")
     class NewCartTest {
 
         @Test
