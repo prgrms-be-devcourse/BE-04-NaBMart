@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.cart.controller;
 import com.prgrms.nabmart.domain.cart.controller.request.RegisterCartItemRequest;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,9 @@ public class CartItemController {
 
     @PostMapping("/cart-items")
     public ResponseEntity<Void> registerCartItem(
-        @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest
+        @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest, @LoginUser Long userId
     ) {
-        RegisterCartItemCommand command = RegisterCartItemCommand.of(
-            registerCartItemRequest.cartId(),
+        RegisterCartItemCommand command = RegisterCartItemCommand.of(userId,
             registerCartItemRequest.itemId(), registerCartItemRequest.quantity());
 
         Long cartItemId = cartItemService.registerCartItem(command);

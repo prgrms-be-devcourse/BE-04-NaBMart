@@ -23,7 +23,7 @@ class RegisterCartItemRequestTest {
         void success() {
             // given
             RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(1L,
-                1L, 5);
+                5);
 
             // when
             Set<ConstraintViolation<RegisterCartItemRequest>> violations = validator.validate(
@@ -34,41 +34,11 @@ class RegisterCartItemRequestTest {
         }
 
         @Test
-        @DisplayName("예외 : cartId가 null")
-        void throwExceptionWhenCartIdIsNull() {
-            // given
-            RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(null,
-                1L, 5);
-
-            // when
-            Set<ConstraintViolation<RegisterCartItemRequest>> violations = validator.validate(
-                givenRegisterCartItemRequest);
-
-            // then
-            assertThat(violations).hasSize(1);
-        }
-
-        @Test
-        @DisplayName("예외 : cartId가 양수가 아닌 경우")
-        void throwExceptionWhenCartIdIsNotPositive() {
-            // given
-            RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(-1L,
-                1L, 5);
-
-            // when
-            Set<ConstraintViolation<RegisterCartItemRequest>> violations = validator.validate(
-                givenRegisterCartItemRequest);
-
-            // then
-            assertThat(violations).hasSize(1);
-        }
-
-        @Test
         @DisplayName("예외 : itemId가 null")
         void throwExceptionWhenItemIdIsNull() {
             // given
-            RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(1L,
-                null, 5);
+            RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(null,
+                5);
 
             // when
             Set<ConstraintViolation<RegisterCartItemRequest>> violations = validator.validate(
@@ -82,8 +52,8 @@ class RegisterCartItemRequestTest {
         @DisplayName("예외 : itemId가 양수가 아닌 경우")
         void throwExceptionWhenItemIdIsNotPositive() {
             // given
-            RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(1L,
-                -1L, 5);
+            RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(-1L,
+                5);
 
             // when
             Set<ConstraintViolation<RegisterCartItemRequest>> violations = validator.validate(
@@ -98,7 +68,7 @@ class RegisterCartItemRequestTest {
         void throwExceptionWhenQuantityIsNull() {
             // given
             RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(1L,
-                1L, null);
+                null);
 
             // when
             Set<ConstraintViolation<RegisterCartItemRequest>> violations = validator.validate(
@@ -113,7 +83,7 @@ class RegisterCartItemRequestTest {
         void throwExceptionWhenQuantityIsNotPositive() {
             // given
             RegisterCartItemRequest givenRegisterCartItemRequest = new RegisterCartItemRequest(1L,
-                1L, null);
+                -1);
 
             // when
             Set<ConstraintViolation<RegisterCartItemRequest>> violations = validator.validate(

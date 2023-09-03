@@ -1,14 +1,14 @@
 package com.prgrms.nabmart.domain.cart.service.request;
 
 public record RegisterCartItemCommand(
-    Long cartId,
+    Long userId,
     Long itemId,
     Integer quantity) {
 
     public static RegisterCartItemCommand of(
-        final Long cartId,
+        final Long userId,
         final Long itemId,
         final Integer quantity) {
-        return new RegisterCartItemCommand(cartId, itemId, quantity);
+        return new RegisterCartItemCommand(userId, itemId, quantity);
     }
 }

@@ -2,12 +2,13 @@ package com.prgrms.nabmart.domain.cart.service;
 
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.cart.CartItem;
-import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
+import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,22 @@ public class CartItemService {
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Long registerCartItem(RegisterCartItemCommand registerCartItemCommand) {
-        Cart foundCart = cartRepository.findById(registerCartItemCommand.cartId())
-            .orElseThrow(() -> new NotExistsCartException(
-                "cartId로 Cart를 찾을 수 없습니다. cartId : " + registerCartItemCommand.cartId()
-            ));
+
+        // TODO : UserException 확인 후 없으면 Exception 생성
+        User foundUser = userRepository.findById(registerCartItemCommand.userId())
+            .orElseThrow(NoSuchElementException::new);
+
+        Cart foundCart = cartRepository.findCartByUser(registerCartItemCommand.userId())
+            .orElseGet(() -> {
+                    Cart savedCart = cartRepository.save(new Cart(foundUser));
+                    return savedCart;
+                }
+            );
+
         // TODO : ItemException 확인 후 없으면 Exception 생성
         Item foundItem = itemRepository.findById(registerCartItemCommand.itemId())
             .orElseThrow(NoSuchElementException::new);
