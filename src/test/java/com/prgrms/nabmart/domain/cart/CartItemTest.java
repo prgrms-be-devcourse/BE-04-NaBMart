@@ -79,7 +79,7 @@ class CartItemTest {
         }
 
         @Test
-        @DisplayName("예외 : Item 이 null")
+        @DisplayName("예외 : Item 가 null")
         void throwExceptionWhenItemIsNull() {
             // given
 

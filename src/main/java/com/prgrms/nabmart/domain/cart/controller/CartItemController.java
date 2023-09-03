@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartItemController {
 
     private final CartItemService cartItemService;
-    private static final String BASE_URL = "/api/v1";
+    private static final String BASE_URL = "/api/v1/cart-items/";
 
     @PostMapping("/cart-items")
     public ResponseEntity<Void> registerCartItem(
@@ -30,7 +30,7 @@ public class CartItemController {
 
         Long cartItemId = cartItemService.registerCartItem(command);
 
-        URI location = URI.create(BASE_URL + "/" + cartItemId);
+        URI location = URI.create(BASE_URL + cartItemId);
 
         return ResponseEntity.created(location).build();
     }
