@@ -2,10 +2,10 @@ package com.prgrms.nabmart.domain.cart;
 
 import static java.util.Objects.isNull;
 
-import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.cart.exception.InvalidCartQuantityException;
 import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
 import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
