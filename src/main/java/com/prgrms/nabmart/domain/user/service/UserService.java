@@ -2,8 +2,8 @@ package com.prgrms.nabmart.domain.user.service;
 
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
+import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,17 +16,23 @@ public class UserService {
 
     @Transactional
     public RegisterUserResponse getOrRegisterUser(RegisterUserCommand registerUserCommand) {
-        User findUser = userRepository.findByProviderAndProviderId(registerUserCommand.provider(), registerUserCommand.providerId())
-                .orElseGet(() -> {
-                    User user = new User(
-                            registerUserCommand.nickname(),
-                            registerUserCommand.provider(),
-                            registerUserCommand.providerId(),
-                            registerUserCommand.userRole()
-                    );
-                    userRepository.save(user);
-                    return user;
-                });
+
+        User findUser = userRepository.findByProviderAndProviderId(
+                registerUserCommand.provider(),
+                registerUserCommand.providerId()
+            )
+            .orElseGet(() -> {
+                User user = User.builder()
+                    .nickname(registerUserCommand.nickname())
+                    .email(registerUserCommand.email())
+                    .provider(registerUserCommand.provider())
+                    .providerId(registerUserCommand.providerId())
+                    .userRole(registerUserCommand.userRole())
+                    .build();
+                userRepository.save(user);
+                return user;
+            });
+
         return RegisterUserResponse.from(findUser);
     }
 }

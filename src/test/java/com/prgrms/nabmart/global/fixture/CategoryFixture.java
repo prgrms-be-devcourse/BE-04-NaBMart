@@ -1,7 +1,7 @@
 package com.prgrms.nabmart.global.fixture;
 
-import com.prgrms.nabmart.domain.category.domain.MainCategory;
-import com.prgrms.nabmart.domain.category.domain.SubCategory;
+import com.prgrms.nabmart.domain.category.MainCategory;
+import com.prgrms.nabmart.domain.category.SubCategory;
 
 public final class CategoryFixture {
 
