@@ -5,21 +5,24 @@ import lombok.Builder;
 
 @Builder
 public record RegisterUserCommand(
+    String nickname,
+    String email,
+    String provider,
+    String providerId,
+    UserRole userRole) {
+
+    public static RegisterUserCommand of(
         String nickname,
+        String email,
         String provider,
         String providerId,
         UserRole userRole) {
-
-    public static RegisterUserCommand of(
-            String nickname,
-            String provider,
-            String providerId,
-            UserRole userRole) {
         return RegisterUserCommand.builder()
-                .nickname(nickname)
-                .provider(provider)
-                .providerId(providerId)
-                .userRole(userRole)
-                .build();
+            .nickname(nickname)
+            .email(email)
+            .provider(provider)
+            .providerId(providerId)
+            .userRole(userRole)
+            .build();
     }
 }

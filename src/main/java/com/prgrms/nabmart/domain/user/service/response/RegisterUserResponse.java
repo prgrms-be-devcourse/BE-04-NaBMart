@@ -7,8 +7,8 @@ public record RegisterUserResponse(Long userId, UserRole userRole) {
 
     public static RegisterUserResponse from(User user) {
         return new RegisterUserResponse(
-                user.getUserId(),
-                user.getUserRole()
+            user.getUserId(),
+            user.getUserRole()
         );
     }
 }
