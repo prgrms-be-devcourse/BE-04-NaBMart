@@ -1,6 +1,9 @@
 package com.prgrms.nabmart.global.auth.oauth.handler;
 
 import com.prgrms.nabmart.global.auth.exception.InvalidProviderException;
+import com.prgrms.nabmart.global.auth.oauth.client.KakaoMessageProvider;
+import com.prgrms.nabmart.global.auth.oauth.client.NaverMessageProvider;
+import com.prgrms.nabmart.global.auth.oauth.client.OAuthHttpMessageProvider;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthUserInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +27,14 @@ public enum OAuthProvider {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         String email = String.valueOf(kakaoAccount.get("email"));
         return new OAuthUserInfo(oAuthUserId, nickname, email);
-    }),
+    }, new KakaoMessageProvider()),
     NAVER("naver", attributes -> {
         Map<String, String> response = (Map<String, String>) attributes.get("response");
         String oAuthUserId = response.get("id");
         String nickname = response.get("nickname");
         String email = response.get("email");
         return new OAuthUserInfo(oAuthUserId, nickname, email);
-    });
+    }, new NaverMessageProvider());
 
     private static final Map<String, OAuthProvider> PROVIDERS =
         Collections.unmodifiableMap(Stream.of(values())
@@ -39,6 +42,7 @@ public enum OAuthProvider {
 
     private final String name;
     private final Function<Map<String, Object>, OAuthUserInfo> extractUserInfo;
+    private final OAuthHttpMessageProvider oAuthHttpMessageProvider;
 
     public static OAuthProvider getOAuthProvider(final String provider) {
         OAuthProvider oAuthProvider = PROVIDERS.get(provider);
