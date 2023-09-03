@@ -30,7 +30,7 @@ public class CartItemService {
         User foundUser = userRepository.findById(registerCartItemCommand.userId())
             .orElseThrow(NoSuchElementException::new);
 
-        Cart foundCart = cartRepository.findCartByUser(registerCartItemCommand.userId())
+        Cart foundCart = cartRepository.findByUser(foundUser)
             .orElseGet(() -> {
                     Cart savedCart = cartRepository.save(new Cart(foundUser));
                     return savedCart;

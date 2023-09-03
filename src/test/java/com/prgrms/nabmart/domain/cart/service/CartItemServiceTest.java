@@ -68,8 +68,8 @@ class CartItemServiceTest {
     }
 
     @Nested
-    @DisplayName("장바구니 상품 생성 시")
-    class CartItemAPITest {
+    @DisplayName("장바구니 상품 생성 Service 실행 시")
+    class CartItemTest {
 
         RegisterCartItemCommand registerCartItemCommand = RegisterCartItemCommand.of(1L, 1L,
             givenQuantity);
@@ -80,7 +80,7 @@ class CartItemServiceTest {
             // given
             given(userRepository.findById(any())).willReturn(Optional.ofNullable(givenUser));
             given(itemRepository.findById(any())).willReturn(Optional.ofNullable(givenItem));
-            given(cartRepository.findCartByUser(any())).willReturn(Optional.ofNullable(givenCart));
+            given(cartRepository.findByUser(any())).willReturn(Optional.ofNullable(givenCart));
             given(cartItemRepository.save(any())).willReturn(givenCartItem);
 
             // when
