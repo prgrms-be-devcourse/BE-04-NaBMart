@@ -1,12 +1,15 @@
 package com.prgrms.nabmart.domain.event.controller;
 
+import com.prgrms.nabmart.domain.event.controller.request.RegisterEventItemsRequest;
 import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
+import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,17 @@ public class EventController {
             registerEventRequest.title(), registerEventRequest.description());
         Long eventId = eventService.registerEvent(registerEventCommand);
         URI location = URI.create(BASE_URL + eventId);
+        return ResponseEntity.created(location).build();
+    }
+
+    @PostMapping("/{eventId}")
+    public ResponseEntity<Void> registerEventItems(
+        @RequestBody @Valid RegisterEventItemsRequest registerEventItemsRequest,
+        @PathVariable Long eventId
+    ) {
+        RegisterEventItemsCommand registerEventItemsCommand = RegisterEventItemsCommand.from(eventId, registerEventItemsRequest.items());
+        Long saved = eventService.registerEventItems(registerEventItemsCommand);
+        URI location = URI.create(BASE_URL + saved);
         return ResponseEntity.created(location).build();
     }
 }
