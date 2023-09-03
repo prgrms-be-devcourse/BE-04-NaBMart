@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.event.controller;
 
 import com.prgrms.nabmart.domain.event.controller.request.RegisterEventItemsRequest;
 import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
+import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
@@ -22,6 +23,7 @@ public class EventController {
 
     private static final String BASE_URL = "/api/v1/events/";
     private final EventService eventService;
+    private final EventItemService eventItemService;
 
     @PostMapping
     public ResponseEntity<Void> registerEvent(
@@ -40,7 +42,7 @@ public class EventController {
         @PathVariable Long eventId
     ) {
         RegisterEventItemsCommand registerEventItemsCommand = RegisterEventItemsCommand.from(eventId, registerEventItemsRequest.items());
-        Long saved = eventService.registerEventItems(registerEventItemsCommand);
+        Long saved = eventItemService.registerEventItems(registerEventItemsCommand);
         URI location = URI.create(BASE_URL + saved);
         return ResponseEntity.created(location).build();
     }
