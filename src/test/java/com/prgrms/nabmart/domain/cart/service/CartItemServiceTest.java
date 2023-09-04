@@ -69,7 +69,7 @@ class CartItemServiceTest {
 
     @Nested
     @DisplayName("장바구니 상품 생성 Service 실행 시")
-    class CartItemTest {
+    class RegisterCartItemTest {
 
         RegisterCartItemCommand registerCartItemCommand = RegisterCartItemCommand.of(1L, 1L,
             givenQuantity);
@@ -88,6 +88,28 @@ class CartItemServiceTest {
 
             // then
             then(cartItemRepository).should().save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 삭제 Service 실행 시")
+    class DeleteCartItemTest {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+
+            // given
+            Long cartItemId = 1L;
+
+            given(cartItemRepository.findById(any())).willReturn(
+                Optional.ofNullable(givenCartItem));
+
+            // when
+            cartItemService.deleteCartItem(cartItemId);
+
+            // then
+            then(cartItemRepository).should().delete(any());
         }
     }
 }

@@ -1,15 +1,12 @@
 package com.prgrms.nabmart.domain.cart;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 
-import com.prgrms.nabmart.domain.cart.exception.InvalidCartQuantityException;
-import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
+import com.prgrms.nabmart.domain.cart.exception.InvalidCartItemException;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.fixture.CartFixture;
 import com.prgrms.nabmart.global.fixture.CartItemFixture;
@@ -63,18 +60,19 @@ class CartItemTest {
         @DisplayName("예외 : Cart 가 null")
         void throwExceptionWhenCartIsNull() {
             // given
+            Cart nullCart = null;
 
             // when
-
-            // then
-            assertThatThrownBy(() ->
+            Exception exception = catchException(() ->
                 CartItem.builder()
-                    .cart(null)
+                    .cart(nullCart)
                     .item(givenItem)
                     .quantity(givenQuantity)
                     .build()
-            )
-                .isInstanceOf(NotExistsCartException.class);
+            );
+
+            // then
+            assertThat(exception).isInstanceOf(InvalidCartItemException.class);
         }
 
         @Test
@@ -93,26 +91,26 @@ class CartItemTest {
             );
 
             // then
-            assertThat(exception).isInstanceOf(NotExistsItemException.class);
+            assertThat(exception).isInstanceOf(InvalidCartItemException.class);
         }
 
         @Test
         @DisplayName("예외 : Quantity 가 음수")
         void throwExceptionWhenQuantityIsOutOfRange() {
             // given
-            int testQuantity = -1;
+            int nullQuantity = -1;
 
             // when
-
-            // then
-            assertThatThrownBy(() ->
+            Exception exception = catchException(() ->
                 CartItem.builder()
                     .cart(givenCart)
                     .item(givenItem)
-                    .quantity(testQuantity)
+                    .quantity(nullQuantity)
                     .build()
-            )
-                .isInstanceOf(InvalidCartQuantityException.class);
+            );
+
+            // then
+            assertThat(exception).isInstanceOf(InvalidCartItemException.class);
         }
     }
 }
