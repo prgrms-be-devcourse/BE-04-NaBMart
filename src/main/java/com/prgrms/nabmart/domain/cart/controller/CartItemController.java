@@ -3,12 +3,14 @@ package com.prgrms.nabmart.domain.cart.controller;
 import com.prgrms.nabmart.domain.cart.controller.request.RegisterCartItemRequest;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +45,19 @@ public class CartItemController {
         @Valid @PathVariable Long cartItemId
     ) {
         cartItemService.deleteCartItem(cartItemId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{cartItemId}")
+    public ResponseEntity<Void> updateCartItemQuantity(
+        @Valid @PathVariable Long cartItemId,
+        @Valid @RequestBody int quantity
+    ) {
+        UpdateCartItemCommand updateCartItemCommand = UpdateCartItemCommand.of(cartItemId,
+            quantity);
+
+        cartItemService.updateCartItemQuantity(updateCartItemCommand);
 
         return ResponseEntity.noContent().build();
     }
