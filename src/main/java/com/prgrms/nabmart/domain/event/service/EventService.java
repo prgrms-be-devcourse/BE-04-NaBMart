@@ -3,6 +3,10 @@ package com.prgrms.nabmart.domain.event.service;
 import com.prgrms.nabmart.domain.event.domain.Event;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
+import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse;
+import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse.FindEventResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,4 +24,14 @@ public class EventService {
         return registered.getEventId();
     }
 
+    @Transactional(readOnly = true)
+    public FindEventsResponse findEvents() {
+        List<Event> events = eventRepository.findAllByOrderByCreatedAtDesc();
+        return FindEventsResponse.of(events.stream()
+            .map(event -> new FindEventResponse(
+                event.getEventId(),
+                event.getTitle(),
+                event.getDescription()
+            )).collect(Collectors.toList()));
+    }
 }
