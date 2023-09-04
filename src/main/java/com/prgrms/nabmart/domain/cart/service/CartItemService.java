@@ -2,7 +2,7 @@ package com.prgrms.nabmart.domain.cart.service;
 
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.cart.CartItem;
-import com.prgrms.nabmart.domain.cart.exception.NotExistsCartItemException;
+import com.prgrms.nabmart.domain.cart.exception.NotFoundCartItemException;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
@@ -58,7 +58,7 @@ public class CartItemService {
         Long cartItemId
     ) {
         CartItem foundCartItem = cartItemRepository.findById(cartItemId).orElseThrow(
-            () -> new NotExistsCartItemException("장바구니 상품이 존재하지 않습니다.")
+            () -> new NotFoundCartItemException("장바구니 상품이 존재하지 않습니다.")
         );
 
         cartItemRepository.delete(foundCartItem);
