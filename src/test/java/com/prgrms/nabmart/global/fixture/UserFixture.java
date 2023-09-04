@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.global.fixture;
 
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 import lombok.AccessLevel;
@@ -14,6 +15,7 @@ public final class UserFixture {
     private static final String PROVIDER = "provider";
     private static final String PROVIDER_ID = "providerId";
     private static final UserRole USER_ROLE = UserRole.ROLE_USER;
+    private static final UserGrade USER_GRADE = UserGrade.NORMAL;
 
     public static User user() {
 
@@ -22,7 +24,8 @@ public final class UserFixture {
             .email(EMAIL)
             .provider(PROVIDER)
             .providerId(PROVIDER_ID)
-            .userRole(UserRole.ROLE_USER)
+            .userRole(USER_ROLE)
+            .userGrade(USER_GRADE)
             .build();
     }
 
@@ -33,6 +36,7 @@ public final class UserFixture {
             .provider(PROVIDER)
             .providerId(PROVIDER_ID)
             .userRole(USER_ROLE)
+            .userGrade(USER_GRADE)
             .build();
     }
 }

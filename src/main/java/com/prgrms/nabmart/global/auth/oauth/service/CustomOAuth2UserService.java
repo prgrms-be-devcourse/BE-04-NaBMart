@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.global.auth.oauth.service;
 
+import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.UserService;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
@@ -39,7 +40,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             oAuthUserInfo.email(),
             registrationId,
             oAuthUserInfo.oAuthUserId(),
-            UserRole.ROLE_USER);
+            UserRole.ROLE_USER,
+            UserGrade.NORMAL);
         RegisterUserResponse userResponse = userService.getOrRegisterUser(registerUserCommand);
         return new CustomOAuth2User(userResponse, attributes);
     }
