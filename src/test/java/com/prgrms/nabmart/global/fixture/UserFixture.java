@@ -3,7 +3,10 @@ package com.prgrms.nabmart.global.fixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UserFixture {
 
     private static final String NICKNAME = "닉네임";
@@ -11,9 +14,6 @@ public final class UserFixture {
     private static final String PROVIDER = "provider";
     private static final String PROVIDER_ID = "providerId";
     private static final UserRole USER_ROLE = UserRole.ROLE_USER;
-
-    private UserFixture() {
-    }
 
     public static User user() {
 
