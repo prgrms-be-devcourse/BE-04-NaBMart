@@ -23,7 +23,7 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
     }
 
     @Override
-    public String callUnlinkOAuthUser(final FindUserDetailResponse userDetailResponse) {
+    public void callUnlinkOAuthUser(final FindUserDetailResponse userDetailResponse) {
         OAuthProvider oAuthProvider = OAuthProvider.getOAuthProvider(userDetailResponse.provider());
         OAuthHttpMessageProvider oAuthHttpMessageProvider = oAuthProvider.getOAuthHttpMessageProvider();
         OAuth2AuthorizedClient oAuth2AuthorizedClient = authorizedClientService.loadAuthorizedClient(
@@ -38,7 +38,6 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
             unlinkHttpMessage.uriVariables());
         log.info("회원의 연결이 종료되었습니다. 회원 ID={}", response);
         oAuthHttpMessageProvider.checkSuccessUnlinkRequest(response);
-        return null;
     }
 
 }

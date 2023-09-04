@@ -26,6 +26,7 @@ public class UserController {
         FindUserCommand findUserDetailCommand = FindUserCommand.from(userId);
         FindUserDetailResponse findUserDetailResponse = userService.findUser(findUserDetailCommand);
         restClient.callUnlinkOAuthUser(findUserDetailResponse);
+        userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 }

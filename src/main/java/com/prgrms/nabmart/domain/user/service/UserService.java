@@ -4,9 +4,9 @@ import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.DoesNotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
-import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
-import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
 import com.prgrms.nabmart.domain.user.service.request.RegisterOAuthUserCommand;
+import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
+import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,9 +36,19 @@ public class UserService {
         return AuthUserResponse.from(findUser);
     }
 
+    @Transactional(readOnly = true)
     public FindUserDetailResponse findUser(FindUserCommand findUserCommand) {
-        User findUser = userRepository.findById(findUserCommand.userId())
-            .orElseThrow(() -> new DoesNotFoundUserException("존재하지 않는 유저입니다."));
+        User findUser = findUserByUserId(findUserCommand.userId());
         return FindUserDetailResponse.from(findUser);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
+    private User findUserByUserId(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new DoesNotFoundUserException("존재하지 않는 유저입니다."));
     }
 }
