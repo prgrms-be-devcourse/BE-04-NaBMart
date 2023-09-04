@@ -41,7 +41,7 @@ public class User extends BaseTimeEntity {
     private UserRole userRole;
 
     @Enumerated(EnumType.STRING)
-    @Column
+    @Column(nullable = false)
     private UserGrade userGrade;
 
     @Builder
