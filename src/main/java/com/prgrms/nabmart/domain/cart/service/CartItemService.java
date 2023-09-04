@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.cart.exception.NotFoundCartItemException;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
@@ -63,5 +64,15 @@ public class CartItemService {
             );
 
         cartItemRepository.delete(foundCartItem);
+    }
+
+    @Transactional
+    public void updateCartItemQuantity(UpdateCartItemCommand updateCartItemCommand) {
+        CartItem foundCartItem = cartItemRepository.findById(updateCartItemCommand.cartId())
+            .orElseThrow(
+                () -> new NotFoundCartItemException("장바구니 상품이 존재하지 않습니다.")
+            );
+
+        foundCartItem.changeQuantity(updateCartItemCommand.quantity());
     }
 }
