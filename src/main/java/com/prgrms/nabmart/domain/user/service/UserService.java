@@ -5,8 +5,8 @@ import com.prgrms.nabmart.domain.user.exception.DoesNotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
-import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
+import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,7 @@ public class UserService {
 
     @Transactional
     public RegisterUserResponse getOrRegisterUser(final RegisterUserCommand registerUserCommand) {
+
         User findUser = userRepository.findByProviderAndProviderId(
                 registerUserCommand.provider(),
                 registerUserCommand.providerId())
@@ -33,6 +34,7 @@ public class UserService {
                 userRepository.save(user);
                 return user;
             });
+
         return RegisterUserResponse.from(findUser);
     }
 

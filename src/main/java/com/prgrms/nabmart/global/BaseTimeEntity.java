@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.domain;
+package com.prgrms.nabmart.global;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
