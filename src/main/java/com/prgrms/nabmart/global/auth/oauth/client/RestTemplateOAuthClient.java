@@ -37,6 +37,7 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
             Map.class,
             unlinkHttpMessage.uriVariables());
         log.info("회원의 연결이 종료되었습니다. 회원 ID={}", response);
+        oAuthHttpMessageProvider.checkSuccessUnlinkRequest(response);
         return null;
     }
 

@@ -1,8 +1,11 @@
 package com.prgrms.nabmart.global.auth.oauth.client;
 
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
+import com.prgrms.nabmart.global.auth.exception.OAuthUnlinkFailureException;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthHttpMessage;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -50,5 +53,11 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
         multiValueMap.add("target_id_type", "user_id");
         multiValueMap.add("target_id", String.valueOf(userDetailResponse.providerId()));
         return multiValueMap;
+    }
+
+    @Override
+    public void checkSuccessUnlinkRequest(Map<String, Object> unlinkResponse) {
+        Optional.ofNullable(unlinkResponse.get("id"))
+            .orElseThrow(() -> new OAuthUnlinkFailureException("소셜 로그인 연동 해제가 실패하였습니다."));
     }
 }

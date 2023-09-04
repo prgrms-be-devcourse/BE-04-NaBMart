@@ -1,9 +1,11 @@
 package com.prgrms.nabmart.global.auth.oauth.client;
 
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
+import com.prgrms.nabmart.global.auth.exception.OAuthUnlinkFailureException;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthHttpMessage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -52,5 +54,12 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
         urlVariables.put("grant_type", "delete");
         urlVariables.put("service_provider", "NAVER");
         return urlVariables;
+    }
+
+    @Override
+    public void checkSuccessUnlinkRequest(Map<String, Object> unlinkResponse) {
+        Optional.ofNullable(unlinkResponse.get("result"))
+            .filter(result -> result.equals("success"))
+            .orElseThrow(() -> new OAuthUnlinkFailureException("소셜 로그인 연동 해제가 실패하였습니다."));
     }
 }
