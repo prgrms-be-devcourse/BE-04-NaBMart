@@ -2,7 +2,7 @@ package com.prgrms.nabmart.global.auth.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
+import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.dto.JwtAuthentication;
 import com.prgrms.nabmart.global.fixture.AuthFixture;
 import java.util.List;
@@ -34,12 +34,12 @@ class JwtAuthenticationProviderTest {
     @DisplayName("authenticate 메서드 실행 시")
     class AuthenticateTest {
 
-        AuthUserResponse userResponse;
+        RegisterUserResponse userResponse;
         String accessToken;
 
         @BeforeEach
         void setUp() {
-            userResponse = AuthFixture.authUserResponse();
+            userResponse = AuthFixture.registerUserResponse();
             accessToken = tokenProvider.createToken(userResponse);
         }
 

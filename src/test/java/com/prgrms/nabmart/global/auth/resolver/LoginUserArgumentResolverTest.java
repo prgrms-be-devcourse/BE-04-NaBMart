@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
+import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
 import com.prgrms.nabmart.global.fixture.AuthFixture;
@@ -33,7 +33,7 @@ class LoginUserArgumentResolverTest {
 
     MockMvc mvc;
     TokenProvider tokenProvider;
-    AuthUserResponse authUserResponse;
+    RegisterUserResponse userResponse;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +41,7 @@ class LoginUserArgumentResolverTest {
             .setCustomArgumentResolvers(new LoginUserArgumentResolver())
             .build();
         tokenProvider = AuthFixture.tokenProvider();
-        authUserResponse = AuthFixture.authUserResponse();
+        userResponse = AuthFixture.registerUserResponse();
 
         Authentication authentication = AuthFixture.usernamePasswordAuthenticationToken();
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -55,7 +55,7 @@ class LoginUserArgumentResolverTest {
         @DisplayName("성공: authentication 객체에서 userId를 추출하여 인자로 전달")
         void success() throws Exception {
             //given
-            String token = tokenProvider.createToken(authUserResponse);
+            String token = tokenProvider.createToken(userResponse);
 
             //when
             ResultActions resultActions = mvc.perform(get("/resolvers")

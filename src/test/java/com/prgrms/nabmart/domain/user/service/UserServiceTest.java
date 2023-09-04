@@ -7,7 +7,7 @@ import static org.mockito.Mockito.times;
 
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.domain.user.service.request.RegisterOAuthUserCommand;
+import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 import com.prgrms.nabmart.global.fixture.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ class UserServiceTest {
     @DisplayName("getOrRegisterUser 메서드 실행 시")
     class GetOrRegisterUserTest {
 
-        RegisterOAuthUserCommand registerUserCommand = UserFixture.registerUserCommand();
+        RegisterUserCommand registerUserCommand = UserFixture.registerUserCommand();
 
         @Test
         @DisplayName("성공: User가 존재하면 User 반환")

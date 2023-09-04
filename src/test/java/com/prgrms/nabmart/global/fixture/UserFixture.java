@@ -2,7 +2,7 @@ package com.prgrms.nabmart.global.fixture;
 
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserRole;
-import com.prgrms.nabmart.domain.user.service.request.RegisterOAuthUserCommand;
+import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 
 public final class UserFixture {
 
@@ -25,8 +25,8 @@ public final class UserFixture {
             .build();
     }
 
-    public static RegisterOAuthUserCommand registerUserCommand() {
-        return RegisterOAuthUserCommand.builder()
+    public static RegisterUserCommand registerUserCommand() {
+        return RegisterUserCommand.builder()
             .nickname(NICKNAME)
             .email(EMAIL)
             .provider(PROVIDER)

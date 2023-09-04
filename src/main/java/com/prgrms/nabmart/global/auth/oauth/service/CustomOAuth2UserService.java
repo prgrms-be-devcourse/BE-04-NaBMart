@@ -2,8 +2,8 @@ package com.prgrms.nabmart.global.auth.oauth.service;
 
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.UserService;
-import com.prgrms.nabmart.domain.user.service.request.RegisterOAuthUserCommand;
-import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
+import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
+import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.oauth.dto.CustomOAuth2User;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthUserInfo;
 import com.prgrms.nabmart.global.auth.oauth.handler.OAuthProvider;
@@ -34,13 +34,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuthUserInfo oAuthUserInfo = OAuthProvider.getOAuthProvider(registrationId)
             .getOAuthUserInfo(attributes);
 
-        RegisterOAuthUserCommand registerUserCommand = RegisterOAuthUserCommand.of(
+        RegisterUserCommand registerUserCommand = RegisterUserCommand.of(
             oAuthUserInfo.nickname(),
             oAuthUserInfo.email(),
             registrationId,
             oAuthUserInfo.oAuthUserId(),
             UserRole.ROLE_USER);
-        AuthUserResponse userResponse = userService.getOrRegisterUser(registerUserCommand);
+        RegisterUserResponse userResponse = userService.getOrRegisterUser(registerUserCommand);
         return new CustomOAuth2User(userResponse, attributes);
     }
 }

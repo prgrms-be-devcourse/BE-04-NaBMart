@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.prgrms.nabmart.domain.user.UserRole;
-import com.prgrms.nabmart.domain.user.service.response.AuthUserResponse;
+import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
 import com.prgrms.nabmart.global.fixture.AuthFixture;
@@ -32,7 +32,7 @@ class JavaJwtTokenProviderTest {
         @DisplayName("성공: 토큰 반환")
         void success() {
             //given
-            AuthUserResponse registerUserResponse = AuthFixture.authUserResponse();
+            RegisterUserResponse registerUserResponse = AuthFixture.registerUserResponse();
 
             //when
             String token = tokenProvider.createToken(registerUserResponse);
@@ -49,13 +49,13 @@ class JavaJwtTokenProviderTest {
     @DisplayName("validateToken 메서드 실행 시")
     class ValidateTokenTest {
 
-        AuthUserResponse registerUserResponse = AuthFixture.authUserResponse();
+        RegisterUserResponse registerUserResponse = AuthFixture.registerUserResponse();
 
         private String createToken(
             String issuer,
             int expirySeconds,
             Algorithm algorithm,
-            AuthUserResponse userResponse) {
+            RegisterUserResponse userResponse) {
             Date now = new Date();
             Date expiresAt = new Date(now.getTime() + expirySeconds * 1000L);
             return JWT.create()

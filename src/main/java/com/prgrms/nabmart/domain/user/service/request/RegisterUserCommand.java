@@ -4,20 +4,20 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import lombok.Builder;
 
 @Builder
-public record RegisterOAuthUserCommand(
+public record RegisterUserCommand(
     String nickname,
     String email,
     String provider,
     String providerId,
     UserRole userRole) {
 
-    public static RegisterOAuthUserCommand of(
+    public static RegisterUserCommand of(
         String nickname,
         String email,
         String provider,
         String providerId,
         UserRole userRole) {
-        return RegisterOAuthUserCommand.builder()
+        return RegisterUserCommand.builder()
             .nickname(nickname)
             .email(email)
             .provider(provider)
