@@ -1,8 +1,8 @@
 package com.prgrms.nabmart.domain.coupon;
 
-import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.coupon.exception.CouponValidationException;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

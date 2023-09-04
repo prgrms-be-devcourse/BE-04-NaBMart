@@ -2,10 +2,10 @@ package com.prgrms.nabmart.domain.event.domain;
 
 import static java.util.Objects.isNull;
 
-import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.event.exception.NotExistsEventException;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
