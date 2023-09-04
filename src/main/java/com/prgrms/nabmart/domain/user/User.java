@@ -40,13 +40,18 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserRole userRole;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private UserGrade userGrade;
+
     @Builder
     public User(
         final String nickname,
         final String email,
         final String provider,
         final String providerId,
-        final UserRole userRole) {
+        final UserRole userRole,
+        final UserGrade userGrade) {
         validateNickname(nickname);
         validateEmail(email);
         this.nickname = nickname;
@@ -54,6 +59,7 @@ public class User extends BaseTimeEntity {
         this.provider = provider;
         this.providerId = providerId;
         this.userRole = userRole;
+        this.userGrade = userGrade;
     }
 
     private void validateNickname(String nickname) {
