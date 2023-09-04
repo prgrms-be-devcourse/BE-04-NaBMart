@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import com.prgrms.nabmart.domain.cart.exception.InvalidCartQuantityException;
 import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
 import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -65,8 +66,7 @@ public class CartItem extends BaseTimeEntity {
 
     public void validateItem(Item item) {
         if (isNull(item)) {
-            // TODO : ItemException 확인 후 없으면 Exception 생성
-            throw new IllegalArgumentException("Item 이 존재하지 않습니다.");
+            throw new NotExistsItemException("Item 이 존재하지 않습니다.");
         }
     }
 

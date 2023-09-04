@@ -8,6 +8,7 @@ import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.fixture.CartFixture;
 import com.prgrms.nabmart.global.fixture.CartItemFixture;
@@ -90,7 +91,7 @@ class CartItemTest {
                     .quantity(givenQuantity)
                     .build()
             )
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotExistsItemException.class);
         }
 
         @Test

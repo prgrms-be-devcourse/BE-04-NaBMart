@@ -23,7 +23,8 @@ public class CartItemController {
 
     @PostMapping("/cart-items")
     public ResponseEntity<Void> registerCartItem(
-        @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest, @LoginUser Long userId
+        @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest,
+        @LoginUser Long userId
     ) {
         RegisterCartItemCommand command = RegisterCartItemCommand.of(userId,
             registerCartItemRequest.itemId(), registerCartItemRequest.quantity());

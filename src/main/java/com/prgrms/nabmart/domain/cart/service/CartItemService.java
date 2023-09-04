@@ -6,10 +6,11 @@ import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.exception.NotExistUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +27,8 @@ public class CartItemService {
     @Transactional
     public Long registerCartItem(RegisterCartItemCommand registerCartItemCommand) {
 
-        // TODO : UserException 확인 후 없으면 Exception 생성
         User foundUser = userRepository.findById(registerCartItemCommand.userId())
-            .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(() -> new NotExistUserException("존재하지 않은 사용자입니다."));
 
         Cart foundCart = cartRepository.findByUser(foundUser)
             .orElseGet(() -> {
@@ -37,9 +37,8 @@ public class CartItemService {
                 }
             );
 
-        // TODO : ItemException 확인 후 없으면 Exception 생성
         Item foundItem = itemRepository.findById(registerCartItemCommand.itemId())
-            .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(() -> new NotExistsItemException("존재하지 않은 상품입니다."));
 
         CartItem cartItem = CartItem.builder()
             .cart(foundCart)
