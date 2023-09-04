@@ -98,7 +98,6 @@ class CartItemServiceTest {
         @Test
         @DisplayName("성공")
         void success() {
-
             // given
             Long cartItemId = 1L;
 
@@ -110,6 +109,24 @@ class CartItemServiceTest {
 
             // then
             then(cartItemRepository).should().delete(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 목록 조회 Service 실행 시")
+    class FindCartItemsTest {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // given
+            Long cartItemId = 1L;
+
+            // when
+            cartItemService.findCartItems(cartItemId);
+
+            // then
+            then(cartItemRepository).should().findAllByCartItemIdAndOrderByCreatedAt((any()));
         }
     }
 }
