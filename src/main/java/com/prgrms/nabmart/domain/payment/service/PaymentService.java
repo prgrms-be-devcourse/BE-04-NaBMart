@@ -1,11 +1,14 @@
 package com.prgrms.nabmart.domain.payment.service;
 
 import com.prgrms.nabmart.domain.order.Order;
-import com.prgrms.nabmart.domain.order.exception.NoExistsOrderException;
+import com.prgrms.nabmart.domain.order.OrderStatus;
+import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.payment.Payment;
 import com.prgrms.nabmart.domain.payment.PaymentStatus;
+import com.prgrms.nabmart.domain.payment.PaymentType;
 import com.prgrms.nabmart.domain.payment.controller.response.PaymentResponse;
+import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PaymentService {
-
-    private final static String MOCK_ORDER_NAME = "orderName";
 
     private final PaymentRepository paymentRepository;
 
@@ -33,32 +34,40 @@ public class PaymentService {
     @Transactional
     public PaymentResponse pay(Long orderId, PaymentCommand paymentCommand) {
         final Order order = getOrderByOrderId(orderId);
-        final Payment payment = buildPayment(paymentCommand, order);
 
+        validateOrder(order);
+
+        final Payment payment = buildPayment(paymentCommand, order);
         paymentRepository.save(payment);
 
         return new PaymentResponse(
-                paymentCommand.paymentType().toString(),
+                paymentCommand.paymentType(),
                 order.getPrice(),
-                String.valueOf(order.getOrderId()),
-                MOCK_ORDER_NAME,
+                order.getOrderId(),
+                order.getName(),
                 order.getUser().getEmail(),
                 order.getUser().getNickname(),
                 successCallBackUrl,
                 failCallBackUrl);
         }
 
+    private void validateOrder(Order order) {
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new DuplicatePayException("이미 결제가 완료된 order 입니다.");
+        }
+    }
+
     private Payment buildPayment(PaymentCommand paymentCommand, Order order) {
         return Payment.builder()
                 .order(order)
                 .user(order.getUser())
-                .paymentType(paymentCommand.paymentType())
+                .paymentType(PaymentType.valueOf(paymentCommand.paymentType()))
                 .paymentStatus(PaymentStatus.PENDING)
                 .build();
     }
 
     private Order getOrderByOrderId(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoExistsOrderException("order 가 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundOrderException("order 가 존재하지 않습니다."));
     }
 }
