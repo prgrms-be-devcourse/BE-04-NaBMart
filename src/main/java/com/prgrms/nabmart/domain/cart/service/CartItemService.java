@@ -26,8 +26,9 @@ public class CartItemService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long registerCartItem(RegisterCartItemCommand registerCartItemCommand) {
-
+    public Long registerCartItem(
+        RegisterCartItemCommand registerCartItemCommand
+    ) {
         User foundUser = userRepository.findById(registerCartItemCommand.userId())
             .orElseThrow(() -> new NotExistUserException("존재하지 않은 사용자입니다."));
 
@@ -53,8 +54,9 @@ public class CartItemService {
     }
 
     @Transactional
-    public void deleteCartItem(Long cartItemId) {
-
+    public void deleteCartItem(
+        Long cartItemId
+    ) {
         CartItem foundCartItem = cartItemRepository.findById(cartItemId).orElseThrow(
             () -> new NotExistsCartItemException("장바구니 상품이 존재하지 않습니다.")
         );

@@ -40,7 +40,7 @@ public class CartItemController {
 
     @DeleteMapping("/cart-items/{cartItemId}")
     public ResponseEntity<Void> deleteCartItem(
-        @PathVariable Long cartItemId
+        @Valid @PathVariable Long cartItemId
     ) {
         cartItemService.deleteCartItem(cartItemId);
 
