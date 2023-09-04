@@ -2,9 +2,9 @@ package com.prgrms.nabmart.global.auth.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.dto.JwtAuthentication;
+import com.prgrms.nabmart.global.fixture.AuthFixture;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ class JwtAuthenticationProviderTest {
 
         @BeforeEach
         void setUp() {
-            userResponse = new RegisterUserResponse(1L, UserRole.ROLE_USER);
+            userResponse = AuthFixture.registerUserResponse();
             accessToken = tokenProvider.createToken(userResponse);
         }
 
