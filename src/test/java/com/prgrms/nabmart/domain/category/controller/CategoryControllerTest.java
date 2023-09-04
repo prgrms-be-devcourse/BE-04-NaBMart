@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
+import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +34,7 @@ public class CategoryControllerTest {
     }
 
     @Nested
-    @DisplayName("카테고리 저장하는 api 호출 시")
+    @DisplayName("대카테고리 저장하는 api 호출 시")
     class SaveMainCategoryApi {
 
         @Test
@@ -51,6 +52,31 @@ public class CategoryControllerTest {
                 .andExpect(header().string("Location", "/api/v1/main-categories/1"));
 
             verify(categoryService, times(1)).saveMainCategory(command);
+        }
+    }
+
+    @Nested
+    @DisplayName("소카테고리 저장하는 api 호출 시")
+    class SaveSubCategoryApi {
+
+        @Test
+        @DisplayName("성공")
+        public void success() throws Exception {
+            // Given
+            RegisterSubCategoryCommand command = new RegisterSubCategoryCommand(1L, "sub-category");
+            when(categoryService.saveSubCategory(command)).thenReturn(1L);
+
+            // When & Then
+            mockMvc.perform(post("/api/v1/sub-categories")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\n"
+                        + "    \"mainCategoryId\" : 1,\n"
+                        + "    \"name\" : \"sub-category\"\n"
+                        + "}"))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/v1/sub-categories/1"));
+
+            verify(categoryService, times(1)).saveSubCategory(command);
         }
     }
 }
