@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.cart;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchException;
 
 import com.prgrms.nabmart.domain.cart.exception.InvalidCartQuantityException;
 import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
@@ -77,21 +78,22 @@ class CartItemTest {
         }
 
         @Test
-        @DisplayName("예외 : Item 가 null")
+        @DisplayName("예외 : Item 이 null")
         void throwExceptionWhenItemIsNull() {
             // given
+            Item nullItem = null;
 
             // when
-
-            // then
-            assertThatThrownBy(() ->
+            Exception exception = catchException(() ->
                 CartItem.builder()
                     .cart(givenCart)
-                    .item(null)
+                    .item(nullItem)
                     .quantity(givenQuantity)
                     .build()
-            )
-                .isInstanceOf(NotExistsItemException.class);
+            );
+
+            // then
+            assertThat(exception).isInstanceOf(NotExistsItemException.class);
         }
 
         @Test
