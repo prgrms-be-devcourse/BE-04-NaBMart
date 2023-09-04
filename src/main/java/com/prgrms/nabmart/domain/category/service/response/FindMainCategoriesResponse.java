@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public record FindMainCategoriesResponse(List<String> mainCategoryNames) {
 
-    public static FindMainCategoriesResponse from(List<MainCategory> mainCategories) {
+    public static FindMainCategoriesResponse from(final List<MainCategory> mainCategories) {
         List<String> mainCategoryNames = mainCategories.stream()
             .map(MainCategory::getName)
             .collect(Collectors.toList());
