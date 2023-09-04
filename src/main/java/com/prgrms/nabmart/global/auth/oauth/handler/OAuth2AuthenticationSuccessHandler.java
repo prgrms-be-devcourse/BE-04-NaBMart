@@ -1,23 +1,16 @@
 package com.prgrms.nabmart.global.auth.oauth.handler;
 
-import com.prgrms.nabmart.domain.user.UserRole;
-import com.prgrms.nabmart.domain.user.service.UserService;
-import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
-import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
-import com.prgrms.nabmart.global.auth.oauth.dto.OAuthUserInfo;
+import com.prgrms.nabmart.global.auth.oauth.dto.CustomOAuth2User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Slf4j
 @Component
@@ -25,28 +18,15 @@ import java.io.IOException;
 public class OAuth2AuthenticationSuccessHandler extends
     SavedRequestAwareAuthenticationSuccessHandler {
 
-    private final UserService userService;
     private final TokenProvider tokenProvider;
 
     @Override
     public void onAuthenticationSuccess(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        Authentication authentication) throws ServletException, IOException {
-        if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
-            OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
-            String registrationId = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
-            OAuthUserInfo oAuthUserInfo = OAuthProvider.getOAuthProvider(registrationId)
-                .getOAuthUserInfo(oAuth2User.getAttributes());
-
-            RegisterUserCommand registerUserCommand = RegisterUserCommand.of(
-                oAuthUserInfo.nickname(),
-                oAuthUserInfo.email(),
-                registrationId,
-                oAuthUserInfo.oAuthUserId(),
-                UserRole.ROLE_USER);
-            RegisterUserResponse user = userService.getOrRegisterUser(registerUserCommand);
-            String accessToken = tokenProvider.createToken(user);
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final Authentication authentication) throws ServletException, IOException {
+        if (authentication.getPrincipal() instanceof CustomOAuth2User customOAuth2User) {
+            String accessToken = tokenProvider.createToken(customOAuth2User.getUserResponse());
             sendAccessToken(response, accessToken);
         } else {
             super.onAuthenticationSuccess(request, response, authentication);
