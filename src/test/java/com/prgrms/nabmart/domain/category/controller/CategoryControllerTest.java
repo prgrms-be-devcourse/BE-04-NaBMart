@@ -7,31 +7,32 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+@WebMvcTest(CategoryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class CategoryControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private CategoryService categoryService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryController(categoryService)).build();
-    }
+    @MockBean
+    private CategoryService categoryService;
 
     @Nested
     @DisplayName("대카테고리 저장하는 api 호출 시")
@@ -47,7 +48,7 @@ public class CategoryControllerTest {
             // When & Then
             mockMvc.perform(post("/api/v1/main-categories")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\":\"TestCategory\"}"))
+                    .content(objectMapper.writeValueAsString(command)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/main-categories/1"));
 
@@ -69,10 +70,7 @@ public class CategoryControllerTest {
             // When & Then
             mockMvc.perform(post("/api/v1/sub-categories")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\n"
-                        + "    \"mainCategoryId\" : 1,\n"
-                        + "    \"name\" : \"sub-category\"\n"
-                        + "}"))
+                    .content(objectMapper.writeValueAsString(command)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/sub-categories/1"));
 
