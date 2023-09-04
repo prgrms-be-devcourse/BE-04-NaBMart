@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,15 +42,8 @@ class CouponControllerTest {
         @DisplayName("성공")
         public void success() throws Exception {
             // Given
-            String name = "TestName";
-            int discount = 10000;
-            String description = "TestDescription";
-            int minOrderPrice = 1000;
-            String endAtString = "2023-12-31";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate endAt = LocalDate.parse(endAtString, formatter);
-            RegisterCouponCommand command = new RegisterCouponCommand(name, discount, description,
-                minOrderPrice, endAt);
+            RegisterCouponCommand command = new RegisterCouponCommand("TestName", 10000,
+                "TestDescription", 1000, LocalDate.parse("2023-12-31"));
 
             // When & Then
             when(couponService.createCoupon(command)).thenReturn(1L);
