@@ -31,5 +31,10 @@ public final class AuthFixture {
     public static RegisterUserResponse registerUserResponse() {
         return new RegisterUserResponse(1L, "nickname", "abc", UserRole.ROLE_USER);
     }
+
+    public static String accessToken() {
+        RegisterUserResponse userResponse = registerUserResponse();
+        TokenProvider tokenProvider = tokenProvider();
+        return tokenProvider.createToken(userResponse);
     }
 }
