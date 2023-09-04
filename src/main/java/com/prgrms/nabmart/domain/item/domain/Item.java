@@ -1,8 +1,8 @@
 package com.prgrms.nabmart.domain.item.domain;
 
-import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -54,6 +54,7 @@ public class Item extends BaseTimeEntity {
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
+    @Builder
     public Item(String name, int price, String description, int quantity, int discount,
         int maxBuyQuantity, MainCategory mainCategory, SubCategory subCategory) {
         this.name = name;
