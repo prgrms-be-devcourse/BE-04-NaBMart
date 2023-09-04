@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.category.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -14,7 +15,9 @@ import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
+import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
 import com.prgrms.nabmart.global.fixture.CategoryFixture;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,17 +43,18 @@ public class CategoryServiceTest {
     @DisplayName("saveMainCategory 메서드 실행 시")
     class SaveMainCategoryTests {
 
+        RegisterMainCategoryCommand registerMainCategoryCommand = CategoryFixture.registerMainCategoryCommand();
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+
         @Test
         @DisplayName("성공")
         public void success() {
             // Given
-            RegisterMainCategoryCommand command = new RegisterMainCategoryCommand("TestCategory");
-            MainCategory savedMainCategory = new MainCategory("TestCategory");
             when(mainCategoryRepository.save(any(MainCategory.class))).thenReturn(
-                savedMainCategory);
+                mainCategory);
 
             // When
-            categoryService.saveMainCategory(command);
+            categoryService.saveMainCategory(registerMainCategoryCommand);
 
             // Then
             verify(mainCategoryRepository, times(1)).save(any(MainCategory.class));
@@ -60,13 +64,15 @@ public class CategoryServiceTest {
         @DisplayName("예외: 이미 존재하는 MainCategory 이름")
         public void throwExceptionWhenNameIsDuplicated() {
             // Given
-            RegisterMainCategoryCommand command = new RegisterMainCategoryCommand("TestCategory");
-            when(mainCategoryRepository.existsByName("TestCategory")).thenReturn(true);
+            when(
+                mainCategoryRepository.existsByName(registerMainCategoryCommand.name())).thenReturn(
+                true);
 
             // When & Then
-            assertThatThrownBy(() -> categoryService.saveMainCategory(command))
+            assertThatThrownBy(() -> categoryService.saveMainCategory(registerMainCategoryCommand))
                 .isInstanceOf(DuplicateCategoryNameException.class);
-            verify(mainCategoryRepository, times(1)).existsByName("TestCategory");
+            verify(mainCategoryRepository, times(1)).existsByName(
+                registerMainCategoryCommand.name());
         }
     }
 
@@ -110,6 +116,31 @@ public class CategoryServiceTest {
                 .isInstanceOf(DuplicateCategoryNameException.class);
             verify(subCategoryRepository, times(1)).existsByMainCategoryAndName(any(), any());
             verify(mainCategoryRepository, times(1)).findById(anyLong());
+        }
+    }
+
+    @Nested
+    @DisplayName("모든 대카테고리 조회 메서드 호출 시")
+    class FindAllMainCategories {
+
+        List<String> mainCategoryNames = CategoryFixture.mainCategoryNames();
+        List<MainCategory> mainCategories = CategoryFixture.mainCategories();
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+
+            // Then
+            when(mainCategoryRepository.findAll()).thenReturn(mainCategories);
+
+            // When
+            FindMainCategoriesResponse findMainCategoriesResponse = categoryService.findAllMainCategories();
+
+            // Then
+            assertThat(findMainCategoriesResponse.mainCategoryNames())
+                .usingRecursiveComparison()
+                .isEqualTo(mainCategoryNames);
+            verify(mainCategoryRepository, times(1)).findAll();
         }
     }
 }
