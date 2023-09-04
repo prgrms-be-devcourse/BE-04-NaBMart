@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 import com.prgrms.nabmart.domain.event.domain.Event;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,6 +45,28 @@ public class EventServiceTest {
 
             // Then
             verify(eventRepository, times(1)).save(any(Event.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("findEvents 메서드 실행 시")
+    class FindEventsTests {
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Given
+            List<Event> events = Arrays.asList(
+                new Event("title 1", "description 1"),
+                new Event("title 2", "description 2")
+            );
+            when(eventRepository.findAllByOrderByCreatedAtDesc()).thenReturn(events);
+
+            // When
+            eventService.findEvents();
+
+            // Then
+            verify(eventRepository, times(1)).findAllByOrderByCreatedAtDesc();
         }
     }
 }
