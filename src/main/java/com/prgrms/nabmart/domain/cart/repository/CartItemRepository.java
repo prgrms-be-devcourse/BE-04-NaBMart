@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
-    List<CartItem> findAllByCartItemIdAndOrderByCreatedAt(final Long cartItemId);
+    List<CartItem> findAllByCartItemIdOrderByCreatedAt(final Long cartItemId);
 }

@@ -71,7 +71,7 @@ public class CartItemService {
 
     @Transactional(readOnly = true)
     public FindCartItemsResponse findCartItems(final Long cartItemId) {
-        List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdAndOrderByCreatedAt(
+        List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdOrderByCreatedAt(
             cartItemId);
 
         return FindCartItemsResponse.of(cartItems

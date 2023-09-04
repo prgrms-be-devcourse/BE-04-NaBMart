@@ -128,7 +128,7 @@ class CartItemServiceTest {
             cartItemService.findCartItems(cartItemId);
 
             // then
-            then(cartItemRepository).should().findAllByCartItemIdAndOrderByCreatedAt((any()));
+            then(cartItemRepository).should().findAllByCartItemIdOrderByCreatedAt((any()));
         }
     }
 
