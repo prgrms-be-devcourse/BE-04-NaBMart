@@ -23,8 +23,8 @@ public final class UserFixture {
             .email(EMAIL)
             .provider(PROVIDER)
             .providerId(PROVIDER_ID)
-            .userRole(UserRole.ROLE_USER)
-            .userGrade(UserGrade.NORMAL)
+            .userRole(USER_ROLE)
+            .userGrade(USER_GRADE)
             .build();
     }
 
@@ -35,7 +35,7 @@ public final class UserFixture {
             .provider(PROVIDER)
             .providerId(PROVIDER_ID)
             .userRole(USER_ROLE)
-            .userGrade(UserGrade.NORMAL)
+            .userGrade(USER_GRADE)
             .build();
     }
 }
