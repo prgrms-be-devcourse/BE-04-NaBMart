@@ -3,13 +3,16 @@ package com.prgrms.nabmart.global.fixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
+import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
+import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UserFixture {
 
+    private static final Long USER_ID = 1L;
     private static final String NICKNAME = "닉네임";
     private static final String EMAIL = "email@example.com";
     private static final String PROVIDER = "provider";
@@ -18,7 +21,6 @@ public final class UserFixture {
     private static final UserGrade USER_GRADE = UserGrade.NORMAL;
 
     public static User user() {
-
         return User.builder()
             .nickname(NICKNAME)
             .email(EMAIL)
@@ -38,5 +40,20 @@ public final class UserFixture {
             .userRole(USER_ROLE)
             .userGrade(USER_GRADE)
             .build();
+    }
+
+    public static FindUserDetailResponse findUserDetailResponse() {
+        return new FindUserDetailResponse(
+            USER_ID,
+            NICKNAME,
+            EMAIL,
+            PROVIDER,
+            PROVIDER_ID,
+            USER_ROLE,
+            USER_GRADE);
+    }
+
+    public static FindUserCommand findUserCommand() {
+        return FindUserCommand.from(USER_ID);
     }
 }
