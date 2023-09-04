@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.global.fixture;
 
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 
@@ -11,6 +12,7 @@ public final class UserFixture {
     private static final String PROVIDER = "provider";
     private static final String PROVIDER_ID = "providerId";
     private static final UserRole USER_ROLE = UserRole.ROLE_USER;
+    private static final UserGrade USER_GRADE = UserGrade.NORMAL;
 
     private UserFixture() {
     }
@@ -22,6 +24,7 @@ public final class UserFixture {
             .provider(PROVIDER)
             .providerId(PROVIDER_ID)
             .userRole(UserRole.ROLE_USER)
+            .userGrade(UserGrade.NORMAL)
             .build();
     }
 
@@ -32,6 +35,7 @@ public final class UserFixture {
             .provider(PROVIDER)
             .providerId(PROVIDER_ID)
             .userRole(USER_ROLE)
+            .userGrade(UserGrade.NORMAL)
             .build();
     }
 }

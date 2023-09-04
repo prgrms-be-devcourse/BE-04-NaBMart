@@ -29,6 +29,7 @@ public class UserService {
                     .provider(registerUserCommand.provider())
                     .providerId(registerUserCommand.providerId())
                     .userRole(registerUserCommand.userRole())
+                    .userGrade(registerUserCommand.userGrade())
                     .build();
                 userRepository.save(user);
                 return user;
