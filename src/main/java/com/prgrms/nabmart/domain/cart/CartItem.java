@@ -2,7 +2,7 @@ package com.prgrms.nabmart.domain.cart;
 
 import static java.util.Objects.isNull;
 
-import com.prgrms.nabmart.domain.cart.exception.InvalidCartQuantityException;
+import com.prgrms.nabmart.domain.cart.exception.InvalidCartItemQuantityException;
 import com.prgrms.nabmart.domain.cart.exception.NotExistsCartException;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
@@ -72,7 +72,7 @@ public class CartItem extends BaseTimeEntity {
 
     public void validateQuantity(int quantity) {
         if (quantity < MIN_QUANTITY) {
-            throw new InvalidCartQuantityException("수량은 음수가 될 수 없습니다.");
+            throw new InvalidCartItemQuantityException("수량은 음수가 될 수 없습니다.");
         }
     }
 }
