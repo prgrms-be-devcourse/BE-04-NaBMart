@@ -57,9 +57,10 @@ public class CartItemService {
     public void deleteCartItem(
         Long cartItemId
     ) {
-        CartItem foundCartItem = cartItemRepository.findById(cartItemId).orElseThrow(
-            () -> new NotFoundCartItemException("장바구니 상품이 존재하지 않습니다.")
-        );
+        CartItem foundCartItem = cartItemRepository.findById(cartItemId)
+            .orElseThrow(
+                () -> new NotFoundCartItemException("장바구니 상품이 존재하지 않습니다.")
+            );
 
         cartItemRepository.delete(foundCartItem);
     }

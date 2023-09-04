@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/cart-items")
 public class CartItemController {
 
     private final CartItemService cartItemService;
     private static final String BASE_URL = "/api/v1/cart-items/";
 
-    @PostMapping("/cart-items")
+    @PostMapping
     public ResponseEntity<Void> registerCartItem(
         @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest,
         @LoginUser Long userId
@@ -38,7 +38,7 @@ public class CartItemController {
         return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping("/cart-items/{cartItemId}")
+    @DeleteMapping("/{cartItemId}")
     public ResponseEntity<Void> deleteCartItem(
         @Valid @PathVariable Long cartItemId
     ) {
