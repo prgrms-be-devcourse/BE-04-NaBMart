@@ -6,12 +6,15 @@ import com.prgrms.nabmart.domain.cart.exception.NotFoundCartItemException;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.response.FindCartItemResponse;
+import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotExistUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +58,7 @@ public class CartItemService {
 
     @Transactional
     public void deleteCartItem(
-        Long cartItemId
+        final Long cartItemId
     ) {
         CartItem foundCartItem = cartItemRepository.findById(cartItemId)
             .orElseThrow(
@@ -63,5 +66,22 @@ public class CartItemService {
             );
 
         cartItemRepository.delete(foundCartItem);
+    }
+
+    @Transactional(readOnly = true)
+    public FindCartItemsResponse findCartItems(final Long cartItemId) {
+        List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdAndOrderByCreatedAt(
+            cartItemId);
+
+        return FindCartItemsResponse.of(cartItems
+            .stream()
+            .map(
+                cartItem -> new FindCartItemResponse(
+                    cartItem.getCart().getCartId(),
+                    cartItem.getItem().getItemId(),
+                    cartItem.getQuantity()
+                )
+            )
+            .toList());
     }
 }

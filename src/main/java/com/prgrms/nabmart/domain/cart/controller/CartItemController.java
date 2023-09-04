@@ -3,12 +3,14 @@ package com.prgrms.nabmart.domain.cart.controller;
 import com.prgrms.nabmart.domain.cart.controller.request.RegisterCartItemRequest;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,5 +47,14 @@ public class CartItemController {
         cartItemService.deleteCartItem(cartItemId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{cartItemId}")
+    public ResponseEntity<FindCartItemsResponse> findCartItems(
+        @PathVariable Long cartItemId
+    ) {
+        return ResponseEntity.ok(
+            cartItemService.findCartItems(cartItemId)
+        );
     }
 }
