@@ -7,10 +7,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.prgrms.nabmart.domain.event.domain.Event;
+import com.prgrms.nabmart.domain.event.domain.EventItem;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
+import com.prgrms.nabmart.domain.event.service.request.FindEventDetailCommand;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
+import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.global.fixture.CategoryFixture;
+import com.prgrms.nabmart.global.fixture.EventFixture;
+import com.prgrms.nabmart.global.fixture.ItemFixture;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -67,6 +74,30 @@ public class EventServiceTest {
 
             // Then
             verify(eventRepository, times(1)).findAllByOrderByCreatedAtDesc();
+        }
+    }
+
+    @Nested
+    @DisplayName("findEventDetail 메서드 실행 시")
+    class FindEventDetailTests {
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Given
+            Event event = EventFixture.event();
+            Item item = ItemFixture.item(CategoryFixture.mainCategory(),
+                CategoryFixture.subCategory(CategoryFixture.mainCategory()));
+            EventItem eventItem = new EventItem(event, item);
+            FindEventDetailCommand command = FindEventDetailCommand.from(event.getEventId());
+            when(eventRepository.findByIdWithEventItems(event.getEventId())).thenReturn(
+                Optional.of(event));
+
+            // When
+            eventService.findEventDetail(command);
+
+            // Then
+            verify(eventRepository, times(1)).findByIdWithEventItems(command.eventId());
         }
     }
 }

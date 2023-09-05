@@ -2,7 +2,9 @@ package com.prgrms.nabmart.domain.item.domain;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
+import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.global.BaseTimeEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +13,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +58,12 @@ public class Item extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
+    
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private List<Review> reviewList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private List<LikeItem> likeItemList = new ArrayList<>();
 
     @Builder
     public Item(String name, int price, String description, int quantity, int discount,
