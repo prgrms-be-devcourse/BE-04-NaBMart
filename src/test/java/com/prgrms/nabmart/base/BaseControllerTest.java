@@ -8,6 +8,7 @@ import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
+import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.user.service.UserService;
 import com.prgrms.nabmart.global.auth.oauth.client.OAuthRestClient;
 import com.prgrms.nabmart.global.fixture.AuthFixture;
@@ -63,6 +64,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected OAuthRestClient oAuthRestClient;
+
+    @MockBean
+    protected PaymentService paymentService;
 
     protected String accessToken;
 
