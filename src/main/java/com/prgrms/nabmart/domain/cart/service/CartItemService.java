@@ -71,7 +71,7 @@ public class CartItemService {
         List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdOrderByCreatedAt(
             cartItemId);
 
-        return FindCartItemsResponse.of(cartItems
+        return FindCartItemsResponse.from(cartItems
             .stream()
             .map(
                 cartItem -> FindCartItemResponse.of(
