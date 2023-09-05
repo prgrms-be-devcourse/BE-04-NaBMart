@@ -58,21 +58,22 @@ public class CartItemService {
     public void deleteCartItem(
         Long cartItemId
     ) {
-        CartItem foundCartItem = cartItemRepository.findById(cartItemId)
-            .orElseThrow(
-                () -> new NotFoundCartItemException("장바구니 상품이 존재하지 않습니다.")
-            );
+        CartItem foundCartItem = findCartItemByCartItemId(cartItemId);
 
         cartItemRepository.delete(foundCartItem);
     }
 
     @Transactional
     public void updateCartItemQuantity(UpdateCartItemCommand updateCartItemCommand) {
-        CartItem foundCartItem = cartItemRepository.findById(updateCartItemCommand.cartId())
+        CartItem foundCartItem = findCartItemByCartItemId(updateCartItemCommand.cartId());
+
+        foundCartItem.changeQuantity(updateCartItemCommand.quantity());
+    }
+
+    private CartItem findCartItemByCartItemId(Long cartItemId) {
+        return cartItemRepository.findById(cartItemId)
             .orElseThrow(
                 () -> new NotFoundCartItemException("장바구니 상품이 존재하지 않습니다.")
             );
-
-        foundCartItem.changeQuantity(updateCartItemCommand.quantity());
     }
 }
