@@ -6,13 +6,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.event.domain.Event;
 import com.prgrms.nabmart.domain.event.domain.EventItem;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.FindEventDetailCommand;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.global.fixture.CategoryFixture;
 import com.prgrms.nabmart.global.fixture.EventFixture;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import java.util.Arrays;
