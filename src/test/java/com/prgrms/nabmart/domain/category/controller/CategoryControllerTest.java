@@ -4,6 +4,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
@@ -12,7 +13,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -24,6 +26,7 @@ import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
+import com.prgrms.nabmart.domain.category.service.response.FindSubCategoriesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -141,10 +144,43 @@ public class CategoryControllerTest {
                     ),
                     responseFields(
                         fieldWithPath("mainCategoryNames").type(ARRAY)
-                            .description("메인 카테고리 리스트")
+                            .description("대카테고리 리스트")
                     )
                 ));
         }
     }
 
+    @Nested
+    @DisplayName("소카테고리 조회 api 호출 시")
+    class findSubCategoriesApi {
+
+        @Test
+        @DisplayName("성공")
+        public void findSubCategories() throws Exception {
+            // Given
+            Long mainCategoryId = 1L;
+            FindSubCategoriesResponse subCategoriesResponse = CategoryFixture.findSubCategoriesResponse();
+            when(categoryService.findSubCategoriesByMainCategory(mainCategoryId)).thenReturn(
+                subCategoriesResponse);
+
+            // When & Then
+            mockMvc.perform(get("/api/v1/categories/{mainCategoryId}", mainCategoryId)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document(
+                    "Find SubCategories By MainCategory",
+                    preprocessRequest(
+                        prettyPrint()
+                    ),
+                    pathParameters(
+                        parameterWithName("mainCategoryId").description("대카테고리 Id")
+                    ),
+                    responseFields(
+                        fieldWithPath("subCategoryNames").type(ARRAY)
+                            .description("소카테고리 리스트")
+                    )
+                ));
+        }
+    }
 }
