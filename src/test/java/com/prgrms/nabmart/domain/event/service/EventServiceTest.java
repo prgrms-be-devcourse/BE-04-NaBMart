@@ -13,7 +13,7 @@ import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.FindEventDetailCommand;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.global.fixture.EventFixture;
+import com.prgrms.nabmart.domain.event.support.EventFixture;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import java.util.Arrays;
 import java.util.List;

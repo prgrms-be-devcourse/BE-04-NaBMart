@@ -1,7 +1,7 @@
 package com.prgrms.nabmart.domain.event.service;
 
 import com.prgrms.nabmart.domain.event.domain.Event;
-import com.prgrms.nabmart.domain.event.exception.NotExistsEventException;
+import com.prgrms.nabmart.domain.event.exception.NotFoundEventException;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.FindEventDetailCommand;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
@@ -44,7 +44,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public FindEventDetailResponse findEventDetail(FindEventDetailCommand findEventDetailCommand) {
         Event event = eventRepository.findByIdWithEventItems(findEventDetailCommand.eventId())
-            .orElseThrow(() -> new NotExistsEventException("존재하지 않는 이벤트입니다."));
+            .orElseThrow(() -> new NotFoundEventException("존재하지 않는 이벤트입니다."));
 
         EventDetailResponse eventDetailResponse = new EventDetailResponse(event.getEventId(),
             event.getTitle(), event.getDescription());
