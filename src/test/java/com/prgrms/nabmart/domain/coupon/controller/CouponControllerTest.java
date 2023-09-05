@@ -60,7 +60,7 @@ class CouponControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        public void RegisterCoupon() throws Exception {
             // Given
             RegisterCouponCommand registerCouponCommand = new RegisterCouponCommand("TestName",
                 10000,
@@ -102,7 +102,7 @@ class CouponControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        public void RegisterUserCoupon() throws Exception {
             // Given
             Long couponId = 1L;
             RegisterUserCouponCommand registerUserCouponCommand = new RegisterUserCouponCommand(1L,
