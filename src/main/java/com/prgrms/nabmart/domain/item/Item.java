@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.domain.item.domain;
+package com.prgrms.nabmart.domain.item;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
@@ -58,7 +58,7 @@ public class Item extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
-    
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
     private List<Review> reviewList = new ArrayList<>();
 

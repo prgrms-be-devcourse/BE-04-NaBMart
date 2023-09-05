@@ -7,6 +7,7 @@ import com.prgrms.nabmart.domain.category.controller.request.RegisterSubCategory
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
+import com.prgrms.nabmart.domain.category.service.response.FindSubCategoriesResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -44,5 +45,9 @@ public final class CategoryFixture {
 
     public static FindMainCategoriesResponse findMainCategoriesResponse() {
         return new FindMainCategoriesResponse(List.of("main1", "main2", "main3"));
+    }
+
+    public static FindSubCategoriesResponse findSubCategoriesResponse() {
+        return new FindSubCategoriesResponse(List.of("sub1", "sub2", "sub3"));
     }
 }

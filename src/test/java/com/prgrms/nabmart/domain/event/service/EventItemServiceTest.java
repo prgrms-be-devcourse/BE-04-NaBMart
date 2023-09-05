@@ -16,7 +16,7 @@ import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
 import com.prgrms.nabmart.domain.event.support.EventFixture;
 import com.prgrms.nabmart.domain.event.support.EventItemFixture;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import java.util.Arrays;
@@ -72,7 +72,8 @@ class EventItemServiceTest {
             // Given
             given(eventRepository.findById(any())).willReturn(Optional.ofNullable(givenEvent));
             given(itemRepository.findByItemIdIn(any())).willReturn(Arrays.asList(givenItem));
-            given(eventItemRepository.findDuplicatedItems(any(), any())).willReturn(Arrays.asList());
+            given(eventItemRepository.findDuplicatedItems(any(), any())).willReturn(
+                Arrays.asList());
             given(eventItemRepository.saveAll(any())).willReturn(Arrays.asList(givenEventItem));
 
             // When
@@ -88,7 +89,8 @@ class EventItemServiceTest {
             // Given
             given(eventRepository.findById(any())).willReturn(Optional.ofNullable(givenEvent));
             given(itemRepository.findByItemIdIn(any())).willReturn(Arrays.asList(givenItem));
-            given(eventItemRepository.findDuplicatedItems(any(), any())).willReturn(Arrays.asList(givenItem));
+            given(eventItemRepository.findDuplicatedItems(any(), any())).willReturn(
+                Arrays.asList(givenItem));
 
             // When & Then
             assertThatThrownBy(() -> eventItemService.registerEventItems(command))

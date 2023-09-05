@@ -3,7 +3,7 @@ package com.prgrms.nabmart.domain.event.domain;
 import static java.util.Objects.isNull;
 
 import com.prgrms.nabmart.domain.event.exception.NotFoundEventException;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Entity;

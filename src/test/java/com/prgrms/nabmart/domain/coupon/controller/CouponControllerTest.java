@@ -17,9 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
-import com.prgrms.nabmart.global.fixture.AuthFixture;
 import java.time.LocalDate;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,8 +27,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -47,12 +43,6 @@ class CouponControllerTest {
 
     @MockBean
     private CouponService couponService;
-
-    @BeforeEach
-    void setUp() {
-        Authentication authentication = AuthFixture.usernamePasswordAuthenticationToken();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
 
     @Nested
     @DisplayName("쿠폰 생성하는 api 호출 시")

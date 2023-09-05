@@ -6,7 +6,6 @@ import lombok.Builder;
 
 @Builder
 public record RegisterUserCommand(
-    
     String nickname,
     String email,
     String provider,

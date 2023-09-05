@@ -9,11 +9,11 @@ import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.response.FindCartItemResponse;
 import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.exception.NotExistUserException;
+import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class CartItemService {
         RegisterCartItemCommand registerCartItemCommand
     ) {
         User foundUser = userRepository.findById(registerCartItemCommand.userId())
-            .orElseThrow(() -> new NotExistUserException("존재하지 않은 사용자입니다."));
+            .orElseThrow(() -> new NotFoundUserException("존재하지 않은 사용자입니다."));
 
         Cart foundCart = cartRepository.findByUser(foundUser)
             .orElseGet(() -> {

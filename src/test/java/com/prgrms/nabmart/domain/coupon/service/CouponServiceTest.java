@@ -19,7 +19,7 @@ import com.prgrms.nabmart.domain.coupon.support.CouponFixture;
 import com.prgrms.nabmart.domain.coupon.support.UserCouponFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.global.fixture.UserFixture;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.time.LocalDate;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;

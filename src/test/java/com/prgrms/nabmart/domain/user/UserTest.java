@@ -4,8 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.prgrms.nabmart.domain.user.User.UserBuilder;
-import com.prgrms.nabmart.domain.user.exception.InvalidEmailException;
-import com.prgrms.nabmart.domain.user.exception.InvalidNicknameException;
+import com.prgrms.nabmart.domain.user.exception.InvalidUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,7 @@ class UserTest {
                 .provider(PROVIDER)
                 .providerId("123")
                 .userRole(UserRole.ROLE_USER);
-            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidNicknameException.class);
+            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidUserException.class);
         }
 
         @ParameterizedTest
@@ -98,7 +97,7 @@ class UserTest {
                 .provider(PROVIDER)
                 .providerId(PROVIDER_ID)
                 .userRole(USER_ROLE);
-            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidEmailException.class);
+            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidUserException.class);
         }
 
         @Test
@@ -115,7 +114,7 @@ class UserTest {
                 .provider(PROVIDER)
                 .providerId(PROVIDER_ID)
                 .userRole(USER_ROLE);
-            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidEmailException.class);
+            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidUserException.class);
         }
 
         @Test
@@ -132,7 +131,7 @@ class UserTest {
                 .provider(PROVIDER)
                 .providerId(PROVIDER_ID)
                 .userRole(USER_ROLE);
-            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidEmailException.class);
+            assertThatThrownBy(userBuilder::build).isInstanceOf(InvalidUserException.class);
         }
     }
 }

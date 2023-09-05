@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
-import com.prgrms.nabmart.global.fixture.UserFixture;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
