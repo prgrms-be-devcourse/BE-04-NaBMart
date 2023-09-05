@@ -4,11 +4,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,7 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.response.FindCartItemResponse;
+import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
 import com.prgrms.nabmart.global.fixture.AuthFixture;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -62,7 +67,7 @@ class CartItemControllerTest {
 
         @Test
         @DisplayName("성공")
-        void success() throws Exception {
+        void registerCartItem() throws Exception {
 
             // given
             RegisterCartItemCommand registerCartItemCommand = RegisterCartItemCommand.of(1L, 1L, 5);
@@ -99,7 +104,7 @@ class CartItemControllerTest {
 
         @Test
         @DisplayName("성공")
-        void success() throws Exception {
+        void deleteCartItem() throws Exception {
 
             // given
             Long cartItemId = 1L;
@@ -128,7 +133,7 @@ class CartItemControllerTest {
 
             @Test
             @DisplayName("성공")
-            void success() throws Exception {
+            void updateCartItem() throws Exception {
 
                 // given
                 Long cartItemId = 1L;
@@ -152,6 +157,55 @@ class CartItemControllerTest {
                             )
                         )
                     );
+            }
+        }
+
+        @Nested
+        @DisplayName("장바구니 상품 목록 조회 API 실행 시")
+        class FindCartItemsAPITest {
+
+            @Test
+            @DisplayName("성공")
+            void findCartItems() throws Exception {
+                // given
+                Long cartItemId = 1L;
+                Long cartId = 1L;
+                Long itemId = 1L;
+                int quantity = 5;
+                FindCartItemsResponse findCartItemsResponse = FindCartItemsResponse.of(
+                    Collections.singletonList(new FindCartItemResponse(
+                        cartId, itemId, quantity
+                    )));
+
+                given(cartItemService.findCartItems(cartItemId)).willReturn(findCartItemsResponse);
+
+                // when
+                ResultActions resultActions = mockMvc.perform(
+                    get("/api/v1/cart-items/{cartItemId}/list", cartItemId)
+                        .contentType(MediaType.APPLICATION_JSON));
+
+                // then
+                resultActions.andExpect(status().isOk())
+                    .andDo(print())
+                    .andDo(document("Find cart-items",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                            parameterWithName("cartItemId").description("cartItemId")
+                        ),
+                        responseFields(
+                            fieldWithPath("findCartItemsResponse").type(JsonFieldType.ARRAY)
+                                .description("List of cart items"),
+                            fieldWithPath("findCartItemsResponse[].cartId").type(
+                                    JsonFieldType.NUMBER)
+                                .description("cartId"),
+                            fieldWithPath("findCartItemsResponse[].itemId").type(
+                                    JsonFieldType.NUMBER)
+                                .description("itemId"),
+                            fieldWithPath("findCartItemsResponse[].quantity").type(
+                                    JsonFieldType.NUMBER)
+                                .description("quantity")
+                        )
+                    ));
             }
         }
     }

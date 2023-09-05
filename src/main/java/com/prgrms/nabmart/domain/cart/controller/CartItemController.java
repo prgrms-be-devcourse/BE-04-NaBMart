@@ -56,13 +56,12 @@ public class CartItemController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{cartItemId}")
+    @GetMapping("/{cartItemId}/list")
     public ResponseEntity<FindCartItemsResponse> findCartItems(
         @PathVariable Long cartItemId
     ) {
-        return ResponseEntity.ok(
-            cartItemService.findCartItems(cartItemId)
-        );
+        return ResponseEntity.ok()
+            .body(cartItemService.findCartItems(cartItemId));
     }
 
     @PatchMapping("/{cartItemId}")
@@ -85,6 +84,5 @@ public class CartItemController {
 
         return ResponseEntity.badRequest()
             .body(ErrorTemplate.of(cartItemException.getMessage()));
-
     }
 }

@@ -6,4 +6,13 @@ public record FindCartItemResponse(
     int quantity
 ) {
 
+    public static FindCartItemResponse of(
+        final Long cartId,
+        final Long itemId,
+        final int quantity
+    ) {
+        return new FindCartItemResponse(cartId,
+            itemId,
+            quantity);
+    }
 }
