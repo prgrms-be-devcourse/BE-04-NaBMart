@@ -17,21 +17,8 @@ public class UserFixture {
     private static final UserRole USER_ROLE = UserRole.ROLE_USER;
     private static final UserGrade USER_GRADE = UserGrade.NORMAL;
 
-    public static User getUser(long userId) {
-        return User.builder()
-            .userId(userId)
-            .userRole(USER_ROLE)
-            .nickname(NICKNAME)
-            .email(EMAIL)
-            .provider(PROVIDER)
-            .providerId(PROVIDER_ID)
-            .userGrade(USER_GRADE)
-            .build();
-    }
-
     public static User user() {
         return User.builder()
-            .userId(USER_ID)
             .nickname(NICKNAME)
             .email(EMAIL)
             .provider(PROVIDER)

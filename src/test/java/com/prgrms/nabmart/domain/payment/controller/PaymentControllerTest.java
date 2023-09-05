@@ -4,7 +4,6 @@ import static com.prgrms.nabmart.domain.order.support.OrderFixture.getPendingOrd
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponse;
-import static com.prgrms.nabmart.domain.user.support.UserFixture.getUser;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -22,6 +21,7 @@ import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
 import com.prgrms.nabmart.domain.payment.controller.response.PaymentResponse;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ public class PaymentControllerTest extends BaseControllerTest {
         @DisplayName("성공")
         void postPay() throws Exception {
             // given
-            User user = getUser(1);
+            User user = UserFixture.user();
             Order order = getPendingOrder(1, user);
             PaymentRequest paymentRequest = paymentRequestWithCard();
             PaymentCommand paymentCommand = paymentCommandWithCard();
