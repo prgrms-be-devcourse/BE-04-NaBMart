@@ -41,6 +41,7 @@ public class Order extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private OrderStatus status = OrderStatus.PENDING; // 주문 상태 정보, 기본값 'PENDING'
 
     @ManyToOne(fetch = FetchType.LAZY)

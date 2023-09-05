@@ -75,7 +75,7 @@ class PaymentServiceTest {
         }
 
         @Test
-        @DisplayName("실패: order 가 존재하지 않을 경우, NotFoundOrderException 발생")
+        @DisplayName("예외: order 가 존재하지 않을 경우, NotFoundOrderException 발생")
         void throwExceptionWhenInvalidOrder() {
             // given
             long noExistOrderId = 1L;
@@ -93,7 +93,7 @@ class PaymentServiceTest {
         }
 
         @Test
-        @DisplayName("실패: order 가 Pending 상태가 아닐 경우, DuplicatePayException 발생")
+        @DisplayName("예외: order 가 Pending 상태가 아닐 경우, DuplicatePayException 발생")
         void throwExceptionWhenNotPendingOrder() {
             // given
             User user = getUser(1L);
