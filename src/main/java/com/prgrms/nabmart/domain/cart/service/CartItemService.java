@@ -67,7 +67,9 @@ public class CartItemService {
     }
 
     @Transactional(readOnly = true)
-    public FindCartItemsResponse findCartItems(final Long cartItemId) {
+    public FindCartItemsResponse findCartItems(
+        final Long cartItemId
+    ) {
         List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdOrderByCreatedAt(
             cartItemId);
 
@@ -81,6 +83,22 @@ public class CartItemService {
                 )
             )
             .toList());
+    }
+
+    @Transactional(readOnly = true)
+    public int getCartItemTotalPrice(
+        final Long cartItemId
+    ) {
+        int totalPrice = 0;
+
+        List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdOrderByCreatedAt(
+            cartItemId);
+
+        for (CartItem cartItem : cartItems) {
+            totalPrice += cartItem.getItem().getPrice() * cartItem.getQuantity();
+        }
+
+        return totalPrice;
     }
 
     @Transactional
