@@ -27,6 +27,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
 
+    public static final int MAX_CONTENT = 100;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
@@ -89,7 +91,7 @@ public class Review {
     public void validateContent(
         final String content
     ) {
-        if (content.length() > 100) {
+        if (content.length() > MAX_CONTENT) {
             throw new InvalidReviewException("리뷰 내용은 100자를 넘을 수 없습니다.");
         }
     }
