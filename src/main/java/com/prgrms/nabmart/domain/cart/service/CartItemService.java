@@ -74,7 +74,7 @@ public class CartItemService {
         return FindCartItemsResponse.of(cartItems
             .stream()
             .map(
-                cartItem -> new FindCartItemResponse(
+                cartItem -> FindCartItemResponse.of(
                     cartItem.getCart().getCartId(),
                     cartItem.getItem().getItemId(),
                     cartItem.getQuantity()
