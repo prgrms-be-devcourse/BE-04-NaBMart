@@ -13,13 +13,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.event.controller.request.RegisterEventItemsRequest;
 import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
-import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
 import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.EventDetailResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.EventItemResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse.FindEventResponse;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,7 +52,6 @@ public class EventControllerTest extends BaseControllerTest {
             // Given
             RegisterEventRequest request = new RegisterEventRequest("TestTitle", "TestDescription");
             String requestBody = objectMapper.writeValueAsString(request);
-            RegisterEventCommand command = new RegisterEventCommand("TestTitle", "TestDescription");
 
             given(eventService.registerEvent(any())).willReturn(1L);
 
@@ -163,6 +163,33 @@ public class EventControllerTest extends BaseControllerTest {
                         )
                     )
                 );
+        }
+    }
+
+    @Nested
+    @DisplayName("이벤트에 상품을 등록하는 api 호출 시")
+    class RegisterEventItemsApi {
+
+        @Test
+        @DisplayName("성공")
+        public void success() throws Exception {
+            // Given
+            RegisterEventItemsRequest request = new RegisterEventItemsRequest(Arrays.asList(1L, 2L));
+            String requestBody = objectMapper.writeValueAsString(request);
+
+            given(eventItemService.registerEventItems(any())).willReturn(1L);
+
+            // When
+            ResultActions resultActions = mvc.perform(post("/api/v1/events/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+            // Then
+            resultActions.andExpect(status().isCreated())
+                .andDo(document("Register Event Items",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint())
+                ));
         }
     }
 }
