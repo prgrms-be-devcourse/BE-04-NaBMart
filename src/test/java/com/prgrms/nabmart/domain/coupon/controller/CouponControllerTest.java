@@ -7,32 +7,34 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import java.time.LocalDate;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-
+@AutoConfigureRestDocs
+@WebMvcTest(controllers = CouponController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class CouponControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private CouponService couponService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new CouponController(couponService)).build();
-    }
+    @MockBean
+    private CouponService couponService;
 
     @Nested
     @DisplayName("쿠폰 생성하는 api 호출 시")
@@ -49,13 +51,7 @@ class CouponControllerTest {
             when(couponService.createCoupon(command)).thenReturn(1L);
             mockMvc.perform(post("/api/v1/coupons")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("{"
-                        + "\"name\":\"TestName\","
-                        + "\"discount\":10000,"
-                        + "\"description\":\"TestDescription\","
-                        + "\"minOrderPrice\":1000,"
-                        + "\"endAt\":\"2023-12-31\""
-                        + "}"))
+                    .content(objectMapper.writeValueAsString(command)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/coupons/1"));
 
