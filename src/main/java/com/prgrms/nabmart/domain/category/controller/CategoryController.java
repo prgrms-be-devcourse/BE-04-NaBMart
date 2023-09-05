@@ -1,9 +1,11 @@
 package com.prgrms.nabmart.domain.category.controller;
 
 import com.prgrms.nabmart.domain.category.controller.request.RegisterMainCategoryRequest;
+import com.prgrms.nabmart.domain.category.controller.request.RegisterSubCategoryRequest;
 import com.prgrms.nabmart.domain.category.exception.DuplicateCategoryNameException;
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
+import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -23,7 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private static final String BASE_URL = "/api/v1/main-categories/";
+    private static final String MAIN_CATEGORY_BASE_URL = "/api/v1/main-categories/";
+    private static final String SUB_CATEGORY_BASE_URL = "/api/v1/sub-categories/";
 
     @PostMapping("/main-categories")
     public ResponseEntity<Void> saveMainCategory(
@@ -31,8 +34,19 @@ public class CategoryController {
 
         RegisterMainCategoryCommand registerMainCategoryCommand = RegisterMainCategoryCommand.from(
             registerMainCategoryRequest);
-        Long saveMainCategoryId = categoryService.saveMainCategory(registerMainCategoryCommand);
-        URI location = URI.create(BASE_URL + saveMainCategoryId);
+        Long savedMainCategoryId = categoryService.saveMainCategory(registerMainCategoryCommand);
+        URI location = URI.create(MAIN_CATEGORY_BASE_URL + savedMainCategoryId);
+        return ResponseEntity.created(location).build();
+    }
+
+    @PostMapping("/sub-categories")
+    public ResponseEntity<Void> saveSubCategory(
+        @RequestBody @Valid RegisterSubCategoryRequest registerSubCategoryRequest) {
+
+        RegisterSubCategoryCommand registerSubCategoryCommand = RegisterSubCategoryCommand.from(
+            registerSubCategoryRequest);
+        Long savedSubCategoryId = categoryService.saveSubCategory(registerSubCategoryCommand);
+        URI location = URI.create(SUB_CATEGORY_BASE_URL + savedSubCategoryId);
         return ResponseEntity.created(location).build();
     }
 

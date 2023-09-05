@@ -16,46 +16,33 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
 import com.prgrms.nabmart.domain.payment.controller.response.PaymentResponse;
-import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @AutoConfigureRestDocs
 @WebMvcTest(PaymentController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class PaymentControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+public class PaymentControllerTest extends BaseControllerTest {
 
     @Value("${payment.toss.success_url}")
     private String successCallBackUrl;
 
     @Value("${payment.toss.fail_url}")
     private String failCallBackUrl;
-
-    @MockBean
-    PaymentService paymentService;
 
     @Nested
     @DisplayName("pay 메서드 실행 시")

@@ -1,9 +1,16 @@
 package com.prgrms.nabmart.domain.user;
 
-import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.user.exception.InvalidEmailException;
 import com.prgrms.nabmart.domain.user.exception.InvalidNicknameException;
-import jakarta.persistence.*;
+import com.prgrms.nabmart.global.BaseTimeEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,6 +47,10 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserRole userRole;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserGrade userGrade;
+
     @Builder
     public User(
         final Long userId,
@@ -47,7 +58,8 @@ public class User extends BaseTimeEntity {
         final String email,
         final String provider,
         final String providerId,
-        final UserRole userRole) {
+        final UserRole userRole,
+        final UserGrade userGrade) {
         validateNickname(nickname);
         validateEmail(email);
         this.userId = userId;
@@ -56,6 +68,7 @@ public class User extends BaseTimeEntity {
         this.provider = provider;
         this.providerId = providerId;
         this.userRole = userRole;
+        this.userGrade = userGrade;
     }
 
     private void validateNickname(String nickname) {
