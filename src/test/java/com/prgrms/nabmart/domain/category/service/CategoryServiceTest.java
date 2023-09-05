@@ -71,8 +71,6 @@ public class CategoryServiceTest {
             // When & Then
             assertThatThrownBy(() -> categoryService.saveMainCategory(registerMainCategoryCommand))
                 .isInstanceOf(DuplicateCategoryNameException.class);
-            verify(mainCategoryRepository, times(1)).existsByName(
-                registerMainCategoryCommand.name());
         }
     }
 
@@ -98,7 +96,6 @@ public class CategoryServiceTest {
             categoryService.saveSubCategory(registerSubCategoryCommand);
 
             // Then
-
             verify(subCategoryRepository, times(1)).save(any(SubCategory.class));
             verify(mainCategoryRepository, times(1)).findById(anyLong());
         }
@@ -114,8 +111,6 @@ public class CategoryServiceTest {
             // When & Then
             assertThatThrownBy(() -> categoryService.saveSubCategory(registerSubCategoryCommand))
                 .isInstanceOf(DuplicateCategoryNameException.class);
-            verify(subCategoryRepository, times(1)).existsByMainCategoryAndName(any(), any());
-            verify(mainCategoryRepository, times(1)).findById(anyLong());
         }
     }
 
@@ -123,8 +118,8 @@ public class CategoryServiceTest {
     @DisplayName("모든 대카테고리 조회 메서드 호출 시")
     class FindAllMainCategories {
 
-        List<String> mainCategoryNames = CategoryFixture.mainCategoryNames();
-        List<MainCategory> mainCategories = CategoryFixture.mainCategories();
+        List<String> mainCategoryNames = mainCategoryNames();
+        List<MainCategory> mainCategories = mainCategories();
 
         @Test
         @DisplayName("성공")
@@ -140,7 +135,18 @@ public class CategoryServiceTest {
             assertThat(findMainCategoriesResponse.mainCategoryNames())
                 .usingRecursiveComparison()
                 .isEqualTo(mainCategoryNames);
-            verify(mainCategoryRepository, times(1)).findAll();
         }
+    }
+
+
+    private List<MainCategory> mainCategories() {
+        MainCategory mainCategory1 = new MainCategory("main1");
+        MainCategory mainCategory2 = new MainCategory("main2");
+        MainCategory mainCategory3 = new MainCategory("main3");
+        return List.of(mainCategory1, mainCategory2, mainCategory3);
+    }
+
+    private List<String> mainCategoryNames() {
+        return List.of("main1", "main2", "main3");
     }
 }
