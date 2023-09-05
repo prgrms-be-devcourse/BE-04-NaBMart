@@ -10,7 +10,6 @@ import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.
 import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.EventItemResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse.FindEventResponse;
-import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.review.Review;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final ItemRepository itemRepository;
 
     @Transactional
     public Long registerEvent(RegisterEventCommand registerEventCommand) {
