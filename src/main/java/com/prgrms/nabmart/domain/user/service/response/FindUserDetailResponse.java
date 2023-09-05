@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.user.service.response;
 
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
 
 public record FindUserDetailResponse(
@@ -9,7 +10,8 @@ public record FindUserDetailResponse(
     String email,
     String provider,
     String providerId,
-    UserRole userRole) {
+    UserRole userRole,
+    UserGrade userGrade) {
 
     public static FindUserDetailResponse from(final User findUser) {
         return new FindUserDetailResponse(
@@ -18,6 +20,7 @@ public record FindUserDetailResponse(
             findUser.getEmail(),
             findUser.getProvider(),
             findUser.getProviderId(),
-            findUser.getUserRole());
+            findUser.getUserRole(),
+            findUser.getUserGrade());
     }
 }

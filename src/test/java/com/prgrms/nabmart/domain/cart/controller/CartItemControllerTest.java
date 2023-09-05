@@ -3,10 +3,14 @@ package com.prgrms.nabmart.domain.cart.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -30,10 +34,11 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
+@AutoConfigureRestDocs
 @WebMvcTest(CartItemController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@AutoConfigureRestDocs
 class CartItemControllerTest {
 
     @Autowired
@@ -52,25 +57,29 @@ class CartItemControllerTest {
     }
 
     @Nested
-    @DisplayName("장바구니 상품 API 실행 시")
-    class cartItemTest {
+    @DisplayName("장바구니 상품 등록 API 실행 시")
+    class RegisterCartItemAPITest {
 
         @Test
         @DisplayName("성공")
         void success() throws Exception {
+
             // given
             RegisterCartItemCommand registerCartItemCommand = RegisterCartItemCommand.of(1L, 1L, 5);
+
             given(cartItemService.registerCartItem(any())).willReturn(1L);
+
             // when
+            ResultActions resultActions = mockMvc.perform(post("/api/v1/cart-items")
+                .content(objectMapper.writeValueAsString(registerCartItemCommand))
+                .contentType(MediaType.APPLICATION_JSON));
 
             // then
-            mockMvc.perform(post("/api/v1/cart-items")
-                    .content(objectMapper.writeValueAsString(registerCartItemCommand))
-                    .contentType(MediaType.APPLICATION_JSON))
+            resultActions
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/cart-items/1"))
                 .andDo(print())
-                .andDo(document("Create cart-item",
+                .andDo(document("Register cart-item",
                         preprocessRequest(
                             prettyPrint()
                         ),
@@ -81,6 +90,69 @@ class CartItemControllerTest {
                         )
                     )
                 );
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 삭제 API 실행 시")
+    class DeleteCartItemAPITest {
+
+        @Test
+        @DisplayName("성공")
+        void success() throws Exception {
+
+            // given
+            Long cartItemId = 1L;
+
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                delete("/api/v1/cart-items/{cartItemId}", cartItemId)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(print())
+                .andDo(
+                    document("Delete cart-item",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                            parameterWithName("cartItemId").description("cartItemId")
+                        )
+                    )
+                );
+        }
+
+        @Nested
+        @DisplayName("장바구니 상품 수량 수정 API 실행 시")
+        class UpdateCartItemQuantityAPITest {
+
+            @Test
+            @DisplayName("성공")
+            void success() throws Exception {
+
+                // given
+                Long cartItemId = 1L;
+                int updateQuantity = 2;
+
+                // when
+                ResultActions resultActions = mockMvc.perform(
+                    patch("/api/v1/cart-items/{cartItemId}", cartItemId)
+                        .content(objectMapper.writeValueAsString(updateQuantity))
+                        .contentType(MediaType.APPLICATION_JSON)
+                );
+
+                // then
+                resultActions.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(
+                        document("Update cart-item quantity",
+                            preprocessRequest(prettyPrint()),
+                            pathParameters(
+                                parameterWithName("cartItemId").description("cartItemId")
+                            )
+                        )
+                    );
+            }
         }
     }
 }

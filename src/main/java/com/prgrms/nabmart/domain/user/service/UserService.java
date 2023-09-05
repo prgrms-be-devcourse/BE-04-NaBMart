@@ -1,7 +1,7 @@
 package com.prgrms.nabmart.domain.user.service;
 
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.exception.DoesNotFoundUserException;
+import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
@@ -30,6 +30,7 @@ public class UserService {
                     .provider(registerUserCommand.provider())
                     .providerId(registerUserCommand.providerId())
                     .userRole(registerUserCommand.userRole())
+                    .userGrade(registerUserCommand.userGrade())
                     .build();
                 userRepository.save(user);
                 return user;
@@ -51,6 +52,6 @@ public class UserService {
 
     private User findUserByUserId(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new DoesNotFoundUserException("존재하지 않는 유저입니다."));
+            .orElseThrow(() -> new NotFoundUserException("존재하지 않는 유저입니다."));
     }
 }
