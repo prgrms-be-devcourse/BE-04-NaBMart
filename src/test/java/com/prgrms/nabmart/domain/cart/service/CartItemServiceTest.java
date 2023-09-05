@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.cart.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -9,6 +10,7 @@ import com.prgrms.nabmart.domain.cart.CartItem;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.domain.Item;
@@ -110,6 +112,31 @@ class CartItemServiceTest {
 
             // then
             then(cartItemRepository).should().delete(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 수량 수정 Service 실행 시")
+    class UpdateCartItemTest {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+
+            // given
+            Long cartItemId = 1L;
+            int updateQuantity = 2;
+            UpdateCartItemCommand updateCartItemCommand = UpdateCartItemCommand.of(cartItemId,
+                updateQuantity);
+
+            given(cartItemRepository.findById(any())).willReturn(
+                Optional.ofNullable(givenCartItem));
+
+            // when
+            cartItemService.updateCartItemQuantity(updateCartItemCommand);
+
+            // then
+            assertThat(givenCartItem.getQuantity()).isEqualTo(updateQuantity);
         }
     }
 }

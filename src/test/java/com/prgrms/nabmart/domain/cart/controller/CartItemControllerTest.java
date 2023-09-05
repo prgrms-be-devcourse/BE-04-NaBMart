@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -69,11 +70,12 @@ class CartItemControllerTest {
             given(cartItemService.registerCartItem(any())).willReturn(1L);
 
             // when
+            ResultActions resultActions = mockMvc.perform(post("/api/v1/cart-items")
+                .content(objectMapper.writeValueAsString(registerCartItemCommand))
+                .contentType(MediaType.APPLICATION_JSON));
 
             // then
-            mockMvc.perform(post("/api/v1/cart-items")
-                    .content(objectMapper.writeValueAsString(registerCartItemCommand))
-                    .contentType(MediaType.APPLICATION_JSON))
+            resultActions
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/cart-items/1"))
                 .andDo(print())
@@ -105,7 +107,7 @@ class CartItemControllerTest {
             // when
             ResultActions resultActions = mockMvc.perform(
                 delete("/api/v1/cart-items/{cartItemId}", cartItemId)
-                    .accept(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON));
 
             // then
             resultActions.andExpect(status().isNoContent())
@@ -120,5 +122,37 @@ class CartItemControllerTest {
                 );
         }
 
+        @Nested
+        @DisplayName("장바구니 상품 수량 수정 API 실행 시")
+        class UpdateCartItemQuantityAPITest {
+
+            @Test
+            @DisplayName("성공")
+            void success() throws Exception {
+
+                // given
+                Long cartItemId = 1L;
+                int updateQuantity = 2;
+
+                // when
+                ResultActions resultActions = mockMvc.perform(
+                    patch("/api/v1/cart-items/{cartItemId}", cartItemId)
+                        .content(objectMapper.writeValueAsString(updateQuantity))
+                        .contentType(MediaType.APPLICATION_JSON)
+                );
+
+                // then
+                resultActions.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(
+                        document("Update cart-item quantity",
+                            preprocessRequest(prettyPrint()),
+                            pathParameters(
+                                parameterWithName("cartItemId").description("cartItemId")
+                            )
+                        )
+                    );
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.cart.exception.NotFoundCartItemException;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
@@ -57,11 +58,22 @@ public class CartItemService {
     public void deleteCartItem(
         Long cartItemId
     ) {
-        CartItem foundCartItem = cartItemRepository.findById(cartItemId)
+        CartItem foundCartItem = findCartItemByCartItemId(cartItemId);
+
+        cartItemRepository.delete(foundCartItem);
+    }
+
+    @Transactional
+    public void updateCartItemQuantity(UpdateCartItemCommand updateCartItemCommand) {
+        CartItem foundCartItem = findCartItemByCartItemId(updateCartItemCommand.cartId());
+
+        foundCartItem.changeQuantity(updateCartItemCommand.quantity());
+    }
+
+    private CartItem findCartItemByCartItemId(Long cartItemId) {
+        return cartItemRepository.findById(cartItemId)
             .orElseThrow(
                 () -> new NotFoundCartItemException("장바구니 상품이 존재하지 않습니다.")
             );
-
-        cartItemRepository.delete(foundCartItem);
     }
 }

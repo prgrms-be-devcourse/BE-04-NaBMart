@@ -73,4 +73,9 @@ public class CartItem extends BaseTimeEntity {
             throw new InvalidCartItemException("수량은 음수가 될 수 없습니다.");
         }
     }
+
+    public void changeQuantity(final Integer quantity) {
+        validateQuantity(quantity);
+        this.quantity = quantity;
+    }
 }
