@@ -65,7 +65,7 @@ class EventItemServiceTest {
     @DisplayName("registerEventItems 메서드 실행 시")
     class RegisterEventItemsTest {
 
-        RegisterEventItemsCommand command = RegisterEventItemsCommand.from(1L,
+        RegisterEventItemsCommand command = RegisterEventItemsCommand.of(1L,
             Arrays.asList(1L));
 
         @Test

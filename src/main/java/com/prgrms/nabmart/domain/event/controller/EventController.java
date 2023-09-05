@@ -33,7 +33,7 @@ public class EventController {
     public ResponseEntity<Void> registerEvent(
         @RequestBody @Valid RegisterEventRequest registerEventRequest
     ) {
-        RegisterEventCommand registerEventCommand = RegisterEventCommand.from(
+        RegisterEventCommand registerEventCommand = RegisterEventCommand.of(
             registerEventRequest.title(), registerEventRequest.description());
         Long eventId = eventService.registerEvent(registerEventCommand);
         URI location = URI.create(BASE_URL + eventId);
@@ -58,7 +58,7 @@ public class EventController {
         @RequestBody @Valid RegisterEventItemsRequest registerEventItemsRequest,
         @PathVariable Long eventId
     ) {
-        RegisterEventItemsCommand registerEventItemsCommand = RegisterEventItemsCommand.from(eventId, registerEventItemsRequest.items());
+        RegisterEventItemsCommand registerEventItemsCommand = RegisterEventItemsCommand.of(eventId, registerEventItemsRequest.items());
         Long saved = eventItemService.registerEventItems(registerEventItemsCommand);
         URI location = URI.create(BASE_URL + saved);
         return ResponseEntity.created(location).build();
