@@ -3,26 +3,38 @@ package com.prgrms.nabmart.domain.category.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
+import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CategoryController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureRestDocs
 public class CategoryControllerTest {
 
     @Autowired
@@ -77,4 +89,34 @@ public class CategoryControllerTest {
             verify(categoryService, times(1)).saveSubCategory(command);
         }
     }
+
+    @Nested
+    @DisplayName("모든 대카테고리 조회 api 호출 시")
+    class findAllMainCategoriesApi {
+
+        @Test
+        @DisplayName("성공")
+        public void findAllMainCategories() throws Exception {
+            // Given
+            FindMainCategoriesResponse mainCategoriesResponse = CategoryFixture.findMainCategoriesResponse();
+            when(categoryService.findAllMainCategories()).thenReturn(mainCategoriesResponse);
+
+            // When & Then
+            mockMvc.perform(get("/api/v1/main-categories")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document(
+                    "Find All MainCategories",
+                    preprocessRequest(
+                        prettyPrint()
+                    ),
+                    responseFields(
+                        fieldWithPath("mainCategoryNames").type(JsonFieldType.ARRAY)
+                            .description("메인 카테고리 리스트")
+                    )
+                ));
+        }
+    }
+
 }
