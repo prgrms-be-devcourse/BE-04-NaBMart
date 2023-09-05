@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.domain.category.domain;
+package com.prgrms.nabmart.domain.category;
 
 import com.prgrms.nabmart.domain.item.domain.Item;
 import jakarta.persistence.Column;
@@ -22,7 +22,7 @@ public class MainCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mainCategoryId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "mainCategory")

@@ -19,17 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/coupons")
+@RequestMapping("/api/v1")
 public class CouponController {
 
     private final CouponService couponService;
 
-    @PostMapping
+    @PostMapping("/coupons")
     public ResponseEntity<Void> createCoupon(
         @Valid @RequestBody RegisterCouponRequest registerCouponRequest) {
         RegisterCouponCommand command = RegisterCouponCommand.from(registerCouponRequest);
         Long couponId = couponService.createCoupon(command);
-        URI location = URI.create("/v1/coupons" + "/" + couponId);
+        URI location = URI.create("/api/v1/coupons" + "/" + couponId);
         return ResponseEntity.created(location).build();
     }
 

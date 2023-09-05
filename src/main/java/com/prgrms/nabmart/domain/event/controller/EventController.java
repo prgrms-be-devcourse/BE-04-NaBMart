@@ -5,11 +5,13 @@ import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
 import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
+import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +36,11 @@ public class EventController {
         Long eventId = eventService.registerEvent(registerEventCommand);
         URI location = URI.create(BASE_URL + eventId);
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<FindEventsResponse> findEvents() {
+        return ResponseEntity.ok(eventService.findEvents());
     }
 
     @PostMapping("/{eventId}")
