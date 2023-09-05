@@ -31,12 +31,16 @@ public class Cart extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Cart(User user) {
+    public Cart(
+        final User user
+    ) {
         validateUser(user);
         this.user = user;
     }
 
-    public void validateUser(User user) {
+    public void validateUser(
+        final User user
+    ) {
         if (isNull(user)) {
             throw new NotExistUserException("User 가 존재하지 않습니다.");
         }
