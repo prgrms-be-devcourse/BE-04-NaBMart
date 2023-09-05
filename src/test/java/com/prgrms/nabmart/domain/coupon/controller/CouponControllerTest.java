@@ -4,6 +4,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,7 +29,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -81,14 +82,14 @@ class CouponControllerTest {
                             prettyPrint()
                         ),
                         requestFields(
-                            fieldWithPath("name").type(JsonFieldType.STRING).description("couponName"),
-                            fieldWithPath("discount").type(JsonFieldType.NUMBER)
+                            fieldWithPath("name").type(STRING).description("couponName"),
+                            fieldWithPath("discount").type(NUMBER)
                                 .description("discount"),
-                            fieldWithPath("description").type(JsonFieldType.STRING)
+                            fieldWithPath("description").type(STRING)
                                 .description("couponDescription"),
-                            fieldWithPath("minOrderPrice").type(JsonFieldType.NUMBER)
+                            fieldWithPath("minOrderPrice").type(NUMBER)
                                 .description("minOrderPrice"),
-                            fieldWithPath("endAt").type(JsonFieldType.STRING)
+                            fieldWithPath("endAt").type(STRING)
                                 .description("endAt (yyyy-MM-dd)"))
                     )
                 );
@@ -124,8 +125,8 @@ class CouponControllerTest {
                             prettyPrint()
                         ),
                         requestFields(
-                            fieldWithPath("userId").type(JsonFieldType.NUMBER).description("userId"),
-                            fieldWithPath("couponId").type(JsonFieldType.NUMBER)
+                            fieldWithPath("userId").type(NUMBER).description("userId"),
+                            fieldWithPath("couponId").type(NUMBER)
                                 .description("couponId"))
                     )
                 );
