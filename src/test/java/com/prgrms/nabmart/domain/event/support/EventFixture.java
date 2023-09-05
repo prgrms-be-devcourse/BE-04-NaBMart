@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.global.fixture;
+package com.prgrms.nabmart.domain.event.support;
 
 import com.prgrms.nabmart.domain.event.domain.Event;
 
