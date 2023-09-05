@@ -53,6 +53,7 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(
+        final Long userId,
         final String nickname,
         final String email,
         final String provider,
@@ -61,6 +62,7 @@ public class User extends BaseTimeEntity {
         final UserGrade userGrade) {
         validateNickname(nickname);
         validateEmail(email);
+        this.userId = userId;
         this.nickname = nickname;
         this.email = email;
         this.provider = provider;

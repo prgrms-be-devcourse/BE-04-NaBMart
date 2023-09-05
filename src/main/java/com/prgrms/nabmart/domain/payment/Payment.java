@@ -1,6 +1,6 @@
-package com.prgrms.nabmart.domain.order;
+package com.prgrms.nabmart.domain.payment;
 
-import com.prgrms.nabmart.domain.coupon.Coupon;
+import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -20,35 +20,36 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
 @Builder
-@Table(name = "orders")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends BaseTimeEntity {
+@Table(name = "payment")
+public class Payment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+    private Long payId;
+
+    @Setter
+    private String paymentKey;
 
     @Column(nullable = false)
-    private String name;
+    @Enumerated(value = EnumType.STRING)
+    private PaymentType paymentType;
 
     @Column(nullable = false)
-    private Integer price;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Builder.Default
-    private OrderStatus status = OrderStatus.PENDING; // 주문 상태 정보, 기본값 'PENDING'
+    @Enumerated(value = EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id")
-    private Coupon coupon;
+    @JoinColumn(name = "order_id")
+    private Order order;
 }
