@@ -2,7 +2,7 @@ package com.prgrms.nabmart.domain.category.exception;
 
 public class DuplicateCategoryNameException extends CategoryException {
 
-    public DuplicateCategoryNameException(String message) {
+    public DuplicateCategoryNameException(final String message) {
         super(message);
     }
 }
