@@ -2,7 +2,7 @@ package com.prgrms.nabmart.domain.event.support;
 
 import com.prgrms.nabmart.domain.event.domain.Event;
 import com.prgrms.nabmart.domain.event.domain.EventItem;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

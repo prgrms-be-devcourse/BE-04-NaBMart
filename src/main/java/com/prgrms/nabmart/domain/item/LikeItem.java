@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.domain.item.domain;
+package com.prgrms.nabmart.domain.item;
 
 import com.prgrms.nabmart.domain.user.User;
 import jakarta.persistence.Entity;
