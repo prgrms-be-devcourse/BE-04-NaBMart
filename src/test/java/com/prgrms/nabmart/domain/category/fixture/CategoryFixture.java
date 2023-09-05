@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.global.fixture;
+package com.prgrms.nabmart.domain.category.fixture;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
@@ -6,6 +6,8 @@ import com.prgrms.nabmart.domain.category.controller.request.RegisterMainCategor
 import com.prgrms.nabmart.domain.category.controller.request.RegisterSubCategoryRequest;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
+import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -38,5 +40,9 @@ public final class CategoryFixture {
 
     public static RegisterMainCategoryCommand registerMainCategoryCommand() {
         return new RegisterMainCategoryCommand(MAIN_CATEGORY_NAME);
+    }
+
+    public static FindMainCategoriesResponse findMainCategoriesResponse() {
+        return new FindMainCategoriesResponse(List.of("main1", "main2", "main3"));
     }
 }
