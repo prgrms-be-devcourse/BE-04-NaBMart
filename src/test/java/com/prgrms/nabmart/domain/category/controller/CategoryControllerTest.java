@@ -130,7 +130,7 @@ public class CategoryControllerTest {
             when(categoryService.findAllMainCategories()).thenReturn(mainCategoriesResponse);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/main-categories")
+            mockMvc.perform(get("/api/v1/categories")
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())

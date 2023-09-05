@@ -41,12 +41,6 @@ public class CategoryController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/main-categories")
-    public ResponseEntity<FindMainCategoriesResponse> findAllMainCategories() {
-        FindMainCategoriesResponse findMainCategoriesResponse = categoryService.findAllMainCategories();
-        return ResponseEntity.ok(findMainCategoriesResponse);
-    }
-
     @PostMapping("/sub-categories")
     public ResponseEntity<Void> saveSubCategory(
         @RequestBody @Valid RegisterSubCategoryRequest registerSubCategoryRequest) {
@@ -58,6 +52,13 @@ public class CategoryController {
         return ResponseEntity.created(location).build();
     }
 
+    @GetMapping("/categories")
+    public ResponseEntity<FindMainCategoriesResponse> findAllMainCategories() {
+        FindMainCategoriesResponse findMainCategoriesResponse = categoryService.findAllMainCategories();
+        return ResponseEntity.ok(findMainCategoriesResponse);
+    }
+
+//    @GetMapping("/main-categories/{mainCategoryId}")
 
     @ExceptionHandler(DuplicateCategoryNameException.class)
     public ResponseEntity<ErrorTemplate> handleException(
