@@ -17,6 +17,7 @@ import com.prgrms.nabmart.global.fixture.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -28,7 +29,7 @@ class UserControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        void RegisterUser() throws Exception {
+        void FindUser() throws Exception {
             //given
             FindUserDetailResponse findUserDetailResponse = UserFixture.findUserDetailResponse();
 
@@ -36,7 +37,8 @@ class UserControllerTest extends BaseControllerTest {
 
             //when
             ResultActions resultActions = mockMvc.perform(get("/api/v1/users/me")
-                .header("Authorization", accessToken));
+                .header("Authorization", accessToken)
+                .accept(MediaType.APPLICATION_JSON));
 
             //then
             resultActions.andExpect(status().isOk())
