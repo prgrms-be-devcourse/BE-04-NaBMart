@@ -9,6 +9,7 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
+import com.prgrms.nabmart.global.fixture.AuthFixture;
 import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,8 +32,7 @@ class JavaJwtTokenProviderTest {
         @DisplayName("성공: 토큰 반환")
         void success() {
             //given
-            RegisterUserResponse registerUserResponse
-                = new RegisterUserResponse(1L, UserRole.ROLE_USER);
+            RegisterUserResponse registerUserResponse = AuthFixture.registerUserResponse();
 
             //when
             String token = tokenProvider.createToken(registerUserResponse);
@@ -49,8 +49,7 @@ class JavaJwtTokenProviderTest {
     @DisplayName("validateToken 메서드 실행 시")
     class ValidateTokenTest {
 
-        RegisterUserResponse registerUserResponse = new RegisterUserResponse(1L,
-            UserRole.ROLE_USER);
+        RegisterUserResponse registerUserResponse = AuthFixture.registerUserResponse();
 
         private String createToken(
             String issuer,

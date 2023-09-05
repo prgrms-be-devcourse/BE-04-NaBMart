@@ -2,9 +2,9 @@ package com.prgrms.nabmart.domain.event.domain;
 
 import static java.util.Objects.isNull;
 
-import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.event.exception.InvalidEventDescriptionException;
 import com.prgrms.nabmart.domain.event.exception.InvalidEventTitleException;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
