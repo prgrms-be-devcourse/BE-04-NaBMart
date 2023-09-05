@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
+import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.user.service.UserService;
@@ -57,6 +58,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected EventService eventService;
+
+    @MockBean
+    protected EventItemService eventItemService;
 
     @MockBean
     protected OAuthRestClient oAuthRestClient;

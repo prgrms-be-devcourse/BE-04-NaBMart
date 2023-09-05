@@ -10,7 +10,7 @@ import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.response.FindCartItemResponse;
 import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
+import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotExistUserException;
@@ -44,7 +44,7 @@ public class CartItemService {
             );
 
         Item foundItem = itemRepository.findById(registerCartItemCommand.itemId())
-            .orElseThrow(() -> new NotExistsItemException("존재하지 않은 상품입니다."));
+            .orElseThrow(() -> new NotFoundItemException("존재하지 않은 상품입니다."));
 
         CartItem cartItem = CartItem.builder()
             .cart(foundCart)
@@ -67,7 +67,9 @@ public class CartItemService {
     }
 
     @Transactional(readOnly = true)
-    public FindCartItemsResponse findCartItems(final Long cartItemId) {
+    public FindCartItemsResponse findCartItems(
+        final Long cartItemId
+    ) {
         List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdOrderByCreatedAt(
             cartItemId);
 
@@ -81,6 +83,22 @@ public class CartItemService {
                 )
             )
             .toList());
+    }
+
+    @Transactional(readOnly = true)
+    public int getCartItemTotalPrice(
+        final Long cartItemId
+    ) {
+        int totalPrice = 0;
+
+        List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdOrderByCreatedAt(
+            cartItemId);
+
+        for (CartItem cartItem : cartItems) {
+            totalPrice += cartItem.getItem().getPrice() * cartItem.getQuantity();
+        }
+
+        return totalPrice;
     }
 
     @Transactional
