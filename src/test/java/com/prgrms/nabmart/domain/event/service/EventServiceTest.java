@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.event.domain.Event;
 import com.prgrms.nabmart.domain.event.domain.EventItem;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
