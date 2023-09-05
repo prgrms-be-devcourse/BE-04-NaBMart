@@ -1,6 +1,6 @@
 package com.prgrms.nabmart.domain.coupon;
 
-import com.prgrms.nabmart.domain.coupon.exception.CouponValidationException;
+import com.prgrms.nabmart.domain.coupon.exception.InvalidCouponException;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -56,7 +56,7 @@ public class Coupon extends BaseTimeEntity {
     private void validateEndAt(LocalDate endAt) {
         LocalDate currentDate = LocalDate.now();
         if (endAt.isBefore(currentDate)) {
-            throw new CouponValidationException("쿠폰 종료일은 현재 날짜보다 이전일 수 없습니다.");
+            throw new InvalidCouponException("쿠폰 종료일은 현재 날짜보다 이전일 수 없습니다.");
         }
     }
 }
