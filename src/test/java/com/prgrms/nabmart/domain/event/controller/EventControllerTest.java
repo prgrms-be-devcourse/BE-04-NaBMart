@@ -25,22 +25,11 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@AutoConfigureRestDocs
-@AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = EventController.class)
-public class EventControllerTest extends BaseControllerTest {
-
-    @Autowired
-    MockMvc mvc;
+class EventControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("이벤트 등록하는 api 호출 시")
@@ -56,7 +45,7 @@ public class EventControllerTest extends BaseControllerTest {
             given(eventService.registerEvent(any())).willReturn(1L);
 
             // When
-            ResultActions resultActions = mvc.perform(post("/api/v1/events")
+            ResultActions resultActions = mockMvc.perform(post("/api/v1/events")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
 
@@ -85,14 +74,12 @@ public class EventControllerTest extends BaseControllerTest {
             given(eventService.findEvents()).willReturn(eventResponses);
 
             // When
-            ResultActions resultActions = mvc.perform(
+            ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/events").accept(MediaType.APPLICATION_JSON));
 
             // Then
             resultActions.andExpect(status().isOk())
                 .andDo(document("Find Events",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
                     responseFields(
                         fieldWithPath("events[].eventId").type(JsonFieldType.NUMBER)
                             .description("이벤트 ID"),
@@ -131,14 +118,12 @@ public class EventControllerTest extends BaseControllerTest {
             given(eventService.findEventDetail(any())).willReturn(eventDetailResponse);
 
             // When
-            ResultActions resultActions = mvc.perform(
+            ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/events/1").accept(MediaType.APPLICATION_JSON));
 
             // Then
             resultActions.andExpect(status().isOk())
                 .andDo(document("Find Event Detail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         responseFields(
                             fieldWithPath("event.eventId").type(JsonFieldType.NUMBER)
                                 .description("이벤트 ID"),
@@ -174,21 +159,20 @@ public class EventControllerTest extends BaseControllerTest {
         @DisplayName("성공")
         public void success() throws Exception {
             // Given
-            RegisterEventItemsRequest request = new RegisterEventItemsRequest(Arrays.asList(1L, 2L));
+            RegisterEventItemsRequest request = new RegisterEventItemsRequest(
+                Arrays.asList(1L, 2L));
             String requestBody = objectMapper.writeValueAsString(request);
 
             given(eventItemService.registerEventItems(any())).willReturn(1L);
 
             // When
-            ResultActions resultActions = mvc.perform(post("/api/v1/events/1")
+            ResultActions resultActions = mockMvc.perform(post("/api/v1/events/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
 
             // Then
             resultActions.andExpect(status().isCreated())
-                .andDo(document("Register Event Items",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint())
+                .andDo(document("Register Event Items"
                 ));
         }
     }
