@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
 import com.prgrms.nabmart.domain.cart.exception.InvalidCartItemException;
+import com.prgrms.nabmart.domain.cart.support.CartFixture;
+import com.prgrms.nabmart.domain.cart.support.CartItemFixture;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.global.fixture.CartFixture;
-import com.prgrms.nabmart.global.fixture.CartItemFixture;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import com.prgrms.nabmart.global.fixture.UserFixture;
 import org.junit.jupiter.api.BeforeEach;

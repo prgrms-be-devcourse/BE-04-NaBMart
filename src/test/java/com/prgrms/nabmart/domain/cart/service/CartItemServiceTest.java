@@ -12,6 +12,8 @@ import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
+import com.prgrms.nabmart.domain.cart.support.CartFixture;
+import com.prgrms.nabmart.domain.cart.support.CartItemFixture;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
@@ -19,8 +21,6 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.global.fixture.CartFixture;
-import com.prgrms.nabmart.global.fixture.CartItemFixture;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import com.prgrms.nabmart.global.fixture.UserFixture;
 import java.util.Collections;
@@ -139,6 +139,30 @@ class CartItemServiceTest {
 
             // then
             assertThat(findCartItemsResponse.findCartItemsResponse()).hasSize(1);
+        }
+    }
+
+    @Nested
+    @DisplayName("장바구니 상품 최종 가격 가져오는 Service 실행 시")
+    class getCartItemTotalPriceTest {
+
+        @Test
+        @DisplayName("성공")
+        void getCartItemTotalPrice() {
+            // given
+            Long cartItemId = 1L;
+            List<CartItem> cartItems = Collections.singletonList(
+                givenCartItem
+            );
+
+            given(cartItemRepository.findAllByCartItemIdOrderByCreatedAt(cartItemId)).willReturn(
+                cartItems);
+
+            // when
+            int totalPrice = cartItemService.getCartItemTotalPrice(cartItemId);
+
+            // then
+            assertThat(totalPrice).isEqualTo(givenQuantity * givenItem.getPrice());
         }
     }
 
