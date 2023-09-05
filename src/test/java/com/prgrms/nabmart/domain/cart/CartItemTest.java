@@ -7,7 +7,7 @@ import com.prgrms.nabmart.domain.cart.exception.InvalidCartItemException;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.fixture.CartFixture;
 import com.prgrms.nabmart.global.fixture.CartItemFixture;

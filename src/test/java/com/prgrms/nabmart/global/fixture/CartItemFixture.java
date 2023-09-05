@@ -2,7 +2,7 @@ package com.prgrms.nabmart.global.fixture;
 
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.cart.CartItem;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

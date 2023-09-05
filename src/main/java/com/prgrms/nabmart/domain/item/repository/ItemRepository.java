@@ -1,6 +1,6 @@
 package com.prgrms.nabmart.domain.item.repository;
 
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
