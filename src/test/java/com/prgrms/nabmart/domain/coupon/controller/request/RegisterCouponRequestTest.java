@@ -27,6 +27,7 @@ class RegisterCouponRequestTest {
             // Given
             RegisterCouponRequest request = new RegisterCouponRequest("ValidName", 10000,
                 "ValidDescription", 1000, LocalDate.parse("2023-12-31"));
+            
             // When
             Set<ConstraintViolation<RegisterCouponRequest>> violations = validator.validate(
                 request);
