@@ -4,7 +4,9 @@ import com.prgrms.nabmart.domain.event.controller.request.RegisterEventItemsRequ
 import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
 import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
+import com.prgrms.nabmart.domain.event.service.request.FindEventDetailCommand;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
+import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
 import jakarta.validation.Valid;
@@ -41,6 +43,14 @@ public class EventController {
     @GetMapping
     public ResponseEntity<FindEventsResponse> findEvents() {
         return ResponseEntity.ok(eventService.findEvents());
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<FindEventDetailResponse> findEventDetail(
+        @PathVariable final Long eventId
+    ) {
+        FindEventDetailCommand findEventDetailCommand = FindEventDetailCommand.from(eventId);
+        return ResponseEntity.ok(eventService.findEventDetail(findEventDetailCommand));
     }
 
     @PostMapping("/{eventId}")

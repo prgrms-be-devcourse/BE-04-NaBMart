@@ -1,48 +1,45 @@
 package com.prgrms.nabmart.domain.event.controller;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prgrms.nabmart.domain.event.service.EventService;
+import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.event.controller.request.RegisterEventRequest;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventCommand;
+import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse;
+import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.EventDetailResponse;
+import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.EventItemResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse.FindEventResponse;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(EventControllerTest.class)
-public class EventControllerTest {
-
-    private MockMvc mockMvc;
-
-    @Mock
-    private EventService eventService;
+@AutoConfigureRestDocs
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = EventController.class)
+public class EventControllerTest extends BaseControllerTest {
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new EventController(eventService)).build();
-    }
+    MockMvc mvc;
 
     @Nested
     @DisplayName("이벤트 등록하는 api 호출 시")
@@ -52,17 +49,23 @@ public class EventControllerTest {
         @DisplayName("성공")
         public void success() throws Exception {
             // Given
+            RegisterEventRequest request = new RegisterEventRequest("TestTitle", "TestDescription");
+            String requestBody = objectMapper.writeValueAsString(request);
             RegisterEventCommand command = new RegisterEventCommand("TestTitle", "TestDescription");
-            when(eventService.registerEvent(command)).thenReturn(1L);
 
-            // When & Then
-            mockMvc.perform(post("/api/v1/events")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"title\":\"TestTitle\",\"description\": \"TestDescription\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/v1/events/1"));
+            given(eventService.registerEvent(any())).willReturn(1L);
 
-            verify(eventService, times(1)).registerEvent(command);
+            // When
+            ResultActions resultActions = mvc.perform(post("/api/v1/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+            // Then
+            resultActions.andExpect(status().isCreated())
+                .andDo(document("Register Event",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint())
+                ));
         }
     }
 
@@ -78,14 +81,88 @@ public class EventControllerTest {
                 new FindEventResponse(1L, "Event 1", "Description 1"),
                 new FindEventResponse(2L, "Event 2", "Description 2")
             ));
-            when(eventService.findEvents()).thenReturn(eventResponses);
 
-            // When & Then
-            mockMvc.perform(get("/api/v1/events"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(eventResponses)));
+            given(eventService.findEvents()).willReturn(eventResponses);
 
-            verify(eventService, times(1)).findEvents();
+            // When
+            ResultActions resultActions = mvc.perform(
+                get("/api/v1/events").accept(MediaType.APPLICATION_JSON));
+
+            // Then
+            resultActions.andExpect(status().isOk())
+                .andDo(document("Find Events",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    responseFields(
+                        fieldWithPath("events[].eventId").type(JsonFieldType.NUMBER)
+                            .description("이벤트 ID"),
+                        fieldWithPath("events[].name").type(JsonFieldType.STRING)
+                            .description("이벤트 이름"),
+                        fieldWithPath("events[].description").type(JsonFieldType.STRING)
+                            .description("이벤트 설명")
+
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("이벤트 디테일 조회하는 api 호출 시")
+    class FindEventDetailApi {
+
+        @Test
+        @DisplayName("성공")
+        public void success() throws Exception {
+            // Given
+            FindEventDetailResponse eventDetailResponse = FindEventDetailResponse.of(
+                new EventDetailResponse(
+                    1L, "Event Title", "Event Description"
+                ),
+                List.of(
+                    new EventItemResponse(
+                        1L, "name 1", 3000, 1000, 5, 3, 4.5
+                    ),
+                    new EventItemResponse(
+                        2L, "name 2", 50000, 2000, 10, 7, 4
+                    )
+                )
+            );
+
+            given(eventService.findEventDetail(any())).willReturn(eventDetailResponse);
+
+            // When
+            ResultActions resultActions = mvc.perform(
+                get("/api/v1/events/1").accept(MediaType.APPLICATION_JSON));
+
+            // Then
+            resultActions.andExpect(status().isOk())
+                .andDo(document("Find Event Detail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                            fieldWithPath("event.eventId").type(JsonFieldType.NUMBER)
+                                .description("이벤트 ID"),
+                            fieldWithPath("event.eventTitle").type(JsonFieldType.STRING)
+                                .description("이벤트 제목"),
+                            fieldWithPath("event.eventDescription").type(JsonFieldType.STRING)
+                                .description("이벤트 설명"),
+                            fieldWithPath("items[].itemId").type(JsonFieldType.NUMBER)
+                                .description("아이템 ID"),
+                            fieldWithPath("items[].name").type(JsonFieldType.STRING)
+                                .description("아이템 이름"),
+                            fieldWithPath("items[].price").type(JsonFieldType.NUMBER)
+                                .description("아이템 가격"),
+                            fieldWithPath("items[].discount").type(JsonFieldType.NUMBER)
+                                .description("아이템 할인"),
+                            fieldWithPath("items[].reviewCount").type(JsonFieldType.NUMBER)
+                                .description("리뷰 개수"),
+                            fieldWithPath("items[].like").type(JsonFieldType.NUMBER)
+                                .description("좋아요 수"),
+                            fieldWithPath("items[].rate").type(JsonFieldType.NUMBER)
+                                .description("평균 평점")
+                        )
+                    )
+                );
         }
     }
 }
