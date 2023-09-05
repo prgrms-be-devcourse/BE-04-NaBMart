@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "orders")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
 public class Order extends BaseTimeEntity {
 
     @Id
@@ -35,11 +34,15 @@ public class Order extends BaseTimeEntity {
     private Long orderId;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private Integer price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderStatus status = OrderStatus.CREATED; // 주문 상태 정보, 기본값 'CREATED'
+    @Builder.Default
+    private OrderStatus status = OrderStatus.PENDING; // 주문 상태 정보, 기본값 'PENDING'
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

@@ -8,6 +8,8 @@ import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
+import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,5 +43,11 @@ public class CategoryService {
         }
         SubCategory subCategory = new SubCategory(mainCategory, newSubCategoryName);
         return subCategoryRepository.save(subCategory).getSubCategoryId();
+    }
+
+    @Transactional(readOnly = true)
+    public FindMainCategoriesResponse findAllMainCategories() {
+        List<MainCategory> mainCategories = mainCategoryRepository.findAll();
+        return FindMainCategoriesResponse.from(mainCategories);
     }
 }

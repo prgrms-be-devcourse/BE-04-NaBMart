@@ -6,9 +6,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.prgrms.nabmart.domain.coupon.Coupon;
+import com.prgrms.nabmart.domain.coupon.UserCoupon;
+import com.prgrms.nabmart.domain.coupon.fixture.CouponFixture;
+import com.prgrms.nabmart.domain.coupon.fixture.UserCouponFixture;
 import com.prgrms.nabmart.domain.coupon.repository.CouponRepository;
+import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
+import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.repository.UserRepository;
+import com.prgrms.nabmart.global.fixture.UserFixture;
 import java.time.LocalDate;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +30,23 @@ class CouponServiceTest {
 
     @Mock
     private CouponRepository couponRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private UserCouponRepository userCouponRepository;
+
+    User givenUser;
+    Coupon givenCoupon;
+    UserCoupon givenUserCoupon;
+
+    @BeforeEach
+    void setUp() {
+        givenUser = UserFixture.user();
+        givenCoupon = CouponFixture.coupon();
+        givenUserCoupon = UserCouponFixture.userCoupon(givenUser, givenCoupon);
+    }
 
     @InjectMocks
     private CouponService couponService;

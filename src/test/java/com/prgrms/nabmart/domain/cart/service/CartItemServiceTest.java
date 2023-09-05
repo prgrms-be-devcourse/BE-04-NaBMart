@@ -11,17 +11,20 @@ import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
+import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.item.domain.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.global.fixture.CartFixture;
 import com.prgrms.nabmart.global.fixture.CartItemFixture;
-import com.prgrms.nabmart.global.fixture.CategoryFixture;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import com.prgrms.nabmart.global.fixture.UserFixture;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,6 +61,7 @@ class CartItemServiceTest {
     CartItem givenCartItem;
     int givenQuantity;
 
+
     @BeforeEach
     void setUp() {
         givenUser = UserFixture.user();
@@ -78,7 +82,7 @@ class CartItemServiceTest {
 
         @Test
         @DisplayName("성공")
-        void success() {
+        void registerCartItem() {
             // given
             given(userRepository.findById(any())).willReturn(Optional.ofNullable(givenUser));
             given(itemRepository.findById(any())).willReturn(Optional.ofNullable(givenItem));
@@ -99,8 +103,7 @@ class CartItemServiceTest {
 
         @Test
         @DisplayName("성공")
-        void success() {
-
+        void deleteCartItem() {
             // given
             Long cartItemId = 1L;
 
@@ -116,13 +119,36 @@ class CartItemServiceTest {
     }
 
     @Nested
+    @DisplayName("장바구니 상품 목록 조회 Service 실행 시")
+    class FindCartItemsTest {
+
+        @Test
+        @DisplayName("성공")
+        void findCartItems() {
+            // given
+            Long cartItemId = 1L;
+            List<CartItem> cartItems = Collections.singletonList(
+                givenCartItem
+            );
+
+            given(cartItemRepository.findAllByCartItemIdOrderByCreatedAt(cartItemId)).willReturn(
+                cartItems);
+
+            // when
+            FindCartItemsResponse findCartItemsResponse = cartItemService.findCartItems(cartItemId);
+
+            // then
+            assertThat(findCartItemsResponse.findCartItemsResponse()).hasSize(1);
+        }
+    }
+
+    @Nested
     @DisplayName("장바구니 상품 수량 수정 Service 실행 시")
     class UpdateCartItemTest {
 
         @Test
         @DisplayName("성공")
-        void success() {
-
+        void updateCartItem() {
             // given
             Long cartItemId = 1L;
             int updateQuantity = 2;
