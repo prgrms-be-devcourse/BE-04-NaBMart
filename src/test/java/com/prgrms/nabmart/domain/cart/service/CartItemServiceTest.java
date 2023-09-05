@@ -143,6 +143,30 @@ class CartItemServiceTest {
     }
 
     @Nested
+    @DisplayName("장바구니 상품 최종 가격 가져오는 Service 실행 시")
+    class getCartItemTotalPriceTest {
+
+        @Test
+        @DisplayName("성공")
+        void getCartItemTotalPrice() {
+            // given
+            Long cartItemId = 1L;
+            List<CartItem> cartItems = Collections.singletonList(
+                givenCartItem
+            );
+
+            given(cartItemRepository.findAllByCartItemIdOrderByCreatedAt(cartItemId)).willReturn(
+                cartItems);
+
+            // when
+            int totalPrice = cartItemService.getCartItemTotalPrice(cartItemId);
+
+            // then
+            assertThat(totalPrice).isEqualTo(givenQuantity * givenItem.getPrice());
+        }
+    }
+
+    @Nested
     @DisplayName("장바구니 상품 수량 수정 Service 실행 시")
     class UpdateCartItemTest {
 
