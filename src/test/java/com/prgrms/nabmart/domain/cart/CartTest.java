@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.exception.NotExistUserException;
-import com.prgrms.nabmart.global.fixture.UserFixture;
+import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -47,7 +47,7 @@ class CartTest {
             Exception exception = catchException(() -> new Cart(nullUser));
 
             // then
-            assertThat(exception).isInstanceOf(NotExistUserException.class);
+            assertThat(exception).isInstanceOf(NotFoundUserException.class);
         }
     }
 }

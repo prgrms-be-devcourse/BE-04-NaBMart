@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.dto.JwtAuthentication;
-import com.prgrms.nabmart.global.fixture.AuthFixture;
+import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.global.fixture;
+package com.prgrms.nabmart.global.auth.support;
 
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;

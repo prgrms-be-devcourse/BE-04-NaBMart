@@ -13,7 +13,7 @@ import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
-import com.prgrms.nabmart.global.fixture.UserFixture;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
