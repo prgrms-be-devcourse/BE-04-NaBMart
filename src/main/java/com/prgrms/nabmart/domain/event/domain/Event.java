@@ -5,11 +5,15 @@ import static java.util.Objects.isNull;
 import com.prgrms.nabmart.domain.BaseTimeEntity;
 import com.prgrms.nabmart.domain.event.exception.InvalidEventDescriptionException;
 import com.prgrms.nabmart.domain.event.exception.InvalidEventTitleException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +32,9 @@ public class Event extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String description;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
+    private List<EventItem> eventItemList = new ArrayList<>();
 
     public Event(String title, String description) {
         validateTitle(title);
