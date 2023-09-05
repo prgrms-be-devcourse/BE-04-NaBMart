@@ -46,7 +46,11 @@ public class CartItem extends BaseTimeEntity {
     private boolean isChecked;
 
     @Builder
-    public CartItem(Cart cart, Item item, int quantity) {
+    public CartItem(
+        final Cart cart,
+        final Item item,
+        final int quantity
+    ) {
         validateCart(cart);
         validateItem(item);
         validateQuantity(quantity);
@@ -56,25 +60,25 @@ public class CartItem extends BaseTimeEntity {
         this.isChecked = true;
     }
 
-    public void validateCart(Cart cart) {
+    public void validateCart(final Cart cart) {
         if (isNull(cart)) {
             throw new InvalidCartItemException("Cart 가 존재하지 않습니다.");
         }
     }
 
-    public void validateItem(Item item) {
+    public void validateItem(final Item item) {
         if (isNull(item)) {
             throw new InvalidCartItemException("Item 이 존재하지 않습니다.");
         }
     }
 
-    public void validateQuantity(int quantity) {
+    public void validateQuantity(final int quantity) {
         if (quantity < MIN_QUANTITY) {
             throw new InvalidCartItemException("수량은 음수가 될 수 없습니다.");
         }
     }
 
-    public void changeQuantity(final Integer quantity) {
+    public void changeQuantity(final int quantity) {
         validateQuantity(quantity);
         this.quantity = quantity;
     }

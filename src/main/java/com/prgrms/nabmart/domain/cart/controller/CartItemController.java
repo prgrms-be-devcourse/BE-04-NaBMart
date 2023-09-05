@@ -5,6 +5,7 @@ import com.prgrms.nabmart.domain.cart.exception.CartItemException;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
+import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +54,14 @@ public class CartItemController {
         cartItemService.deleteCartItem(cartItemId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{cartItemId}/list")
+    public ResponseEntity<FindCartItemsResponse> findCartItems(
+        @PathVariable Long cartItemId
+    ) {
+        return ResponseEntity.ok()
+            .body(cartItemService.findCartItems(cartItemId));
     }
 
     @PatchMapping("/{cartItemId}")
