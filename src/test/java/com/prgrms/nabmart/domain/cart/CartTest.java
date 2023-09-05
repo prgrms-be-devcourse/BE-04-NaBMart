@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.catchException;
 
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotExistUserException;
-import com.prgrms.nabmart.global.fixture.UserFixture;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
