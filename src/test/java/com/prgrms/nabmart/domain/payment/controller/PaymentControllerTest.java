@@ -49,8 +49,8 @@ public class PaymentControllerTest extends BaseControllerTest {
     class payTest {
 
         @Test
-        @DisplayName("성공: ok 응답")
-        void success() throws Exception {
+        @DisplayName("성공")
+        void postPay() throws Exception {
             // given
             User user = getUser(1);
             Order order = getPendingOrder(1, user);
