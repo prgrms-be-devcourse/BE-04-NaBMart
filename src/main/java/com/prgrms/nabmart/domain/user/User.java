@@ -1,7 +1,6 @@
 package com.prgrms.nabmart.domain.user;
 
-import com.prgrms.nabmart.domain.user.exception.InvalidEmailException;
-import com.prgrms.nabmart.domain.user.exception.InvalidNicknameException;
+import com.prgrms.nabmart.domain.user.exception.InvalidUserException;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -71,13 +70,13 @@ public class User extends BaseTimeEntity {
 
     private void validateNickname(String nickname) {
         if (nickname.length() > NICKNAME_LENGTH) {
-            throw new InvalidNicknameException("사용할 수 없는 닉네임입니다.");
+            throw new InvalidUserException("사용할 수 없는 닉네임입니다.");
         }
     }
 
     private void validateEmail(String email) {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            throw new InvalidEmailException("사용할 수 없는 이메일입니다.");
+            throw new InvalidUserException("사용할 수 없는 이메일입니다.");
         }
     }
 }
