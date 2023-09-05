@@ -8,9 +8,7 @@ import com.prgrms.nabmart.domain.event.repository.EventItemRepository;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,24 +27,20 @@ public class EventItemService {
         Event event = eventRepository.findById(registerEventItemsCommand.eventId())
             .orElseThrow(() -> new NotFoundEventException("존재하지 않는 이벤트입니다."));
 
-        List<EventItem> eventItems = new ArrayList<>();
-        List<Long> duplicatedItemIdList = new ArrayList<>();
+        List<Item> items = itemRepository.findByItemIdIn(registerEventItemsCommand.items());
 
-        registerEventItemsCommand.items().forEach(itemId -> {
-            Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundItemException("존재하지 않는 아이템입니다."));
+        List<Item> duplicatedItems = eventItemRepository.findDuplicatedItems(event, items);
 
-            if (eventItemRepository.existsByEventAndItem(event, item)) { // item 중복
-                duplicatedItemIdList.add(itemId);
-            } else {
-                eventItems.add(new EventItem(event, item));
-            }
-        });
-
-        if (duplicatedItemIdList.size() != 0) {
+        if (!duplicatedItems.isEmpty()) {
+            List<Long> duplicatedItemIdList = duplicatedItems.stream()
+                .map(Item::getItemId).toList();
             throw new DuplicateEventItemException(
                 duplicatedItemIdList.toString() + " 해당 아이템은 이미 이벤트에 등록된 상태입니다.");
         }
+
+        List<EventItem> eventItems = items.stream()
+            .map(item -> new EventItem(event, item))
+            .toList();
 
         eventItemRepository.saveAll(eventItems);
         return event.getEventId();

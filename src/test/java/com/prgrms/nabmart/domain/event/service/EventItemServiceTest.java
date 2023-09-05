@@ -17,7 +17,6 @@ import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand
 import com.prgrms.nabmart.domain.event.support.EventFixture;
 import com.prgrms.nabmart.domain.event.support.EventItemFixture;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.global.fixture.ItemFixture;
 import java.util.Arrays;
@@ -65,16 +64,15 @@ class EventItemServiceTest {
     @DisplayName("registerEventItems 메서드 실행 시")
     class RegisterEventItemsTest {
 
-        RegisterEventItemsCommand command = RegisterEventItemsCommand.of(1L,
-            Arrays.asList(1L));
+        RegisterEventItemsCommand command = RegisterEventItemsCommand.of(1L, Arrays.asList(1L));
 
         @Test
         @DisplayName("성공")
         void success() {
             // Given
             given(eventRepository.findById(any())).willReturn(Optional.ofNullable(givenEvent));
-            given(itemRepository.findById(any())).willReturn(Optional.ofNullable(givenItem));
-            given(eventItemRepository.existsByEventAndItem(any(), any())).willReturn(false);
+            given(itemRepository.findByItemIdIn(any())).willReturn(Arrays.asList(givenItem));
+            given(eventItemRepository.findDuplicatedItems(any(), any())).willReturn(Arrays.asList());
             given(eventItemRepository.saveAll(any())).willReturn(Arrays.asList(givenEventItem));
 
             // When
@@ -85,24 +83,12 @@ class EventItemServiceTest {
         }
 
         @Test
-        @DisplayName("예외: 존재하지 않는 아이템")
-        void throwExceptionWhenItemNotFound() {
-            // Given
-            given(eventRepository.findById(any())).willReturn(Optional.ofNullable(givenEvent));
-            given(itemRepository.findById(any())).willReturn(Optional.empty());
-
-            // When & Then
-            assertThatThrownBy(() -> eventItemService.registerEventItems(command))
-                .isInstanceOf(NotFoundItemException.class);
-        }
-
-        @Test
         @DisplayName("예외: 이벤트 아이템 중복")
         void throwExceptionWhenDuplicateEventItem() {
             // Given
             given(eventRepository.findById(any())).willReturn(Optional.ofNullable(givenEvent));
-            given(itemRepository.findById(any())).willReturn(Optional.ofNullable(givenItem));
-            given(eventItemRepository.existsByEventAndItem(any(), any())).willReturn(true);
+            given(itemRepository.findByItemIdIn(any())).willReturn(Arrays.asList(givenItem));
+            given(eventItemRepository.findDuplicatedItems(any(), any())).willReturn(Arrays.asList(givenItem));
 
             // When & Then
             assertThatThrownBy(() -> eventItemService.registerEventItems(command))
