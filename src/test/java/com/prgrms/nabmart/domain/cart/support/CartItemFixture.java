@@ -1,8 +1,8 @@
-package com.prgrms.nabmart.global.fixture;
+package com.prgrms.nabmart.domain.cart.support;
 
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.cart.CartItem;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

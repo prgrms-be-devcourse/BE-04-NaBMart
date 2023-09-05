@@ -7,6 +7,7 @@ import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
+import com.prgrms.nabmart.domain.category.service.response.FindSubCategoriesResponse;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,12 +43,6 @@ public class CategoryController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/main-categories")
-    public ResponseEntity<FindMainCategoriesResponse> findAllMainCategories() {
-        FindMainCategoriesResponse findMainCategoriesResponse = categoryService.findAllMainCategories();
-        return ResponseEntity.ok(findMainCategoriesResponse);
-    }
-
     @PostMapping("/sub-categories")
     public ResponseEntity<Void> saveSubCategory(
         @RequestBody @Valid RegisterSubCategoryRequest registerSubCategoryRequest) {
@@ -58,6 +54,20 @@ public class CategoryController {
         return ResponseEntity.created(location).build();
     }
 
+    @GetMapping("/categories")
+    public ResponseEntity<FindMainCategoriesResponse> findAllMainCategories() {
+        FindMainCategoriesResponse findMainCategoriesResponse = categoryService.findAllMainCategories();
+        return ResponseEntity.ok(findMainCategoriesResponse);
+    }
+
+    @GetMapping("/categories/{mainCategoryId}")
+    public ResponseEntity<FindSubCategoriesResponse> findSubCategories(
+        @PathVariable Long mainCategoryId) {
+
+        FindSubCategoriesResponse findSubCategoriesResponse = categoryService.findSubCategoriesByMainCategory(
+            mainCategoryId);
+        return ResponseEntity.ok(findSubCategoriesResponse);
+    }
 
     @ExceptionHandler(DuplicateCategoryNameException.class)
     public ResponseEntity<ErrorTemplate> handleException(

@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.global.fixture;
+package com.prgrms.nabmart.domain.cart.support;
 
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.user.User;
