@@ -39,3 +39,8 @@ jwt:
   issuer: ${ISSUER}
   client-secret: ${CLIENT_SECRET}
   expiry-seconds: ${EXPIRY_SECONDS}
+
+payment:
+  toss:
+    success_url: ${TOSS_SUCCESS_URL}
+    fail_url: ${TOSS_FAIL_URL}

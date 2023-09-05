@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/pays")
+@RequestMapping("/api/v1/pays")
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -21,7 +21,7 @@ public class PaymentController {
             @RequestBody @Valid PaymentRequest paymentRequest,
             @PathVariable Long orderId
     ) {
-        PaymentCommand paymentCommand = PaymentCommand.from(paymentRequest);
+        PaymentCommand paymentCommand = PaymentCommand.from(paymentRequest.paymentType());
         return ResponseEntity.ok(paymentService.pay(orderId, paymentCommand));
     }
 }

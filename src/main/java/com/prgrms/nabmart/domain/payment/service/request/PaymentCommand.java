@@ -1,6 +1,5 @@
 package com.prgrms.nabmart.domain.payment.service.request;
 
-import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
 import jakarta.validation.constraints.NotBlank;
 
 public record PaymentCommand (
@@ -8,9 +7,7 @@ public record PaymentCommand (
         String paymentType
 ) {
 
-    public static PaymentCommand from(PaymentRequest paymentRequest) {
-        return new PaymentCommand(
-                paymentRequest.paymentType()
-        );
+    public static PaymentCommand from(String paymentType) {
+        return new PaymentCommand(paymentType);
     }
 }

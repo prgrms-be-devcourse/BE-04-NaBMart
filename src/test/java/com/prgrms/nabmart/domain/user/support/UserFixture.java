@@ -11,8 +11,9 @@ public class UserFixture {
     private static final String PROVIDER_ID = "123123";
     private static final UserRole USER_ROLE = UserRole.ROLE_USER;
 
-    public static User getUser() {
+    public static User getUser(long userId) {
         return User.builder()
+                .userId(userId)
                 .userRole(USER_ROLE)
                 .nickname(NICKNAME)
                 .email(EMAIL)
