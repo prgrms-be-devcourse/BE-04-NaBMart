@@ -14,7 +14,7 @@ import com.prgrms.nabmart.domain.event.repository.EventItemRepository;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
+import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.global.fixture.CategoryFixture;
 import com.prgrms.nabmart.global.fixture.EventFixture;
@@ -93,7 +93,7 @@ class EventItemServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> eventItemService.registerEventItems(command))
-                .isInstanceOf(NotExistsItemException.class);
+                .isInstanceOf(NotFoundItemException.class);
         }
 
         @Test

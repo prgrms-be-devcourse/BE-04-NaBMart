@@ -3,12 +3,12 @@ package com.prgrms.nabmart.domain.event.service;
 import com.prgrms.nabmart.domain.event.domain.Event;
 import com.prgrms.nabmart.domain.event.domain.EventItem;
 import com.prgrms.nabmart.domain.event.exception.DuplicateEventItemException;
-import com.prgrms.nabmart.domain.event.exception.NotExistsEventException;
+import com.prgrms.nabmart.domain.event.exception.NotFoundEventException;
 import com.prgrms.nabmart.domain.event.repository.EventItemRepository;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
+import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +27,14 @@ public class EventItemService {
     @Transactional
     public Long registerEventItems(RegisterEventItemsCommand registerEventItemsCommand) {
         Event event = eventRepository.findById(registerEventItemsCommand.eventId())
-            .orElseThrow(() -> new NotExistsEventException("존재하지 않는 이벤트입니다."));
+            .orElseThrow(() -> new NotFoundEventException("존재하지 않는 이벤트입니다."));
 
         List<EventItem> eventItems = new ArrayList<>();
         List<Long> duplicatedItemIdList = new ArrayList<>();
 
         registerEventItemsCommand.items().forEach(itemId -> {
             Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotExistsItemException("존재하지 않는 아이템입니다."));
+                .orElseThrow(() -> new NotFoundItemException("존재하지 않는 아이템입니다."));
 
             if (eventItemRepository.existsByEventAndItem(event, item)) { // item 중복
                 duplicatedItemIdList.add(itemId);
