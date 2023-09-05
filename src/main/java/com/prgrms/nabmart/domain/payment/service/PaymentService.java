@@ -32,7 +32,7 @@ public class PaymentService {
     String failCallBackUrl;
 
     @Transactional
-    public PaymentResponse pay(Long orderId, PaymentCommand paymentCommand) {
+    public PaymentResponse pay(final Long orderId, final PaymentCommand paymentCommand) {
         final Order order = getOrderByOrderId(orderId);
 
         validateOrder(order);
@@ -41,17 +41,17 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         return new PaymentResponse(
-                paymentCommand.paymentType(),
-                order.getPrice(),
-                order.getOrderId(),
-                order.getName(),
-                order.getUser().getEmail(),
-                order.getUser().getNickname(),
-                successCallBackUrl,
-                failCallBackUrl);
-        }
+            paymentCommand.paymentType(),
+            order.getPrice(),
+            order.getOrderId(),
+            order.getName(),
+            order.getUser().getEmail(),
+            order.getUser().getNickname(),
+            successCallBackUrl,
+            failCallBackUrl);
+    }
 
-    private void validateOrder(Order order) {
+    private void validateOrder(final Order order) {
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new DuplicatePayException("이미 결제가 완료된 order 입니다.");
         }
@@ -59,15 +59,15 @@ public class PaymentService {
 
     private Payment buildPayment(PaymentCommand paymentCommand, Order order) {
         return Payment.builder()
-                .order(order)
-                .user(order.getUser())
-                .paymentType(PaymentType.valueOf(paymentCommand.paymentType()))
-                .paymentStatus(PaymentStatus.PENDING)
-                .build();
+            .order(order)
+            .user(order.getUser())
+            .paymentType(PaymentType.valueOf(paymentCommand.paymentType()))
+            .paymentStatus(PaymentStatus.PENDING)
+            .build();
     }
 
     private Order getOrderByOrderId(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundOrderException("order 가 존재하지 않습니다."));
+            .orElseThrow(() -> new NotFoundOrderException("order 가 존재하지 않습니다."));
     }
 }
