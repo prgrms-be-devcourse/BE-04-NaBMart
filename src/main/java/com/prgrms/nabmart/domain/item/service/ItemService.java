@@ -23,19 +23,18 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
-        PageRequest pageRequest = PageRequest.of(findNewItemsCommand.page(),
-            findNewItemsCommand.pageSize());
+        PageRequest pageRequest = PageRequest.of(0, findNewItemsCommand.pageSize());
 
-        Page<Item> items = findNewItemsSorted(findNewItemsCommand.sortType(), pageRequest);
+        Page<Item> items = findNewItemsSorted(findNewItemsCommand.sortType(), pageRequest, findNewItemsCommand.lastItemId());
 
         List<FindItemResponse> findItemResponses = items.stream().map(item -> new FindItemResponse(
             item.getItemId(),
             item.getName(),
             item.getPrice(),
             item.getDiscount(),
-            item.getReviewList().size(),
-            item.getLikeItemList().size(),
-            item.getReviewList().stream().mapToDouble(Review::getRate).average()
+            item.getReviews().size(),
+            item.getLikeItems().size(),
+            item.getReviews().stream().mapToDouble(Review::getRate).average()
                 .orElse(0.0)
         )).toList();
         PageInfoResponse pageInfoResponse = new PageInfoResponse(items.getNumber(),
@@ -44,7 +43,7 @@ public class ItemService {
     }
 
     private Page<Item> findNewItemsSorted(final ItemSortType itemSortType,
-        final PageRequest pageRequest) {
+        final PageRequest pageRequest, final int lastItemId) {
         LocalDateTime createdAt = LocalDateTime.now().minus(2, ChronoUnit.WEEKS);
 
         return switch (itemSortType) {

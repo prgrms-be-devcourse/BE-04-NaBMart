@@ -51,6 +51,10 @@ public class Item extends BaseTimeEntity {
     @Column(nullable = false)
     private int maxBuyQuantity;
 
+    @ColumnDefault("0.0")
+    @Column(nullable = false)
+    private double rate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_category_id")
     private MainCategory mainCategory;
@@ -60,10 +64,10 @@ public class Item extends BaseTimeEntity {
     private SubCategory subCategory;
     
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    private List<Review> reviewList = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    private List<LikeItem> likeItemList = new ArrayList<>();
+    private List<LikeItem> likeItems = new ArrayList<>();
 
     @Builder
     public Item(String name, int price, String description, int quantity, int discount,
@@ -76,6 +80,7 @@ public class Item extends BaseTimeEntity {
         this.maxBuyQuantity = maxBuyQuantity;
         this.mainCategory = mainCategory;
         this.subCategory = subCategory;
+        this.rate = 0.0;
     }
 
     @Builder
@@ -87,5 +92,6 @@ public class Item extends BaseTimeEntity {
         this.quantity = quantity;
         this.discount = discount;
         this.maxBuyQuantity = maxBuyQuantity;
+        this.rate = 0.0;
     }
 }

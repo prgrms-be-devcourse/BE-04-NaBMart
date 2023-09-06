@@ -4,7 +4,7 @@ import static java.util.Objects.isNull;
 
 import com.prgrms.nabmart.domain.event.exception.NotExistsEventException;
 import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.exception.NotExistsItemException;
+import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -49,7 +49,7 @@ public class EventItem extends BaseTimeEntity {
 
     private void validateItem(Item item) {
         if (isNull(item)) {
-            throw new NotExistsItemException("Item이 존재하지 않습니다.");
+            throw new NotFoundItemException("Item이 존재하지 않습니다.");
         }
     }
 }

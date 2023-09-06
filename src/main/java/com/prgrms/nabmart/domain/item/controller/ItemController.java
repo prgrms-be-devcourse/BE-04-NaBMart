@@ -19,7 +19,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/new")
-    public ResponseEntity<FindItemsResponse> findNewItems(@RequestParam final int page,
+    public ResponseEntity<FindItemsResponse> findNewItems(@RequestParam final int lastItemId,
         @RequestParam final int pageSize, @RequestParam(required = false) final String sort
     ) {
         ItemSortType sortType = ItemSortType.DEFAULT;
@@ -27,7 +27,7 @@ public class ItemController {
             sortType = ItemSortType.valueOf(sort);
         }
 
-        FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(page, pageSize, sortType);
+        FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(lastItemId, pageSize, sortType);
         return ResponseEntity.ok(itemService.findNewItems(findNewItemsCommand));
     }
 
