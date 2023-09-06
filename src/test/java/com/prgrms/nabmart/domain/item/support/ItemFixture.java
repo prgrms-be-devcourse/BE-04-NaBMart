@@ -3,6 +3,8 @@ package com.prgrms.nabmart.domain.item.support;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.ItemSortType;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
 import java.util.List;
@@ -21,6 +23,7 @@ public final class ItemFixture {
     private static final int LIKE_COUNT = 0;
     private static final int RATE = 0;
     private static final int MAX_QUANTITY = 10;
+    private static final String ITEM_SORT_TYPE = ItemSortType.NEW.name();
 
     public static Item item(MainCategory mainCategory, SubCategory subCategory) {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, mainCategory,
@@ -36,4 +39,10 @@ public final class ItemFixture {
             LIKE_COUNT,
             RATE);
     }
+
+    public static FindItemsByMainCategoryCommand findItemsByMainCategoryCommand(
+        String mainCategoryName) {
+        return FindItemsByMainCategoryCommand.of(10L, mainCategoryName, 3, ITEM_SORT_TYPE);
+    }
+
 }
