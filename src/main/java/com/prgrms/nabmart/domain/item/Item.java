@@ -40,6 +40,9 @@ public class Item extends BaseTimeEntity {
     @Column
     private String description;
 
+    @Column
+    private double rate;
+    
     @Column(nullable = false)
     private int quantity;
 
