@@ -60,10 +60,10 @@ public class Item extends BaseTimeEntity {
     private SubCategory subCategory;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    private List<Review> reviewList = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    private List<LikeItem> likeItemList = new ArrayList<>();
+    private List<LikeItem> likeItems = new ArrayList<>();
 
     @Builder
     public Item(String name, int price, String description, int quantity, int discount,
