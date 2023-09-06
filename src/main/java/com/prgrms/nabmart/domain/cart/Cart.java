@@ -3,7 +3,7 @@ package com.prgrms.nabmart.domain.cart;
 import static java.util.Objects.isNull;
 
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.exception.NotExistUserException;
+import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -42,7 +42,7 @@ public class Cart extends BaseTimeEntity {
         final User user
     ) {
         if (isNull(user)) {
-            throw new NotExistUserException("User 가 존재하지 않습니다.");
+            throw new NotFoundUserException("User 가 존재하지 않습니다.");
         }
     }
 }

@@ -2,8 +2,8 @@ package com.prgrms.nabmart.domain.review;
 
 import static java.util.Objects.isNull;
 
-import com.prgrms.nabmart.domain.cart.exception.InvalidCartItemException;
 import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.review.exception.InvalidReviewException;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
@@ -72,14 +72,14 @@ public class Review {
         final Item item
     ) {
         if (isNull(item)) {
-            throw new InvalidCartItemException("Item 이 존재하지 않습니다.");
+            throw new NotFoundItemException("Item 이 존재하지 않습니다.");
         }
     }
 
     public void validateRate(
         double rate
     ) {
-        if (0 < rate) {
+        if (0 > rate) {
             throw new InvalidReviewException("평점은 양수여야 합니다.");
         }
 
@@ -91,6 +91,10 @@ public class Review {
     public void validateContent(
         final String content
     ) {
+        if (content.isBlank()) {
+            throw new InvalidReviewException("리뷰 내용은 1자 이상이어야 합니다.");
+        }
+
         if (content.length() > MAX_CONTENT) {
             throw new InvalidReviewException("리뷰 내용은 100자를 넘을 수 없습니다.");
         }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RegisterReviewRequestFixture {
 
-    public static RegisterReviewRequest registerReviewRequestFixture(
+    public static RegisterReviewRequest registerReviewRequest(
         Long itemId, double rate, String content
     ) {
         return new RegisterReviewRequest(itemId, rate, content);
