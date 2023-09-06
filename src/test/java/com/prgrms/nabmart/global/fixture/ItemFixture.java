@@ -3,6 +3,8 @@ package com.prgrms.nabmart.global.fixture;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.LikeItem;
+import com.prgrms.nabmart.domain.user.User;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,5 +21,9 @@ public final class ItemFixture {
     public static Item item(MainCategory mainCategory, SubCategory subCategory) {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, mainCategory,
             subCategory);
+    }
+
+    public static LikeItem likeItem(User user, Item item) {
+        return new LikeItem(user, item);
     }
 }
