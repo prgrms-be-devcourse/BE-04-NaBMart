@@ -20,10 +20,10 @@ public class ItemService {
     private final MainCategoryRepository mainCategoryRepository;
 
     @Transactional(readOnly = true)
-    public FindItemsResponse findItemsByMainCategory(Long previousItemId, Long mainCategoryId,
+    public FindItemsResponse findItemsByMainCategory(Long previousItemId, String mainCategoryName,
         int pageSize) {
-
-        MainCategory mainCategory = mainCategoryRepository.findById(mainCategoryId)
+        MainCategory mainCategory = mainCategoryRepository.findByName(
+                mainCategoryName.toLowerCase())
             .orElseThrow(() -> new NotFoundCategoryException("없는 대카테고리입니다."));
         PageRequest pageRequest = PageRequest.of(0, pageSize);
         List<Item> items = itemRepository.findByItemIdLessThanAndMainCategoryOrderByItemIdDesc(

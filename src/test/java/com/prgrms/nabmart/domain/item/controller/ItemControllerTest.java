@@ -27,7 +27,7 @@ class ItemControllerTest extends BaseControllerTest {
             // Given
             Long previousItemId = 5L;
             int size = 3;
-            Long main = 1L;
+            String main = "mainCategory";
             when(itemService.findItemsByMainCategory(previousItemId, main, size)).thenReturn(
                 findItemsResponse);
 
@@ -35,13 +35,13 @@ class ItemControllerTest extends BaseControllerTest {
             mockMvc.perform(get("/api/v1/items")
                     .queryParam("previousItemId", "5")
                     .queryParam("size", "3")
-                    .queryParam("main", "1"))
+                    .queryParam("main", main))
                 .andExpect(status().isOk())
                 .andDo(restDocs.document(
                     queryParameters(
                         parameterWithName("previousItemId").description("마지막에 조회한 아이템 Id"),
                         parameterWithName("size").description("조회할 아이템 수"),
-                        parameterWithName("main").description("대카테고리 Id")
+                        parameterWithName("main").description("대카테고리명")
                     )
                 ));
 

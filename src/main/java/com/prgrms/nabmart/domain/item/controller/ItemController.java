@@ -20,7 +20,7 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<FindItemsResponse> findItemsByMainCategory(
-        @RequestParam Long previousItemId, @RequestParam int size, @RequestParam Long main) {
+        @RequestParam Long previousItemId, @RequestParam int size, @RequestParam String main) {
 
         FindItemsResponse findItemsResponse = itemService.findItemsByMainCategory(previousItemId,
             main, size);

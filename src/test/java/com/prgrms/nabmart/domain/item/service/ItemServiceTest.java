@@ -57,14 +57,14 @@ class ItemServiceTest {
                 ItemFixture.item(mainCategory, subCategory4)
             );
 
-            when(mainCategoryRepository.findById(anyLong())).thenReturn(
+            when(mainCategoryRepository.findByName(any())).thenReturn(
                 Optional.of(mainCategory));
             when(itemRepository.findByItemIdLessThanAndMainCategoryOrderByItemIdDesc(anyLong(),
                 any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(5L,
-                1L, 2);
+                "mainCategory", 2);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(4);
