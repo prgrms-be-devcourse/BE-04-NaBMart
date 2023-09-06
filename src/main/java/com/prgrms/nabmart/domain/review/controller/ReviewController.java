@@ -30,7 +30,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    private static final String BASE_URL = "/api/v1/reviews/";
+    private static final String BASE_URI = "/api/v1/reviews/";
 
     @PostMapping
     public ResponseEntity<Void> registerReview(
@@ -44,7 +44,7 @@ public class ReviewController {
 
         Long reviewId = reviewService.registerReview(registerReviewCommand);
 
-        URI location = URI.create(BASE_URL + reviewId);
+        URI location = URI.create(BASE_URI + reviewId);
 
         return ResponseEntity.created(location).build();
     }
