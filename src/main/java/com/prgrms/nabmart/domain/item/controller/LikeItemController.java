@@ -2,12 +2,15 @@ package com.prgrms.nabmart.domain.item.controller;
 
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
 import com.prgrms.nabmart.domain.item.service.LikeItemService;
+import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.RegisterLikeItemCommand;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,11 +28,21 @@ public class LikeItemController {
     @PostMapping
     public ResponseEntity<Void> registerLikeItem(
         @RequestBody @Valid RegisterLikeItemRequest registerLikeItemRequest,
-        @LoginUser Long userId) {
+        @LoginUser final Long userId) {
         RegisterLikeItemCommand registerLikeItemCommand
             = RegisterLikeItemCommand.of(userId, registerLikeItemRequest.itemId());
         Long likeItemId = likeItemService.registerLikeItem(registerLikeItemCommand);
         URI location = URI.create(BASE_URI + likeItemId);
         return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping("/{likeItemId}")
+    public ResponseEntity<Void> deleteLikeItem(
+        @PathVariable final Long likeItemId,
+        @LoginUser final Long userId
+    ) {
+        DeleteLikeItemCommand deleteLikeItemCommand = DeleteLikeItemCommand.of(userId, likeItemId);
+        likeItemService.deleteLikeItem(deleteLikeItemCommand);
+        return ResponseEntity.noContent().build();
     }
 }
