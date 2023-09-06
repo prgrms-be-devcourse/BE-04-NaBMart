@@ -4,10 +4,8 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.exception.DuplicateLikeItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
-import com.prgrms.nabmart.domain.item.exception.NotFoundLikeItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.repository.LikeItemRepository;
-import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.RegisterLikeItemCommand;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
@@ -50,5 +48,4 @@ public class LikeItemService {
         return itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
     }
-
 }
