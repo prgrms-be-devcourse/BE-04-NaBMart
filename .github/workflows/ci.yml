@@ -1,3 +1,5 @@
+name: CI-Backend
+
 on:
   push:
     branches: [ "develop", "main" ]
@@ -6,6 +8,9 @@ on:
 
 permissions:
   contents: read
+  # PR 코멘트 등록을 위한 write 권한
+  checks: write
+  pull-requests: write
 
 jobs:
   build:
@@ -13,20 +18,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v3
 
-    ## gradle 권한 주기
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
-      shell: bash
+      # Java version 세팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    ## gradle build
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-      with:
-        arguments: build
+      # 빌드 시 캐시 적용
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      ## gradle 권한 주기
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      # 빌드
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      ## 테스트 결과 PR 코멘트에 등록
+      - name: Register the test results as PR comments
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: '**/build/test-results/test/TEST-*.xml'
+
+      ## 테스트 실패시 코드 라인에 대한 체크 추가
+      - name: If test fail, add check comment on failed code line
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.html'
