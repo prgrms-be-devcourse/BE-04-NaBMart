@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.review.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -13,8 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.review.controller.request.UpdateReviewRequest;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.support.RegisterReviewCommandFixture;
+import com.prgrms.nabmart.domain.review.support.UpdateReviewRequestFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -74,6 +77,39 @@ class ReviewControllerTest extends BaseControllerTest {
             ResultActions resultActions = mockMvc.perform(
                 delete("/api/v1/reviews/{reviewId}", reviewId)
                     .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(print())
+                .andDo(
+                    restDocs.document(
+                        pathParameters(
+                            parameterWithName("reviewId").description("reviewId")
+                        )
+                    )
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("리뷰 수정 API 실행 시")
+    class UpdateReviewAPITest {
+
+        @Test
+        @DisplayName("성공")
+        void updateReview() throws Exception {
+            // given
+            Long reviewId = 1L;
+            UpdateReviewRequest updateReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
+                5, "내공냠냠"
+            );
+
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/v1/reviews/{reviewId}", reviewId)
+                    .content(objectMapper.writeValueAsString(updateReviewRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+            );
 
             // then
             resultActions.andExpect(status().isNoContent())
