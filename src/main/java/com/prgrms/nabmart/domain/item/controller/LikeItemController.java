@@ -29,7 +29,7 @@ public class LikeItemController {
         RegisterLikeItemCommand registerLikeItemCommand
             = RegisterLikeItemCommand.of(userId, registerLikeItemRequest.itemId());
         Long likeItemId = likeItemService.registerLikeItem(registerLikeItemCommand);
-        URI location = URI.create("/api/v1/likes/" + likeItemId);
+        URI location = URI.create(BASE_URI + likeItemId);
         return ResponseEntity.created(location).build();
     }
 }
