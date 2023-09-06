@@ -1,6 +1,9 @@
-package com.prgrms.nabmart.domain.item.domain;
+package com.prgrms.nabmart.domain.coupon;
 
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.global.BaseTimeEntity;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -8,31 +11,33 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "like_item")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LikeItem {
+public class UserCoupon extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long likeItemId;
+    private Long userCouponId;
+
+    @Column(nullable = false)
+    private boolean isUsed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
 
-    public LikeItem(User user, Item item) {
+    public UserCoupon(User user, Coupon coupon) {
         this.user = user;
-        this.item = item;
+        this.coupon = coupon;
+        isUsed = true;
     }
 }

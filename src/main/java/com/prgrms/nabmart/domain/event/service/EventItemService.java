@@ -7,7 +7,7 @@ import com.prgrms.nabmart.domain.event.exception.NotFoundEventException;
 import com.prgrms.nabmart.domain.event.repository.EventItemRepository;
 import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.event.service.request.RegisterEventItemsCommand;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

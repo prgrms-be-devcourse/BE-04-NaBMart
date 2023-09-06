@@ -1,8 +1,9 @@
 package com.prgrms.nabmart.domain.review;
 
+
 import static java.util.Objects.isNull;
 
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.review.exception.InvalidReviewException;
 import com.prgrms.nabmart.domain.user.User;

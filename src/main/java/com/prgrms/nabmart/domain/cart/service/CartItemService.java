@@ -9,7 +9,7 @@ import com.prgrms.nabmart.domain.cart.service.request.RegisterCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.request.UpdateCartItemCommand;
 import com.prgrms.nabmart.domain.cart.service.response.FindCartItemResponse;
 import com.prgrms.nabmart.domain.cart.service.response.FindCartItemsResponse;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.user.User;
