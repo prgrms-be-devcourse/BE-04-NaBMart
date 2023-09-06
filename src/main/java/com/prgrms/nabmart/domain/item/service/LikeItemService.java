@@ -45,10 +45,9 @@ public class LikeItemService {
     }
 
     private void checkDuplicateLikedItem(final User user, final Item item) {
-        likeItemRepository.findByUserAndItem(user, item)
-            .ifPresent(likeItem -> {
-                throw new DuplicateLikeItemException("이미 찜한 상품입니다.");
-            });
+        if (likeItemRepository.existsByUserAndItem(user, item)) {
+            throw new DuplicateLikeItemException("이미 찜한 상품입니다.");
+        }
     }
 
     private User findUserByUserId(final Long userId) {

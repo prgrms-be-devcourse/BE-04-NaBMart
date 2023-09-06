@@ -67,6 +67,8 @@ class LikeItemServiceTest {
             //given
             given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
             given(itemRepository.findById(any())).willReturn(Optional.ofNullable(item));
+            given(likeItemRepository.existsByUserAndItem(any(), any()))
+                .willReturn(false);
 
             //when
             likeItemService.registerLikeItem(registerLikeItemCommand);
@@ -106,8 +108,8 @@ class LikeItemServiceTest {
             //given
             given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
             given(itemRepository.findById(any())).willReturn(Optional.ofNullable(item));
-            given(likeItemRepository.findByUserAndItem(any(), any()))
-                .willReturn(Optional.ofNullable(likeItem));
+            given(likeItemRepository.existsByUserAndItem(any(), any()))
+                .willReturn(true);
 
             //when
             //then

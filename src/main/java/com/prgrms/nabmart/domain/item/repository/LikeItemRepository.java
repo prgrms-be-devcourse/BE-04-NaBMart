@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LikeItemRepository extends JpaRepository<LikeItem, Long> {
 
     Optional<LikeItem> findByUserAndItem(User user, Item item);
+
+    boolean existsByUserAndItem(User user, Item item);
 }
