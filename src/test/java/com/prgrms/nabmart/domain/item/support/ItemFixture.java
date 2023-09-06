@@ -5,6 +5,7 @@ import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
+import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
@@ -25,6 +26,8 @@ public final class ItemFixture {
     private static final int LIKE_COUNT = 0;
     private static final int RATE = 0;
     private static final int MAX_QUANTITY = 10;
+    private static final Long USER_ID = 1L;
+    private static final Long LIKE_ITEM_ID = 1L;
 
     public static Item item(MainCategory mainCategory, SubCategory subCategory) {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, mainCategory,
@@ -47,5 +50,9 @@ public final class ItemFixture {
 
     public static RegisterLikeItemRequest registerLikeItemRequest() {
         return new RegisterLikeItemRequest(ITEM_ID);
+    }
+
+    public static DeleteLikeItemCommand deleteLikeItemCommand() {
+        return new DeleteLikeItemCommand(USER_ID, LIKE_ITEM_ID);
     }
 }
