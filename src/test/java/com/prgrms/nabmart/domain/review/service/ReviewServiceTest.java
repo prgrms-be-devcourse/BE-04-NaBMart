@@ -81,4 +81,24 @@ class ReviewServiceTest {
             then(reviewRepository).should().save(any());
         }
     }
+
+    @Nested
+    @DisplayName("리뷰 삭제 Service 실행 시")
+    class DeleteReviewTest {
+
+        @Test
+        @DisplayName("성공")
+        void deleteReview() {
+            // given
+            Long reviewId = 1L;
+
+            given(reviewRepository.findById(any())).willReturn(Optional.ofNullable(givenReview));
+
+            // when
+            reviewService.deleteReview(reviewId);
+
+            // then
+            then(reviewRepository).should().delete(any());
+        }
+    }
 }
