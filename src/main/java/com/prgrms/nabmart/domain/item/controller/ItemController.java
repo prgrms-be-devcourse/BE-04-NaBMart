@@ -19,11 +19,14 @@ public class ItemController {
 
     private final ItemService itemService;
     private final String DEFAULT_PREVIOUS_ID = "-1";
+    private final String DEFAULT_ITEM_SORT_TYPE = "POPULAR";
 
     @GetMapping
     public ResponseEntity<FindItemsResponse> findItemsByMainCategory(
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long previousItemId,
-        @RequestParam int size, @RequestParam String main, @RequestParam String sort) {
+        @RequestParam int size,
+        @RequestParam String main,
+        @RequestParam String sort) {
 
         FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = FindItemsByMainCategoryCommand.of(
             previousItemId, main, size, sort);
