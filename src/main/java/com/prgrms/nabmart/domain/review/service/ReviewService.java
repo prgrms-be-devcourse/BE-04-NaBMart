@@ -5,6 +5,7 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.review.Review;
+import com.prgrms.nabmart.domain.review.exception.NotFoundReviewException;
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.user.User;
@@ -42,5 +43,15 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(review);
 
         return savedReview.getReviewId();
+    }
+
+    @Transactional
+    public void deleteReview(
+        final Long reviewId
+    ) {
+        Review foundReview = reviewRepository.findById(reviewId)
+            .orElseThrow(() -> new NotFoundReviewException("해당 리뷰를 찾을 수 없습니다."));
+
+        reviewRepository.delete(foundReview);
     }
 }
