@@ -1,11 +1,19 @@
 package com.prgrms.nabmart.domain.item.service;
 
+import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.item.domain.ItemSortType;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
-import com.prgrms.nabmart.domain.item.service.response.FindItemResponse;
-import java.util.Collections;
-import java.util.Comparator;
+import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.PageInfoResponse;
+import com.prgrms.nabmart.domain.review.Review;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,36 +22,43 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    private static final double REVIEW_WEIGHT = 0.4;
-    private static final double RATING_WEIGHT = 0.3;
-    private static final double LIKE_WEIGHT = 0.3;
+    public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
+        PageRequest pageRequest = PageRequest.of(findNewItemsCommand.page(),
+            findNewItemsCommand.pageSize());
 
+        Page<Item> items = findNewItemsSorted(findNewItemsCommand.sortType(), pageRequest);
 
-    private List<FindItemResponse> orderByPopularity(List<FindItemResponse> items) {
-        Comparator<FindItemResponse> popularityComparator = new Comparator<FindItemResponse>() {
-            @Override
-            public int compare(FindItemResponse item1, FindItemResponse item2) {
-                double popularity1 = calculatePopularity(item1);
-                double popularity2 = calculatePopularity(item2);
+        List<FindItemResponse> findItemResponses = items.stream().map(item -> new FindItemResponse(
+            item.getItemId(),
+            item.getName(),
+            item.getPrice(),
+            item.getDiscount(),
+            item.getReviewList().size(),
+            item.getLikeItemList().size(),
+            item.getReviewList().stream().mapToDouble(Review::getRate).average()
+                .orElse(0.0)
+        )).toList();
+        PageInfoResponse pageInfoResponse = new PageInfoResponse(items.getNumber(),
+            items.getTotalPages(), items.getTotalElements());
+        return FindItemsResponse.of(pageInfoResponse, findItemResponses);
+    }
 
-                if (popularity1 < popularity2) {
-                    return 1;
-                } else if (popularity1 > popularity2) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
+    private Page<Item> findNewItemsSorted(final ItemSortType itemSortType,
+        final PageRequest pageRequest) {
+        LocalDateTime createdAt = LocalDateTime.now().minus(2, ChronoUnit.WEEKS);
+
+        return switch (itemSortType) {
+            case HIGHEST_AMOUNT ->
+                itemRepository.findByCreatedAtAfterOrderByPriceDesc(createdAt, pageRequest);
+            case LOWEST_AMOUNT ->
+                itemRepository.findByCreatedAtAfterOrderByPriceAsc(createdAt, pageRequest);
+            case NEW ->
+                itemRepository.findByCreatedAtAfterOrderByCreatedAtDesc(createdAt, pageRequest);
+            case DISCOUNT ->
+                itemRepository.findByCreatedAtAfterOrderByDiscountDesc(createdAt, pageRequest);
+            case POPULAR -> itemRepository.findNewItemsOrderByPopularity(createdAt, pageRequest);
+            default -> itemRepository.findByCreatedAtAfter(createdAt, pageRequest);
         };
-        Collections.sort(items, popularityComparator);
-        return items;
     }
 
-    private double calculatePopularity(FindItemResponse item) {
-        double reviewScore = item.reviewCount() * REVIEW_WEIGHT;
-        double ratingScore = item.rate() * RATING_WEIGHT;
-        double likeScore = item.like() * LIKE_WEIGHT;
-
-        return reviewScore + ratingScore + likeScore;
-    }
 }
