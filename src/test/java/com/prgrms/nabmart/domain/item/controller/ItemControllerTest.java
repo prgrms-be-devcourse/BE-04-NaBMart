@@ -69,7 +69,8 @@ class ItemControllerTest extends BaseControllerTest {
             // Given
             Long itemId = 1L;
             FindItemDetailResponse response = FindItemDetailResponse.of(
-                itemId, "name", 3000, "description", 10, 4.5, 10, 300, 30, 5
+                itemId, "name", 3000, "description", 10, 4.5,
+                10, 300, 30, 5
             );
 
             given(itemService.findItemDetail(any())).willReturn(response);
