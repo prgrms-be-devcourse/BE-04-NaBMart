@@ -10,7 +10,6 @@ import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.
 import com.prgrms.nabmart.domain.event.service.response.FindEventDetailResponse.EventItemResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse;
 import com.prgrms.nabmart.domain.event.service.response.FindEventsResponse.FindEventResponse;
-import com.prgrms.nabmart.domain.review.Review;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +56,7 @@ public class EventService {
                     eventItem.getItem().getDiscount(),
                     eventItem.getItem().getReviews().size(),
                     eventItem.getItem().getLikeItems().size(),
-                    eventItem.getItem().getReviews().stream().mapToDouble(Review::getRate).average()
-                        .orElse(0.0)
+                    eventItem.getItem().getRate()
                 )
             ).collect(Collectors.toList());
 

@@ -23,9 +23,10 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
-        PageRequest pageRequest = PageRequest.of(0, findNewItemsCommand.pageSize());
+        int lastItemId = findNewItemsCommand.lastItemId();
+        int pageSize = findNewItemsCommand.pageSize();
 
-        Page<Item> items = findNewItemsSorted(findNewItemsCommand.sortType(), pageRequest, findNewItemsCommand.lastItemId());
+        List<Item> items = findNewItemsSorted(findNewItemsCommand.sortType());
 
         List<FindItemResponse> findItemResponses = items.stream().map(item -> new FindItemResponse(
             item.getItemId(),
@@ -34,30 +35,33 @@ public class ItemService {
             item.getDiscount(),
             item.getReviews().size(),
             item.getLikeItems().size(),
-            item.getReviews().stream().mapToDouble(Review::getRate).average()
-                .orElse(0.0)
+            item.getRate()
         )).toList();
         PageInfoResponse pageInfoResponse = new PageInfoResponse(items.getNumber(),
             items.getTotalPages(), items.getTotalElements());
         return FindItemsResponse.of(pageInfoResponse, findItemResponses);
     }
 
-    private Page<Item> findNewItemsSorted(final ItemSortType itemSortType,
-        final PageRequest pageRequest, final int lastItemId) {
+    private List<Item> findNewItemsSorted(final ItemSortType itemSortType) {
         LocalDateTime createdAt = LocalDateTime.now().minus(2, ChronoUnit.WEEKS);
 
         return switch (itemSortType) {
             case HIGHEST_AMOUNT ->
-                itemRepository.findByCreatedAtAfterOrderByPriceDesc(createdAt, pageRequest);
+                itemRepository.findByCreatedAtAfterOrderByPriceDesc(createdAt);
             case LOWEST_AMOUNT ->
-                itemRepository.findByCreatedAtAfterOrderByPriceAsc(createdAt, pageRequest);
+                itemRepository.findByCreatedAtAfterOrderByPriceAsc(createdAt);
             case NEW ->
-                itemRepository.findByCreatedAtAfterOrderByCreatedAtDesc(createdAt, pageRequest);
+                itemRepository.findByCreatedAtAfterOrderByCreatedAtDesc(createdAt);
             case DISCOUNT ->
-                itemRepository.findByCreatedAtAfterOrderByDiscountDesc(createdAt, pageRequest);
-            case POPULAR -> itemRepository.findNewItemsOrderByPopularity(createdAt, pageRequest);
-            default -> itemRepository.findByCreatedAtAfter(createdAt, pageRequest);
+                itemRepository.findByCreatedAtAfterOrderByDiscountDesc(createdAt);
+            case POPULAR -> itemRepository.findNewItemsOrderByPopularity(createdAt);
+            default -> itemRepository.findByCreatedAtAfter(createdAt);
         };
+    }
+
+    private Page<Item> fetchPages(Long lastItemId, int size, List<Item> items) {
+        PageRequest pageRequest = PageRequest.of(0, size);
+        return
     }
 
 }
