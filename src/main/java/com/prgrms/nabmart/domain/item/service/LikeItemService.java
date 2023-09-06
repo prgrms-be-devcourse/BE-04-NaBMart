@@ -44,19 +44,19 @@ public class LikeItemService {
         likeItemRepository.delete(likeItem);
     }
 
-    private void checkDuplicateLikedItem(User user, Item item) {
+    private void checkDuplicateLikedItem(final User user, final Item item) {
         likeItemRepository.findByUserAndItem(user, item)
             .ifPresent(likeItem -> {
                 throw new DuplicateLikeItemException("이미 찜한 상품입니다.");
             });
     }
 
-    private User findUserByUserId(Long userId) {
+    private User findUserByUserId(final Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundUserException("존재하지 않는 유저입니다."));
     }
 
-    private Item findItemByItemId(Long itemId) {
+    private Item findItemByItemId(final Long itemId) {
         return itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
     }
