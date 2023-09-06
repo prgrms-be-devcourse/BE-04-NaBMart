@@ -80,7 +80,7 @@ public class User extends BaseTimeEntity {
         }
     }
 
-    public boolean isSameUserId(Long userId) {
+    public boolean isSameUserId(final Long userId) {
         return this.userId.equals(userId);
     }
 }
