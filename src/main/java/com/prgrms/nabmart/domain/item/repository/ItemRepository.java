@@ -24,7 +24,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     // 신상템 - 인기도 순
     @Query("select i from Item i left join Review r on i = r.item left join LikeItem li on i = li.item where i.createdAt > :createdAt group by i order by count(li) * 0.3 + count(r) * 0.3 + avg(r.rate) * 0.4 desc")
-    Page<Item> findNewItemsOrderByPopularity(@Param("createdAt") LocalDateTime createdAt, Pageable pageable);
+    Page<Item> findNewItemsOrderByPopularity(@Param("createdAt") LocalDateTime createdAt,
+        Pageable pageable);
 
     // 신상템 - 기본 순
     Page<Item> findByCreatedAtAfter(LocalDateTime createdAt, Pageable pageable);
