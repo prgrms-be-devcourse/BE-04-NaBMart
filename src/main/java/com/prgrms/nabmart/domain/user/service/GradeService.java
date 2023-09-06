@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +26,9 @@ public class GradeService {
 
     private final UserRepository userRepository;
     private final EntityManager entityManager;
-    
+
+    @Async
+    @Scheduled(cron = "0 0 5 1 * *")
     @Transactional
     public void updateUserGrade() {
         long totalUserCount = userRepository.count();
