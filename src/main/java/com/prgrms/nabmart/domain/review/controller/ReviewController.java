@@ -1,9 +1,11 @@
 package com.prgrms.nabmart.domain.review.controller;
 
 import com.prgrms.nabmart.domain.review.controller.request.RegisterReviewRequest;
+import com.prgrms.nabmart.domain.review.controller.request.UpdateReviewRequest;
 import com.prgrms.nabmart.domain.review.exception.ReviewException;
 import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
+import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +54,22 @@ public class ReviewController {
         @PathVariable Long reviewId
     ) {
         reviewService.deleteReview(reviewId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{reviewId}")
+    public ResponseEntity<Void> updateReview(
+        @PathVariable final Long reviewId,
+        @Valid @RequestBody UpdateReviewRequest updateReviewRequest
+    ) {
+        UpdateReviewCommand updateReviewCommand = UpdateReviewCommand.of(
+            reviewId,
+            updateReviewRequest.rate(),
+            updateReviewRequest.content()
+        );
+
+        reviewService.updateReview(updateReviewCommand);
 
         return ResponseEntity.noContent().build();
     }
