@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.LikeItem;
+import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
 import com.prgrms.nabmart.domain.user.User;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemFixture {
 
+    private static final Long ITEM_ID = 1L;
     private static final String NAME = "아이템이름";
     private static final int PRICE = 1000;
     private static final String DESCRIPTION = "아이템설명";
@@ -25,5 +27,9 @@ public final class ItemFixture {
 
     public static LikeItem likeItem(User user, Item item) {
         return new LikeItem(user, item);
+    }
+
+    public static RegisterLikeItemRequest registerLikeItemRequest() {
+        return new RegisterLikeItemRequest(ITEM_ID);
     }
 }
