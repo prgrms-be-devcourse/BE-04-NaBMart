@@ -37,10 +37,10 @@ public class CartItemController {
         @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest,
         @LoginUser Long userId
     ) {
-        RegisterCartItemCommand command = RegisterCartItemCommand.of(userId,
+        RegisterCartItemCommand registerCartItemCommand = RegisterCartItemCommand.of(userId,
             registerCartItemRequest.itemId(), registerCartItemRequest.quantity());
 
-        Long cartItemId = cartItemService.registerCartItem(command);
+        Long cartItemId = cartItemService.registerCartItem(registerCartItemCommand);
 
         URI location = URI.create(BASE_URL + cartItemId);
 

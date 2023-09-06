@@ -10,6 +10,7 @@ import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.item.service.ItemService;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
+import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.user.service.UserService;
 import com.prgrms.nabmart.global.auth.oauth.client.OAuthRestClient;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
@@ -68,6 +69,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected PaymentService paymentService;
+
+    @MockBean
+    protected ReviewService reviewService;
 
     @MockBean
     protected ItemService itemService;
