@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.review.support;
 
-import com.prgrms.nabmart.domain.item.domain.Item;
+
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.domain.user.User;
 import lombok.AccessLevel;

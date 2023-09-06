@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.review.service;
 
-import com.prgrms.nabmart.domain.item.domain.Item;
+
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.review.Review;
