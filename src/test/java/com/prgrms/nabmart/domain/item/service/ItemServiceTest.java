@@ -11,6 +11,7 @@ import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -47,6 +48,8 @@ class ItemServiceTest {
         SubCategory subCategory2 = new SubCategory(mainCategory, "sub2");
         SubCategory subCategory3 = new SubCategory(mainCategory, "sub2");
         SubCategory subCategory4 = new SubCategory(mainCategory, "sub2");
+        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = ItemFixture.findItemsByMainCategoryCommand(
+            mainCategory.getName());
 
         @Test
         @DisplayName("성공")
@@ -65,8 +68,8 @@ class ItemServiceTest {
                 any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(5L,
-                "mainCategory", 2);
+            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(
+                findItemsByMainCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(4);
