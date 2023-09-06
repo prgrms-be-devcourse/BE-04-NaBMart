@@ -6,6 +6,8 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.item.ItemSortType;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
 import java.util.List;
@@ -25,6 +27,7 @@ public final class ItemFixture {
     private static final int LIKE_COUNT = 0;
     private static final int RATE = 0;
     private static final int MAX_QUANTITY = 10;
+    private static final String ITEM_SORT_TYPE = ItemSortType.NEW.name();
 
     public static Item item(MainCategory mainCategory, SubCategory subCategory) {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, mainCategory,
@@ -44,6 +47,12 @@ public final class ItemFixture {
             LIKE_COUNT,
             RATE);
     }
+
+    public static FindItemsByMainCategoryCommand findItemsByMainCategoryCommand(
+        String mainCategoryName) {
+        return FindItemsByMainCategoryCommand.of(10L, mainCategoryName, 3, ITEM_SORT_TYPE);
+    }
+
 
     public static RegisterLikeItemRequest registerLikeItemRequest() {
         return new RegisterLikeItemRequest(ITEM_ID);
