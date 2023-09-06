@@ -2,7 +2,7 @@ package com.prgrms.nabmart.global.auth.exception;
 
 public class AuthorizationException extends AuthException {
 
-    public AuthorizationException(String message) {
+    public AuthorizationException(final String message) {
         super(message);
     }
 }

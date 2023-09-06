@@ -36,7 +36,7 @@ public class LikeItem {
         this.item = item;
     }
 
-    public boolean isSameUser(Long userId) {
+    public boolean isSameUser(final Long userId) {
         return user.isSameUserId(userId);
     }
 }
