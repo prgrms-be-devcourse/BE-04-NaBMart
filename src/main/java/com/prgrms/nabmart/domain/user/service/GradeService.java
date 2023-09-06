@@ -3,7 +3,7 @@ package com.prgrms.nabmart.domain.user.service;
 import static java.util.stream.Collectors.groupingBy;
 
 import com.prgrms.nabmart.domain.user.UserGrade;
-import com.prgrms.nabmart.domain.user.repository.UserOrderCount;
+import com.prgrms.nabmart.domain.user.repository.response.UserOrderCount;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;

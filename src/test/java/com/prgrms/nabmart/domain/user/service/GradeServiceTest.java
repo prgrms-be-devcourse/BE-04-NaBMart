@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.repository.UserOrderCount;
+import com.prgrms.nabmart.domain.user.repository.response.UserOrderCount;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import jakarta.persistence.EntityManager;

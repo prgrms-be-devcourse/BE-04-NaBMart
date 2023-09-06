@@ -8,6 +8,7 @@ import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
+import com.prgrms.nabmart.domain.user.repository.response.UserOrderCount;
 import com.prgrms.nabmart.global.config.JpaAuditingConfig;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

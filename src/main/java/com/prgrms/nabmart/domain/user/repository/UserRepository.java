@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.user.repository;
 
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
+import com.prgrms.nabmart.domain.user.repository.response.UserOrderCount;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
