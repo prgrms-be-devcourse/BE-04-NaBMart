@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-class LikeControllerTest extends BaseControllerTest {
+class LikeItemControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("찜 아이템 API 호출 시")
@@ -32,7 +32,7 @@ class LikeControllerTest extends BaseControllerTest {
             //given
             RegisterLikeItemRequest registerLikeItemRequest = ItemFixture.registerLikeItemRequest();
 
-            given(likeService.registerLikeItem(any())).willReturn(1L);
+            given(likeItemService.registerLikeItem(any())).willReturn(1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(post("/api/v1/likes")

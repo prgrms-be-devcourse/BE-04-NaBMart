@@ -10,7 +10,7 @@ import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.LikeItem;
-import com.prgrms.nabmart.domain.item.exception.DuplicateLikeException;
+import com.prgrms.nabmart.domain.item.exception.DuplicateLikeItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.repository.LikeItemRepository;
@@ -30,10 +30,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class LikeServiceTest {
+class LikeItemServiceTest {
 
     @InjectMocks
-    LikeService likeService;
+    LikeItemService likeItemService;
 
     @Mock
     UserRepository userRepository;
@@ -65,7 +65,7 @@ class LikeServiceTest {
             given(itemRepository.findById(any())).willReturn(Optional.ofNullable(item));
 
             //when
-            likeService.registerLikeItem(registerLikeItemCommand);
+            likeItemService.registerLikeItem(registerLikeItemCommand);
 
             //then
             then(likeItemRepository).should().save(any());
@@ -79,7 +79,7 @@ class LikeServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> likeService.registerLikeItem(registerLikeItemCommand))
+            assertThatThrownBy(() -> likeItemService.registerLikeItem(registerLikeItemCommand))
                 .isInstanceOf(NotFoundUserException.class);
         }
 
@@ -92,7 +92,7 @@ class LikeServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> likeService.registerLikeItem(registerLikeItemCommand))
+            assertThatThrownBy(() -> likeItemService.registerLikeItem(registerLikeItemCommand))
                 .isInstanceOf(NotFoundItemException.class);
         }
 
@@ -107,8 +107,8 @@ class LikeServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> likeService.registerLikeItem(registerLikeItemCommand))
-                .isInstanceOf(DuplicateLikeException.class);
+            assertThatThrownBy(() -> likeItemService.registerLikeItem(registerLikeItemCommand))
+                .isInstanceOf(DuplicateLikeItemException.class);
         }
     }
 
