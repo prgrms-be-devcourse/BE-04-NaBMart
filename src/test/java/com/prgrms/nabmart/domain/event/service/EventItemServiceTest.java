@@ -18,7 +18,7 @@ import com.prgrms.nabmart.domain.event.support.EventFixture;
 import com.prgrms.nabmart.domain.event.support.EventItemFixture;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
-import com.prgrms.nabmart.global.fixture.ItemFixture;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
