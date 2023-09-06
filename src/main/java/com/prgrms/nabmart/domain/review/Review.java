@@ -100,4 +100,15 @@ public class Review {
             throw new InvalidReviewException("리뷰 내용은 100자를 넘을 수 없습니다.");
         }
     }
+
+    public void changeRageAndContent(
+        final double rate,
+        final String content
+    ) {
+        validateRate(rate);
+        validateContent(content);
+
+        this.rate = rate;
+        this.content = content;
+    }
 }
