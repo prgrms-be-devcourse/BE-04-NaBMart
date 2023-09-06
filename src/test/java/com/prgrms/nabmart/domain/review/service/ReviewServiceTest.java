@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.review.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -13,8 +14,10 @@ import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
+import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
 import com.prgrms.nabmart.domain.review.support.RegisterReviewCommandFixture;
 import com.prgrms.nabmart.domain.review.support.ReviewFixture;
+import com.prgrms.nabmart.domain.review.support.UpdateReviewCommandFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
@@ -99,6 +102,32 @@ class ReviewServiceTest {
 
             // then
             then(reviewRepository).should().delete(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("리뷰 수정 Service 실행 시")
+    class UpdateReviewTest {
+
+        @Test
+        @DisplayName("성공")
+        void updateReview() {
+            // given
+            Long givenReviewId = 1L;
+            double givenRate = 5;
+            String givenContent = "내공냠냠";
+            UpdateReviewCommand updateReviewCommand = UpdateReviewCommandFixture.updateReviewCommand(
+                givenReviewId, givenRate, givenContent
+            );
+
+            given(reviewRepository.findById(any())).willReturn(Optional.ofNullable(givenReview));
+
+            // when
+            reviewService.updateReview(updateReviewCommand);
+
+            // then
+            assertThat(givenReview.getRate()).isEqualTo(givenRate);
+            assertThat(givenReview.getContent()).isEqualTo(givenContent);
         }
     }
 }

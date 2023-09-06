@@ -35,11 +35,11 @@ public class Review {
     private Long reviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @Column
@@ -99,5 +99,16 @@ public class Review {
         if (content.length() > MAX_CONTENT) {
             throw new InvalidReviewException("리뷰 내용은 100자를 넘을 수 없습니다.");
         }
+    }
+
+    public void changeRageAndContent(
+        final double rate,
+        final String content
+    ) {
+        validateRate(rate);
+        validateContent(content);
+
+        this.rate = rate;
+        this.content = content;
     }
 }
