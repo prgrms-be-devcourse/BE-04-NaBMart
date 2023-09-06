@@ -55,9 +55,9 @@ public class EventService {
                     eventItem.getItem().getName(),
                     eventItem.getItem().getPrice(),
                     eventItem.getItem().getDiscount(),
-                    eventItem.getItem().getReviewList().size(),
-                    eventItem.getItem().getLikeItemList().size(),
-                    eventItem.getItem().getReviewList().stream().mapToDouble(Review::getRate).average()
+                    eventItem.getItem().getReviews().size(),
+                    eventItem.getItem().getLikeItems().size(),
+                    eventItem.getItem().getReviews().stream().mapToDouble(Review::getRate).average()
                         .orElse(0.0)
                 )
             ).collect(Collectors.toList());

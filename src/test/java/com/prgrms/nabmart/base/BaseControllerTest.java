@@ -8,6 +8,7 @@ import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
+import com.prgrms.nabmart.domain.item.service.ItemService;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.user.service.UserService;
@@ -71,6 +72,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected ReviewService reviewService;
+
+    @MockBean
+    protected ItemService itemService;
 
     protected String accessToken;
 
