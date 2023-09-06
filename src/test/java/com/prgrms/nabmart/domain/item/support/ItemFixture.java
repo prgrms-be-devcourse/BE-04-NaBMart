@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.global.fixture;
+package com.prgrms.nabmart.domain.item.support;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
