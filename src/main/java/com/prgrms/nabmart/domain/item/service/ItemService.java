@@ -4,7 +4,10 @@ import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.exception.NotFoundCategoryException;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
+import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
+import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +33,24 @@ public class ItemService {
             previousItemId, mainCategory, pageRequest);
 
         return FindItemsResponse.from(items);
+    }
+
+    @Transactional(readOnly = true)
+    public FindItemDetailResponse findItemDetail(FindItemDetailCommand findItemDetailCommand) {
+        Item item = itemRepository.findById(findItemDetailCommand.itemId())
+            .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
+
+        return FindItemDetailResponse.of(
+            item.getItemId(),
+            item.getName(),
+            item.getPrice(),
+            item.getDescription(),
+            item.getQuantity(),
+            item.getRate(),
+            item.getReviews().size(),
+            item.getDiscount(),
+            item.getLikeItems().size(),
+            item.getMaxBuyQuantity()
+        );
     }
 }
