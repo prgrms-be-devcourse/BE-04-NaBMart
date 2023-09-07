@@ -111,7 +111,20 @@ class ItemControllerTest extends BaseControllerTest {
                             .description("최대 구매 수량")
                     )
                 ));
+        }
+    }
+
+    @Nested
+    @DisplayName("신상품 조회하는 api 호출 시")
+    class FindNewItemsApi {
+
+        @Test
+        @DisplayName("성공")
+        public void findNewItems() throws Exception {
+            // Given
+
 
         }
+
     }
 }

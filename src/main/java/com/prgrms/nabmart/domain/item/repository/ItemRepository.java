@@ -19,8 +19,14 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
         MainCategory mainCategory, Pageable pageable);
 
     // 신상품 - 주문 많은 순
-    @Query("SELECT i FROM Item i WHERE i.createdAt > :createdAt AND SIZE(i.reviews) < :reviews ORDER BY SIZE(i.reviews) DESC, i.itemId DESC")
-    List<Item> findNewItemOrderByOrders(@Param("createdAt") LocalDateTime createdAt, @Param("reviews") int reviews, Pageable pageable);
+    @Query("SELECT i "
+        + "FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "WHERE i.createdAt > :createdAt "
+        + "GROUP BY i "
+        + "HAVING SUM(oi.quantity) < :totalOrderedQuantity OR SUM(oi.quantity) = NULL "
+        + "ORDER BY SUM(oi.quantity) DESC, i.itemId DESC ")
+    List<Item> findNewItemOrderByOrders(@Param("createdAt") LocalDateTime createdAt, @Param("totalOrderedQuantity") int totalOrderedQuantity, Pageable pageable);
 
     // 신상품 - 가격 높은 순
     List<Item> findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(
@@ -37,4 +43,12 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     // 신상품 - 할인순
     List<Item> findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(
         LocalDateTime createdAt, int discount, Pageable pageable);
+
+    // 총 주문 수의 아이템 찾기
+    @Query("SELECT i FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "GROUP BY i.itemId "
+        + "HAVING SUM(oi.quantity) = :totalOrderedQuantity "
+        + "ORDER BY i.itemId ASC")
+    List<Item> findItemByTotalOrderedQuantity(@Param("totalOrderedQuantity") int totalOrderedQuantity);
 }
