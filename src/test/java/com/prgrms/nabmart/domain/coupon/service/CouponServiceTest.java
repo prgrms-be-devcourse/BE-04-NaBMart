@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.coupon.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,6 +17,7 @@ import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
+import com.prgrms.nabmart.domain.coupon.service.response.FindIssuedCouponsResponse;
 import com.prgrms.nabmart.domain.coupon.support.CouponFixture;
 import com.prgrms.nabmart.domain.coupon.support.UserCouponFixture;
 import com.prgrms.nabmart.domain.user.User;
@@ -178,6 +180,30 @@ class CouponServiceTest {
             assertThat(findCouponsResponse.coupons())
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(givenCoupon));
+        }
+    }
+
+    @Nested
+    @DisplayName("findIssuedCoupons 메서드 실행 시")
+    class FindIssuedCoupons {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // Given
+            ReflectionTestUtils.setField(givenUserCoupon, "userCouponId", 1L);
+            when(userRepository.findById(any())).thenReturn(Optional.ofNullable(givenUser));
+            when(userCouponRepository.findByUserAndIsUsedAndCouponEndAtAfter(any(), eq(false),
+                any())).thenReturn(List.of(givenUserCoupon));
+
+            // When
+            FindIssuedCouponsResponse findIssuedCouponsResponse = couponService.findIssuedCoupons(
+                1L);
+
+            // Then
+            assertThat(findIssuedCouponsResponse.coupons())
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(givenUserCoupon.getCoupon()));
         }
     }
 }
