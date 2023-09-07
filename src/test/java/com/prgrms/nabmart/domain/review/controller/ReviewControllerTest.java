@@ -3,9 +3,11 @@ package com.prgrms.nabmart.domain.review.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,8 +18,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.review.controller.request.UpdateReviewRequest;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse.FindReviewByUserResponse;
 import com.prgrms.nabmart.domain.review.support.RegisterReviewCommandFixture;
 import com.prgrms.nabmart.domain.review.support.UpdateReviewRequestFixture;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -121,6 +127,54 @@ class ReviewControllerTest extends BaseControllerTest {
                         )
                     )
                 );
+        }
+    }
+
+    @Nested
+    @DisplayName("로그인 한 사용자의 리뷰 목록 조회 API 실행 시")
+    class findReviewsByUserAPITest {
+
+        @Test
+        @DisplayName("성공")
+        void findReviewsByUser() throws Exception {
+            // given
+            Long userId = 1L;
+            FindReviewsByUserResponse findReviewsByUserResponse = FindReviewsByUserResponse.from(
+                List.of(
+                    FindReviewByUserResponse.of(
+                        1L, "김춘배", "너무 맛있어요!", LocalDateTime.now()
+                    )
+                )
+            );
+
+            given(reviewService.findReviewsByUser(userId)).willReturn(findReviewsByUserResponse);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/v1/users/my-reviews")
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                .andDo(print())
+                .andDo(restDocs.document(
+                    responseFields(
+                        fieldWithPath("findReviewsByUserResponse").type(JsonFieldType.ARRAY)
+                            .description("findReviewsByUserResponse"),
+                        fieldWithPath("findReviewsByUserResponse[].reviewId").type(
+                                JsonFieldType.NUMBER)
+                            .description("reviewId"),
+                        fieldWithPath("findReviewsByUserResponse[].userNickname").type(
+                                JsonFieldType.STRING)
+                            .description("userNickname"),
+                        fieldWithPath("findReviewsByUserResponse[].reviewContent").type(
+                                JsonFieldType.STRING)
+                            .description("reviewContent"),
+                        fieldWithPath("findReviewsByUserResponse[].createdAt").type(
+                                JsonFieldType.STRING)
+                            .description("createdAt")
+                    )
+                ));
         }
     }
 }
