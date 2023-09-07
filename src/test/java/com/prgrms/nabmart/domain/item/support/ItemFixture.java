@@ -3,17 +3,21 @@ package com.prgrms.nabmart.domain.item.support;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
-import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindLikeItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindLikeItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindLikeItemsResponse.FindLikeItemResponse;
+import com.prgrms.nabmart.domain.user.User;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemFixture {
@@ -63,5 +67,24 @@ public final class ItemFixture {
 
     public static DeleteLikeItemCommand deleteLikeItemCommand() {
         return new DeleteLikeItemCommand(USER_ID, LIKE_ITEM_ID);
+    }
+
+    public static FindLikeItemsCommand findLikeItemsCommand() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        return new FindLikeItemsCommand(USER_ID, pageRequest);
+    }
+
+    public static FindLikeItemsResponse findLikeItemsResponse() {
+        FindLikeItemResponse findLikeItemResponse = new FindLikeItemResponse(
+            LIKE_ITEM_ID,
+            ITEM_ID,
+            NAME,
+            PRICE,
+            DISCOUNT,
+            REVIEW_COUNT,
+            LIKE_COUNT,
+            RATE
+        );
+        return new FindLikeItemsResponse(List.of(findLikeItemResponse), 0, 1);
     }
 }
