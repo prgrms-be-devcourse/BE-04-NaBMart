@@ -8,10 +8,12 @@ import com.prgrms.nabmart.domain.coupon.repository.CouponRepository;
 import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
+import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,11 +48,20 @@ public class CouponService {
     public Long registerUserCoupon(RegisterUserCouponCommand command) {
         User findUser = findUserByUserId(command.userId());
         Coupon findCoupon = findCouponByCouponId(command.couponId());
+
         validateCouponExpiration(findCoupon.getEndAt());
         validateAlreadyIssuedCoupon(findUser, findCoupon);
-        UserCoupon userCoupon = new UserCoupon(findUser, findCoupon);
 
+        UserCoupon userCoupon = new UserCoupon(findUser, findCoupon);
         return userCouponRepository.save(userCoupon).getUserCouponId();
+    }
+
+    @Transactional(readOnly = true)
+    public FindCouponsResponse findCoupons() {
+        List<Coupon> findCoupons = couponRepository.findByEndAtGreaterThan(
+            LocalDate.now());
+
+        return FindCouponsResponse.from(findCoupons);
     }
 
     private void validateCouponExpiration(LocalDate expirationDate) {
