@@ -57,6 +57,14 @@ public class CouponController {
         return ResponseEntity.ok(findCouponsResponse);
     }
 
+    @GetMapping("/my-coupons")
+    public ResponseEntity<FindCouponsResponse> findUserCoupons(
+        @LoginUser final Long userId
+    ) {
+        FindCouponsResponse findCouponsResponse = couponService.findUserCoupons(userId);
+        return ResponseEntity.ok(findCouponsResponse);
+    }
+
     @ExceptionHandler(CouponException.class)
     public ResponseEntity<ErrorTemplate> handleException(
         final CouponException couponException) {
@@ -65,3 +73,4 @@ public class CouponController {
             .body(ErrorTemplate.of(couponException.getMessage()));
     }
 }
+
