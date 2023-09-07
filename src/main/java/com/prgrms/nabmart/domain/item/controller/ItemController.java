@@ -22,7 +22,6 @@ public class ItemController {
 
     private final ItemService itemService;
     private final String DEFAULT_PREVIOUS_ID = "-1";
-    private final String DEFAULT_ITEM_SORT_TYPE = "POPULAR";
 
     @GetMapping
     public ResponseEntity<FindItemsResponse> findItemsByMainCategory(
