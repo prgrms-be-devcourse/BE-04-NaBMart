@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.item;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
+import com.prgrms.nabmart.domain.item.exception.InvalidItemException;
 import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.global.BaseTimeEntity;
@@ -43,7 +44,7 @@ public class Item extends BaseTimeEntity {
 
     @Column
     private double rate;
-    
+
     @Column(nullable = false)
     private int quantity;
 
@@ -75,6 +76,11 @@ public class Item extends BaseTimeEntity {
     @Builder
     public Item(String name, int price, String description, int quantity, int discount,
         int maxBuyQuantity, MainCategory mainCategory, SubCategory subCategory) {
+        validateName(name);
+        validatePrice(price);
+        validateQuantity(quantity);
+        validateDiscount(discount);
+        validateMaxBuyQuantity(maxBuyQuantity);
         this.name = name;
         this.price = price;
         this.description = description;
@@ -85,14 +91,34 @@ public class Item extends BaseTimeEntity {
         this.subCategory = subCategory;
     }
 
-    @Builder
-    public Item(String name, int price, String description, int quantity, int discount,
-        int maxBuyQuantity) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.quantity = quantity;
-        this.discount = discount;
-        this.maxBuyQuantity = maxBuyQuantity;
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new InvalidItemException("상품명은 필수 항목입니다.");
+        }
+    }
+
+    private void validatePrice(int price) {
+        if (price < 0) {
+            throw new InvalidItemException("상품가격은 0원 이상이어야 합니다.");
+        }
+    }
+
+    private void validateDiscount(int discount) {
+        if (discount < 0) {
+            throw new InvalidItemException("상품 할인율은 0 이상이어야 합니다.");
+        }
+    }
+
+    private void validateQuantity(int quantity) {
+        if (quantity < 0) {
+            throw new InvalidItemException("상품 재고수량은 0개 이상이어야 합니다.");
+        }
+    }
+
+    private void validateMaxBuyQuantity(int maxBuyQuantity) {
+        if (maxBuyQuantity < 0) {
+            throw new InvalidItemException("상품 최대 주문수량은 0개 이상이어야 합니다.");
+        }
     }
 }
