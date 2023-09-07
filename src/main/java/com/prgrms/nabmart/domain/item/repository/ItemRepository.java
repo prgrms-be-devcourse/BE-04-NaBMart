@@ -15,7 +15,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("select i from Item i where i.itemId in ?1")
     List<Item> findByItemIdIn(Collection<Long> itemIds);
 
-    // 대카테고리 전체 조회 - 최신 등록 순
+    // 대카테고리 전체 조회 - 최신 등록 순은
     List<Item> findByItemIdLessThanAndMainCategoryOrderByItemIdDesc(Long itemId,
         MainCategory mainCategory, Pageable pageable);
 

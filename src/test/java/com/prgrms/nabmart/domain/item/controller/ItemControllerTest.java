@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
-import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
@@ -118,8 +117,6 @@ class ItemControllerTest extends BaseControllerTest {
     class FindNewItemsApi {
 
         FindItemsResponse findItemsResponse = ItemFixture.findItemsResponse();
-        FindNewItemsCommand findNewItemsCommand = ItemFixture.findNewItemsCommand();
-
         @Test
         @DisplayName("성공")
         public void findNewItems() throws Exception {
