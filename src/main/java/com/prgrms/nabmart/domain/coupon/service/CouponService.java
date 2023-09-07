@@ -64,6 +64,18 @@ public class CouponService {
         return FindCouponsResponse.from(findCoupons);
     }
 
+    @Transactional(readOnly = true)
+    public FindCouponsResponse findUserCoupons(Long userId) {
+        User findUser = findUserByUserId(userId);
+        List<Coupon> findIssuedCoupons = userCouponRepository.findByUserAndIsUsedAndCouponEndAtAfter(
+                findUser, false,
+                LocalDate.now())
+            .stream().map(UserCoupon::getCoupon)
+            .toList();
+
+        return FindCouponsResponse.from(findIssuedCoupons);
+    }
+
     private void validateCouponExpiration(LocalDate expirationDate) {
         if (expirationDate.isBefore(LocalDate.now())) {
             throw new InvalidCouponException("쿠폰이 이미 만료되었습니다");
@@ -85,5 +97,5 @@ public class CouponService {
         return couponRepository.findById(couponId)
             .orElseThrow(() -> new NotFoundCouponException("존재하지 않은 쿠폰입니다."));
     }
-
 }
+
