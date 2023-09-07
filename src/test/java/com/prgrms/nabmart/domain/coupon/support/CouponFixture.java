@@ -2,12 +2,14 @@ package com.prgrms.nabmart.domain.coupon.support;
 
 import com.prgrms.nabmart.domain.coupon.Coupon;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
+import com.prgrms.nabmart.domain.coupon.service.response.FindCouponResponse;
+import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-
 public class CouponFixture {
 
     private static final String NAME = "쿠폰이름";
@@ -30,4 +32,12 @@ public class CouponFixture {
     public static RegisterCouponCommand registerCouponCommand() {
         return new RegisterCouponCommand(NAME, DISCOUNT, DESCRIPTION, MIN_ORDER_PRICE, END_AT);
     }
+
+    public static FindCouponsResponse findCouponsResponse() {
+        FindCouponResponse findCouponResponse = new FindCouponResponse(
+            1L, NAME, DESCRIPTION, DISCOUNT, MIN_ORDER_PRICE, END_AT);
+        List<FindCouponResponse> couponList = List.of(findCouponResponse);
+        return new FindCouponsResponse(couponList);
+    }
 }
+
