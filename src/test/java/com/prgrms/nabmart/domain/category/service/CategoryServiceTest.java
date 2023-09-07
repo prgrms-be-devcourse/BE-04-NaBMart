@@ -17,6 +17,7 @@ import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
+import com.prgrms.nabmart.domain.category.service.response.FindSubCategoriesResponse;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -118,8 +119,8 @@ public class CategoryServiceTest {
     @DisplayName("모든 대카테고리 조회 메서드 호출 시")
     class FindAllMainCategories {
 
-        List<String> mainCategoryNames = mainCategoryNames();
-        List<MainCategory> mainCategories = mainCategories();
+        List<String> mainCategoryNames = getMainCategoryNames();
+        List<MainCategory> mainCategories = getMainCategories();
 
         @Test
         @DisplayName("성공")
@@ -138,15 +139,55 @@ public class CategoryServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("대카테고리의 소카테고리 조회 메서드 호출 시")
+    class FindSubCategoriesByMainCategory {
 
-    private List<MainCategory> mainCategories() {
+        List<String> subCategoryNames = getSubCategoryNames();
+        List<SubCategory> subCategories = getSubCategories();
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Then
+            when(subCategoryRepository.findByMainCategory(mainCategory)).thenReturn(
+                subCategories);
+            when(mainCategoryRepository.findById(anyLong())).thenReturn(
+                Optional.ofNullable(mainCategory));
+
+            // When
+            FindSubCategoriesResponse findSubCategoriesResponse = categoryService.findSubCategoriesByMainCategory(
+                1L);
+
+            // Then
+            assertThat(findSubCategoriesResponse.subCategoryNames())
+                .usingRecursiveComparison()
+                .isEqualTo(subCategoryNames);
+        }
+    }
+
+
+    private List<MainCategory> getMainCategories() {
         MainCategory mainCategory1 = new MainCategory("main1");
         MainCategory mainCategory2 = new MainCategory("main2");
         MainCategory mainCategory3 = new MainCategory("main3");
         return List.of(mainCategory1, mainCategory2, mainCategory3);
     }
 
-    private List<String> mainCategoryNames() {
+    private List<String> getMainCategoryNames() {
         return List.of("main1", "main2", "main3");
+    }
+
+    private List<SubCategory> getSubCategories() {
+        MainCategory mainCategory = new MainCategory("main");
+        SubCategory subCategory1 = new SubCategory(mainCategory, "sub1");
+        SubCategory subCategory2 = new SubCategory(mainCategory, "sub2");
+        SubCategory subCategory3 = new SubCategory(mainCategory, "sub3");
+        return List.of(subCategory1, subCategory2, subCategory3);
+    }
+
+    private List<String> getSubCategoryNames() {
+        return List.of("sub1", "sub2", "sub3");
     }
 }

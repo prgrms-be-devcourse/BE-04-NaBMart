@@ -2,8 +2,8 @@ package com.prgrms.nabmart.domain.event.domain;
 
 import static java.util.Objects.isNull;
 
-import com.prgrms.nabmart.domain.event.exception.NotExistsEventException;
-import com.prgrms.nabmart.domain.item.domain.Item;
+import com.prgrms.nabmart.domain.event.exception.NotFoundEventException;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Entity;
@@ -13,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {
+    @UniqueConstraint(
+        columnNames = {"event_id", "item_id"}
+    )
+})
 public class EventItem extends BaseTimeEntity {
 
     @Id
@@ -43,7 +50,7 @@ public class EventItem extends BaseTimeEntity {
 
     public void validateEvent(Event event) {
         if (isNull(event)) {
-            throw new NotExistsEventException("Event가 존재하지 않습니다.");
+            throw new NotFoundEventException("Event가 존재하지 않습니다.");
         }
     }
 

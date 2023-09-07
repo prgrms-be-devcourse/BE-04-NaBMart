@@ -4,7 +4,6 @@ import static com.prgrms.nabmart.domain.order.support.OrderFixture.getDelivering
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.getPendingOrder;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponse;
-import static com.prgrms.nabmart.domain.user.support.UserFixture.getUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +20,7 @@ import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,7 +57,7 @@ class PaymentServiceTest {
         @DisplayName("성공: 유효한 order 일 경우, PaymentResponse 를 반환")
         void pay() {
             // given
-            User user = getUser(1L);
+            User user = UserFixture.user();
             Order order = getPendingOrder(1L, user);
 
             PaymentCommand paymentCommand = paymentCommandWithCard();
@@ -96,7 +96,7 @@ class PaymentServiceTest {
         @DisplayName("예외: order 가 Pending 상태가 아닐 경우, DuplicatePayException 발생")
         void throwExceptionWhenNotPendingOrder() {
             // given
-            User user = getUser(1L);
+            User user = UserFixture.user();
             Order order = getDeliveringOrder(1L, user);
 
             PaymentCommand paymentCommand = new PaymentCommand(PaymentType.CARD.toString());

@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
+import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
+import com.prgrms.nabmart.domain.item.service.LikeItemService;
 import com.prgrms.nabmart.domain.item.service.ItemService;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
+import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.user.service.UserService;
 import com.prgrms.nabmart.global.auth.oauth.client.OAuthRestClient;
-import com.prgrms.nabmart.global.fixture.AuthFixture;
+import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,13 +63,25 @@ public abstract class BaseControllerTest {
     protected EventService eventService;
 
     @MockBean
+    protected EventItemService eventItemService;
+
+    @MockBean
     protected OAuthRestClient oAuthRestClient;
 
     @MockBean
     protected PaymentService paymentService;
 
     @MockBean
+    protected ReviewService reviewService;
+
+    @MockBean
     protected ItemService itemService;
+
+    @MockBean
+    protected LikeItemService likeItemService;
+
+    protected static final String AUTHORIZATION = "Authorization";
+
 
     protected String accessToken;
 

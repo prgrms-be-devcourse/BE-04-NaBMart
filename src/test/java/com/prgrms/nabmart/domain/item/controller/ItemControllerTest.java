@@ -1,19 +1,22 @@
 package com.prgrms.nabmart.domain.item.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
-import com.prgrms.nabmart.domain.item.domain.ItemSortType;
-import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
-import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
-import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.PageInfoResponse;
-import java.util.Arrays;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,59 +27,91 @@ import org.springframework.test.web.servlet.ResultActions;
 class ItemControllerTest extends BaseControllerTest {
 
     @Nested
-    @DisplayName("신상품 조회 api 호출 시")
-    class FindNewItemsApi {
+    @DisplayName("findItemsByMainCategory 메서드 호출 시")
+    class FindItemsByMainCategory {
+
+        FindItemsResponse findItemsResponse = ItemFixture.findItemsResponse();
+        String mainCategoryName = "main category";
+        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = ItemFixture.findItemsByMainCategoryCommand(
+            mainCategoryName);
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        void findItemsByMainCategory() throws Exception {
             // Given
-            FindNewItemsCommand command = FindNewItemsCommand.of(0, 3, ItemSortType.LOWEST_AMOUNT);
-            FindItemsResponse response = FindItemsResponse.of(
-                new PageInfoResponse(0, 1, 2L),
-                Arrays.asList(
-                    new FindItemResponse(1L, "name 1", 3000, 50, 3, 10, 3.5),
-                    new FindItemResponse(2L, "name 2", 30000, 500, 3, 10, 3.5)
-                )
+            when(itemService.findItemsByMainCategory(findItemsByMainCategoryCommand)).thenReturn(
+                findItemsResponse);
+
+            // Then&When
+            mockMvc.perform(get("/api/v1/items")
+                    .queryParam("previousItemId", "5")
+                    .queryParam("size", "3")
+                    .queryParam("main", mainCategoryName)
+                    .queryParam("sort", "NEW"))
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    queryParameters(
+                        parameterWithName("previousItemId").description("마지막에 조회한 아이템 Id"),
+                        parameterWithName("size").description("조회할 아이템 수"),
+                        parameterWithName("main").description("대카테고리명"),
+                        parameterWithName("sort").description("정렬 기준명")
+                    )
+                ));
+
+        }
+
+    }
+
+    @Nested
+    @DisplayName("상품 디테일 조회하는 api 호출 시")
+    class FindItemDetailApi {
+
+        @Test
+        @DisplayName("성공")
+        public void findItemDetail() throws Exception {
+            // Given
+            Long itemId = 1L;
+            FindItemDetailResponse response = FindItemDetailResponse.of(
+                itemId, "name", 3000, "description", 10, 4.5,
+                10, 300, 30, 5
             );
 
-            given(itemService.findNewItems(command)).willReturn(response);
+            given(itemService.findItemDetail(any())).willReturn(response);
 
             // When
-            ResultActions resultActions = mockMvc.perform(get("/api/v1/items/new")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("page", "0")
-                .param("pageSize", "3")
-                .param("sort", "LOWEST_AMOUNT"));
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/v1/items/{itemId}", itemId).accept(MediaType.APPLICATION_JSON));
 
             // Then
             resultActions.andExpect(status().isOk())
-                .andDo(document("Find New Items",
+                .andDo(document("Find Item Detail",
+                    pathParameters(
+                        parameterWithName("itemId").description("상품 ID")
+                    ),
                     responseFields(
-                        fieldWithPath("pageInfo.currentPage").type(JsonFieldType.NUMBER)
-                            .description("현재 페이지"),
-                        fieldWithPath("pageInfo.totalPages").type(JsonFieldType.NUMBER)
-                            .description("총 페이지 수"),
-                        fieldWithPath("pageInfo.totalItems").type(JsonFieldType.NUMBER)
-                            .description("총 상품 수"),
-                        fieldWithPath("items[]").type(JsonFieldType.ARRAY)
-                            .description("상품 리스트"),
-                        fieldWithPath("items[].itemId").type(JsonFieldType.NUMBER)
-                            .description("상품 ID"),
-                        fieldWithPath("items[].name").type(JsonFieldType.STRING)
+                        fieldWithPath("itemId").type(JsonFieldType.NUMBER)
+                            .description("아이템 ID"),
+                        fieldWithPath("name").type(JsonFieldType.STRING)
                             .description("상품 이름"),
-                        fieldWithPath("items[].price").type(JsonFieldType.NUMBER)
+                        fieldWithPath("price").type(JsonFieldType.NUMBER)
                             .description("상품 가격"),
-                        fieldWithPath("items[].discount").type(JsonFieldType.NUMBER)
-                            .description("상품 할인"),
-                        fieldWithPath("items[].reviewCount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("description").type(JsonFieldType.STRING)
+                            .description("상품 설명."),
+                        fieldWithPath("quantity").type(JsonFieldType.NUMBER)
+                            .description("상품 수량"),
+                        fieldWithPath("rate").type(JsonFieldType.NUMBER)
+                            .description("상품 평점"),
+                        fieldWithPath("reviewCount").type(JsonFieldType.NUMBER)
                             .description("리뷰 수"),
-                        fieldWithPath("items[].like").type(JsonFieldType.NUMBER)
-                            .description("좋아요 수"),
-                        fieldWithPath("items[].rate").type(JsonFieldType.NUMBER)
-                            .description("평균 평점")
+                        fieldWithPath("discount").type(JsonFieldType.NUMBER)
+                            .description("할인"),
+                        fieldWithPath("like").type(JsonFieldType.NUMBER)
+                            .description("좋아요 수."),
+                        fieldWithPath("maxBuyQuantity").type(JsonFieldType.NUMBER)
+                            .description("최대 구매 수량")
                     )
                 ));
+
         }
     }
 }

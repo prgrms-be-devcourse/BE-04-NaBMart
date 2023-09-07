@@ -1,14 +1,12 @@
 package com.prgrms.nabmart.domain.coupon;
 
 import com.prgrms.nabmart.domain.coupon.exception.InvalidCouponException;
-import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,9 +36,6 @@ public class Coupon extends BaseTimeEntity {
 
     @Column(nullable = false)
     private LocalDate endAt;
-
-    @OneToOne(mappedBy = "coupon")
-    private Order order;
 
     @Builder
     public Coupon(Integer discount, String name, String description, Integer minOrderPrice,

@@ -1,67 +1,118 @@
 package com.prgrms.nabmart.domain.item.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import com.prgrms.nabmart.domain.category.MainCategory;
+import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
-import com.prgrms.nabmart.domain.item.domain.Item;
-import com.prgrms.nabmart.domain.item.domain.ItemSortType;
+import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
-import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
-import com.prgrms.nabmart.global.fixture.ItemFixture;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
+import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
 
-    private ItemService itemService;
-
+    @Mock
     private ItemRepository itemRepository;
 
-    @BeforeEach
-    void setUp() {
-        itemRepository = mock(ItemRepository.class);
-        itemService = new ItemService(itemRepository);
-    }
+    @Mock
+    private MainCategoryRepository mainCategoryRepository;
+
+    @InjectMocks
+    private ItemService itemService;
 
     @Nested
-    @DisplayName("findNewItems 메서드 실행 시")
-    class FindNewItemsTests {
+    @DisplayName("findItemsByMainCategory 메서드 실행 시")
+    class FindItemsByMainCategoryTests {
+
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory1 = new SubCategory(mainCategory, "sub1");
+        SubCategory subCategory2 = new SubCategory(mainCategory, "sub2");
+        SubCategory subCategory3 = new SubCategory(mainCategory, "sub2");
+        SubCategory subCategory4 = new SubCategory(mainCategory, "sub2");
+        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = ItemFixture.findItemsByMainCategoryCommand(
+            mainCategory.getName());
 
         @Test
         @DisplayName("성공")
         public void success() {
             // Given
-            FindNewItemsCommand command = FindNewItemsCommand.of(0, 3, ItemSortType.LOWEST_AMOUNT);
-            PageRequest pageRequest = PageRequest.of(command.page(), command.pageSize());
-            LocalDateTime createdAt = LocalDateTime.now().minus(2, ChronoUnit.WEEKS);
-
-            List<Item> itemList = Arrays.asList(
-                ItemFixture.item(CategoryFixture.mainCategory(), CategoryFixture.subCategory(CategoryFixture.mainCategory())),
-                ItemFixture.item(CategoryFixture.mainCategory(), CategoryFixture.subCategory(CategoryFixture.mainCategory()))
+            List<Item> expectedItems = List.of(
+                ItemFixture.item(mainCategory, subCategory1),
+                ItemFixture.item(mainCategory, subCategory2),
+                ItemFixture.item(mainCategory, subCategory3),
+                ItemFixture.item(mainCategory, subCategory4)
             );
 
-            Page<Item> mockItems = new PageImpl<>(itemList, pageRequest, 20);
-
-            when(itemRepository.findByCreatedAtAfter(createdAt, pageRequest)).thenReturn(mockItems);
+            when(mainCategoryRepository.findByName(any())).thenReturn(
+                Optional.of(mainCategory));
+            when(itemRepository.findByItemIdLessThanAndMainCategoryOrderByItemIdDesc(anyLong(),
+                any(), any())).thenReturn(expectedItems);
 
             // When
-            itemService.findNewItems(command);
+            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(
+                findItemsByMainCategoryCommand);
 
             // Then
-            verify(itemRepository, times(1)).findByCreatedAtAfter(createdAt, pageRequest);
+            assertThat(itemsResponse.items().size()).isEqualTo(4);
+
+            List<String> expected = expectedItems.stream()
+                .map(Item::getName)
+                .toList();
+            List<String> actual = itemsResponse.items().stream()
+                .map(FindItemResponse::name)
+                .toList();
+            assertThat(expected).usingRecursiveComparison()
+                .isEqualTo(actual);
         }
     }
 
+
+    @Nested
+    @DisplayName("findItemDetail 메서드 실행 시")
+    class FindItemDetailTests {
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Given
+            Item item = ItemFixture.item(CategoryFixture.mainCategory(),
+                CategoryFixture.subCategory(CategoryFixture.mainCategory()));
+            FindItemDetailCommand command = FindItemDetailCommand.from(item.getItemId());
+
+            when(itemRepository.findById(item.getItemId())).thenReturn(Optional.of(item));
+
+            // When
+            FindItemDetailResponse response = itemService.findItemDetail(command);
+
+            // Then
+            assertThat(response).isNotNull();
+            assertThat(response.itemId()).isEqualTo(item.getItemId());
+            assertThat(response.name()).isEqualTo(item.getName());
+            assertThat(response.price()).isEqualTo(item.getPrice());
+            assertThat(response.description()).isEqualTo(item.getDescription());
+            assertThat(response.quantity()).isEqualTo(item.getQuantity());
+            assertThat(response.rate()).isEqualTo(item.getRate());
+            assertThat(response.discount()).isEqualTo(item.getDiscount());
+            assertThat(response.maxBuyQuantity()).isEqualTo(item.getMaxBuyQuantity());
+        }
+    }
 }

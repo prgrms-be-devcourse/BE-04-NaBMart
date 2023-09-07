@@ -9,7 +9,7 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
-import com.prgrms.nabmart.global.fixture.AuthFixture;
+import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
