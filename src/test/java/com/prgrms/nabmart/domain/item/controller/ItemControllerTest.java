@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
@@ -118,13 +119,51 @@ class ItemControllerTest extends BaseControllerTest {
     @DisplayName("신상품 조회하는 api 호출 시")
     class FindNewItemsApi {
 
+        FindItemsResponse findItemsResponse = ItemFixture.findItemsResponse();
+        FindNewItemsCommand findNewItemsCommand = ItemFixture.findNewItemsCommand();
+
         @Test
         @DisplayName("성공")
         public void findNewItems() throws Exception {
             // Given
 
+            given(itemService.findNewItems(any())).willReturn(findItemsResponse);
 
+            // When
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/v1/items/new")
+                    .queryParam("lastIdx", "1")
+                    .queryParam("size", "5")
+                    .queryParam("sort", "NEW")
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // Then
+            resultActions.andExpect(status().isOk())
+                .andDo(document("Find New Items",
+                    queryParameters(
+                        parameterWithName("lastIdx").description("마지막에 조회한 아이템의 특성값"),
+                        parameterWithName("size").description("조회할 아이템 수"),
+                        parameterWithName("sort").description("정렬 기준명")
+                    ),
+                    responseFields(
+                        fieldWithPath("items").type(JsonFieldType.ARRAY)
+                            .description("List of items"),
+                        fieldWithPath("items[].itemId").type(JsonFieldType.NUMBER)
+                            .description("상품 ID"),
+                        fieldWithPath("items[].name").type(JsonFieldType.STRING)
+                            .description("상품 이름"),
+                        fieldWithPath("items[].price").type(JsonFieldType.NUMBER)
+                            .description("상품 가격"),
+                        fieldWithPath("items[].discount").type(JsonFieldType.NUMBER)
+                            .description("상품 할인"),
+                        fieldWithPath("items[].reviewCount").type(JsonFieldType.NUMBER)
+                            .description("리뷰 수"),
+                        fieldWithPath("items[].like").type(JsonFieldType.NUMBER)
+                            .description("좋아요 수"),
+                        fieldWithPath("items[].rate").type(JsonFieldType.NUMBER)
+                            .description("평점")
+                    )
+                ));
         }
-
     }
 }
