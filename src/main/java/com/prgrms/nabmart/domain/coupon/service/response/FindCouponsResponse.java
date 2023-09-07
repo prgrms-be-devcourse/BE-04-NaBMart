@@ -11,5 +11,5 @@ public record FindCouponsResponse(List<FindCouponResponse> coupons) {
             .map(FindCouponResponse::from)
             .collect(Collectors.collectingAndThen(Collectors.toList(), FindCouponsResponse::new));
     }
-
 }
+
