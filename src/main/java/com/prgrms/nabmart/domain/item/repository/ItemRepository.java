@@ -38,8 +38,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
         + "GROUP BY i "
         + "HAVING SUM(oi.quantity) < :totalOrderedQuantity "
         + "ORDER BY SUM(oi.quantity) DESC")
-    List<Item> findByOrderCountAndMainCategory(
-        @Param("totalOrderedQuantity") int totalOrderedQuantity,
+    List<Item> findByOrderedQuantityAndMainCategory(
+        @Param("totalOrderedQuantity") Long totalOrderedQuantity,
         @Param("mainCategory") MainCategory mainCategory,
         Pageable pageable);
 }
