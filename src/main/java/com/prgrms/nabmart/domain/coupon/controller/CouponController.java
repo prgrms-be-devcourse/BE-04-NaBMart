@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
+import com.prgrms.nabmart.domain.coupon.service.response.FindIssuedCouponsResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
@@ -57,6 +58,15 @@ public class CouponController {
         return ResponseEntity.ok(findCouponsResponse);
     }
 
+    @GetMapping("/my-coupons")
+    public ResponseEntity<FindIssuedCouponsResponse> findIssuedCoupons(
+        @LoginUser final Long userId
+    ) {
+        FindIssuedCouponsResponse findIssuedCouponsResponse = couponService.findIssuedCoupons(
+            userId);
+        return ResponseEntity.ok(findIssuedCouponsResponse);
+    }
+
     @ExceptionHandler(CouponException.class)
     public ResponseEntity<ErrorTemplate> handleException(
         final CouponException couponException) {
@@ -65,3 +75,4 @@ public class CouponController {
             .body(ErrorTemplate.of(couponException.getMessage()));
     }
 }
+

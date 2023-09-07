@@ -9,6 +9,7 @@ import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
+import com.prgrms.nabmart.domain.coupon.service.response.FindIssuedCouponsResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
@@ -64,6 +65,16 @@ public class CouponService {
         return FindCouponsResponse.from(findCoupons);
     }
 
+    @Transactional(readOnly = true)
+    public FindIssuedCouponsResponse findIssuedCoupons(Long userId) {
+        User findUser = findUserByUserId(userId);
+        List<UserCoupon> findUserCoupons = userCouponRepository.findByUserAndIsUsedAndCouponEndAtAfter(
+            findUser, false,
+            LocalDate.now());
+
+        return FindIssuedCouponsResponse.from(findUserCoupons);
+    }
+
     private void validateCouponExpiration(LocalDate expirationDate) {
         if (expirationDate.isBefore(LocalDate.now())) {
             throw new InvalidCouponException("쿠폰이 이미 만료되었습니다");
@@ -85,5 +96,5 @@ public class CouponService {
         return couponRepository.findById(couponId)
             .orElseThrow(() -> new NotFoundCouponException("존재하지 않은 쿠폰입니다."));
     }
-
 }
+

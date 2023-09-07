@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.coupon.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -20,6 +21,7 @@ import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
+import com.prgrms.nabmart.domain.coupon.service.response.FindIssuedCouponsResponse;
 import com.prgrms.nabmart.domain.coupon.support.CouponFixture;
 import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
@@ -150,6 +152,41 @@ class CouponControllerTest extends BaseControllerTest {
                     )));
         }
     }
+
+    @Nested
+    @DisplayName("발급가능한 쿠폰 조회 api 호출 시")
+    class findIssuedCouponsApi {
+
+        @Test
+        @DisplayName("성공")
+        void findIssuedCoupons() throws Exception {
+            // Given
+            FindIssuedCouponsResponse issuedCouponsResponse = CouponFixture.findIssuedCouponsResponse();
+            when(couponService.findIssuedCoupons(any())).thenReturn(issuedCouponsResponse);
+
+            // When
+            ResultActions resultActions = mockMvc.perform(get("/api/v1/my-coupons")
+                .contentType(MediaType.APPLICATION_JSON));
+
+            // Then
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    responseFields(
+                        fieldWithPath("coupons").type(ARRAY)
+                            .description("발급 가능한 쿠폰 리스트"),
+                        fieldWithPath("coupons[].couponId").type(NUMBER)
+                            .description("쿠폰 아이디"),
+                        fieldWithPath("coupons[].name").type(STRING)
+                            .description("쿠폰 이름"),
+                        fieldWithPath("coupons[].description").type(STRING)
+                            .description("쿠폰 설명"),
+                        fieldWithPath("coupons[].discount").type(NUMBER)
+                            .description("할인 금액"),
+                        fieldWithPath("coupons[].minOrderPrice").type(NUMBER)
+                            .description("최소 주문 금액"),
+                        fieldWithPath("coupons[].endAt").type(STRING)
+                            .description("쿠폰 만료 일자 (yyyy-MM-dd)")
+                    )));
+        }
+    }
 }
-
-
