@@ -9,8 +9,11 @@ import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -75,5 +78,22 @@ public class ItemService {
             item.getLikeItems().size(),
             item.getMaxBuyQuantity()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
+        List<Item> items = findNewItemsFrom(findNewItemsCommand);
+        return FindItemsResponse.from(items);
+    }
+
+    private List<Item> findNewItemsFrom(FindNewItemsCommand findNewItemsCommand) {
+        LocalDateTime createdAt = LocalDateTime.now().minus(2, ChronoUnit.WEEKS);
+        return switch (findNewItemsCommand.sortType()) {
+            case NEW -> itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(createdAt, findNewItemsCommand.lastIdx(), findNewItemsCommand.pageRequest());
+            case HIGHEST_AMOUNT -> itemRepository.findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(createdAt, findNewItemsCommand.lastIdx().intValue(), findNewItemsCommand.pageRequest());
+            case LOWEST_AMOUNT -> itemRepository.findByCreatedAtAfterAndPriceGreaterThanOrderByPriceAscItemIdDesc(createdAt, findNewItemsCommand.lastIdx().intValue(), findNewItemsCommand.pageRequest());
+            case DISCOUNT -> itemRepository.findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(createdAt, findNewItemsCommand.lastIdx().intValue(), findNewItemsCommand.pageRequest());
+            default -> itemRepository.findNewItemOrderByOrders(createdAt, findNewItemsCommand.lastIdx().intValue(), findNewItemsCommand.pageRequest());
+        };
     }
 }

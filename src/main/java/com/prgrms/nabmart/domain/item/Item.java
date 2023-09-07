@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.item;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
+import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
@@ -54,10 +55,6 @@ public class Item extends BaseTimeEntity {
     @Column(nullable = false)
     private int maxBuyQuantity;
 
-    @ColumnDefault("0.0")
-    @Column(nullable = false)
-    private double rate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_category_id")
     private MainCategory mainCategory;
@@ -72,6 +69,9 @@ public class Item extends BaseTimeEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
     private List<LikeItem> likeItems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
     @Builder
     public Item(String name, int price, String description, int quantity, int discount,
         int maxBuyQuantity, MainCategory mainCategory, SubCategory subCategory) {
@@ -83,7 +83,6 @@ public class Item extends BaseTimeEntity {
         this.maxBuyQuantity = maxBuyQuantity;
         this.mainCategory = mainCategory;
         this.subCategory = subCategory;
-        this.rate = 0.0;
     }
 
     @Builder
@@ -95,6 +94,5 @@ public class Item extends BaseTimeEntity {
         this.quantity = quantity;
         this.discount = discount;
         this.maxBuyQuantity = maxBuyQuantity;
-        this.rate = 0.0;
     }
 }
