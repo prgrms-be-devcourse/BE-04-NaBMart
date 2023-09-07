@@ -13,6 +13,7 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
@@ -113,6 +114,45 @@ class ItemServiceTest {
             assertThat(response.rate()).isEqualTo(item.getRate());
             assertThat(response.discount()).isEqualTo(item.getDiscount());
             assertThat(response.maxBuyQuantity()).isEqualTo(item.getMaxBuyQuantity());
+        }
+    }
+
+    @Nested
+    @DisplayName("findNewItems 메서드 실행 시")
+    class FindNewItemsTests {
+
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = new SubCategory(mainCategory, "sub");
+        FindNewItemsCommand findNewItemsCommand = ItemFixture.findNewItemsCommand();
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Given
+            List<Item> expectedItems = List.of(
+                ItemFixture.item(mainCategory, subCategory),
+                ItemFixture.item(mainCategory, subCategory),
+                ItemFixture.item(mainCategory, subCategory)
+            );
+
+            when(itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(any(),
+                any(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findNewItems(findNewItemsCommand);
+
+            // Then
+            assertThat(itemsResponse.items().size()).isEqualTo(3);
+
+            List<String> expected = expectedItems.stream()
+                .map(Item::getName)
+                .toList();
+            List<String> actual = itemsResponse.items().stream()
+                .map(FindItemResponse::name)
+                .toList();
+            assertThat(expected).usingRecursiveComparison()
+                .isEqualTo(actual);
         }
     }
 }
