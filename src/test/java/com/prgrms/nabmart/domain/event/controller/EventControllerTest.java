@@ -34,7 +34,7 @@ class EventControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        public void registerEvent() throws Exception {
             // Given
             RegisterEventRequest request = new RegisterEventRequest("TestTitle", "TestDescription");
             String requestBody = objectMapper.writeValueAsString(request);
@@ -59,7 +59,7 @@ class EventControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        public void findEvents() throws Exception {
             // Given
             FindEventsResponse eventResponses = FindEventsResponse.of(List.of(
                 new FindEventResponse(1L, "Event 1", "Description 1"),
@@ -94,7 +94,7 @@ class EventControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        public void findEventDetail() throws Exception {
             // Given
             FindEventDetailResponse eventDetailResponse = FindEventDetailResponse.of(
                 new EventDetailResponse(
@@ -152,7 +152,7 @@ class EventControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        public void registerEventItems() throws Exception {
             // Given
             RegisterEventItemsRequest request = new RegisterEventItemsRequest(
                 Arrays.asList(1L, 2L));

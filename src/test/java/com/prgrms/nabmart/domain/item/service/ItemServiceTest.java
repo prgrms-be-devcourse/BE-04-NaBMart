@@ -12,6 +12,8 @@ import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
+import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
@@ -80,6 +82,37 @@ class ItemServiceTest {
                 .toList();
             assertThat(expected).usingRecursiveComparison()
                 .isEqualTo(actual);
+        }
+    }
+
+
+    @Nested
+    @DisplayName("findItemDetail 메서드 실행 시")
+    class FindItemDetailTests {
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Given
+            Item item = ItemFixture.item(CategoryFixture.mainCategory(),
+                CategoryFixture.subCategory(CategoryFixture.mainCategory()));
+            FindItemDetailCommand command = FindItemDetailCommand.from(item.getItemId());
+
+            when(itemRepository.findById(item.getItemId())).thenReturn(Optional.of(item));
+
+            // When
+            FindItemDetailResponse response = itemService.findItemDetail(command);
+
+            // Then
+            assertThat(response).isNotNull();
+            assertThat(response.itemId()).isEqualTo(item.getItemId());
+            assertThat(response.name()).isEqualTo(item.getName());
+            assertThat(response.price()).isEqualTo(item.getPrice());
+            assertThat(response.description()).isEqualTo(item.getDescription());
+            assertThat(response.quantity()).isEqualTo(item.getQuantity());
+            assertThat(response.rate()).isEqualTo(item.getRate());
+            assertThat(response.discount()).isEqualTo(item.getDiscount());
+            assertThat(response.maxBuyQuantity()).isEqualTo(item.getMaxBuyQuantity());
         }
     }
 }
