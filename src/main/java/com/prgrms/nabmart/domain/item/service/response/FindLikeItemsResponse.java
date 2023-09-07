@@ -29,7 +29,7 @@ public record FindLikeItemsResponse(
         int like,
         double rate) {
 
-        public static FindLikeItemResponse from(LikeItem likeItem) {
+        public static FindLikeItemResponse from(final LikeItem likeItem) {
             Item item = likeItem.getItem();
             return new FindLikeItemResponse(
                 likeItem.getLikeItemId(),

@@ -4,7 +4,7 @@ import org.springframework.data.domain.Pageable;
 
 public record FindLikeItemsCommand(Long userId, Pageable pageable) {
 
-    public static FindLikeItemsCommand of(Long userId, Pageable pageable) {
+    public static FindLikeItemsCommand of(final Long userId, final Pageable pageable) {
         return new FindLikeItemsCommand(userId, pageable);
     }
 }
