@@ -68,7 +68,7 @@ class ItemControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void success() throws Exception {
+        public void findItemDetail() throws Exception {
             // Given
             Long itemId = 1L;
             FindItemDetailResponse response = FindItemDetailResponse.of(
