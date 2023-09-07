@@ -8,12 +8,15 @@ import com.prgrms.nabmart.domain.item.exception.NotFoundLikeItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.repository.LikeItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindLikeItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.RegisterLikeItemCommand;
+import com.prgrms.nabmart.domain.item.service.response.FindLikeItemsResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +51,14 @@ public class LikeItemService {
         if (likeItemRepository.existsByUserAndItem(user, item)) {
             throw new DuplicateLikeItemException("이미 찜한 상품입니다.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public FindLikeItemsResponse findLikeItems(FindLikeItemsCommand findLikeItemsCommand) {
+        User user = findUserByUserId(findLikeItemsCommand.userId());
+        Page<LikeItem> findLikeItemsPage
+            = likeItemRepository.findByUserWithItem(user, findLikeItemsCommand.pageable());
+        return FindLikeItemsResponse.from(findLikeItemsPage);
     }
 
     private User findUserByUserId(final Long userId) {

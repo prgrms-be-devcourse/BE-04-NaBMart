@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindLikeItemsCommand;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
@@ -14,6 +15,7 @@ import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindIte
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemFixture {
@@ -63,5 +65,10 @@ public final class ItemFixture {
 
     public static DeleteLikeItemCommand deleteLikeItemCommand() {
         return new DeleteLikeItemCommand(USER_ID, LIKE_ITEM_ID);
+    }
+
+    public static FindLikeItemsCommand findLikeItemsCommand() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        return new FindLikeItemsCommand(USER_ID, pageRequest);
     }
 }
