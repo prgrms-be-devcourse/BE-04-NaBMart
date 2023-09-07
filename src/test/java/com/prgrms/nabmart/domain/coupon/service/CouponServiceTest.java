@@ -15,12 +15,14 @@ import com.prgrms.nabmart.domain.coupon.repository.CouponRepository;
 import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
+import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
 import com.prgrms.nabmart.domain.coupon.support.CouponFixture;
 import com.prgrms.nabmart.domain.coupon.support.UserCouponFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +70,7 @@ class CouponServiceTest {
 
         @Test
         @DisplayName("성공")
-        public void success() {
+        void success() {
             // Given
             Coupon coupon = givenCoupon;
             when(couponRepository.save(any(Coupon.class))).thenReturn(
@@ -90,7 +92,7 @@ class CouponServiceTest {
 
         @Test
         @DisplayName("성공")
-        public void success() {
+        void success() {
             // Given
             when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(givenUserCoupon);
             when(couponRepository.findById((any()))).thenReturn(Optional.ofNullable(givenCoupon));
@@ -107,7 +109,7 @@ class CouponServiceTest {
 
         @Test
         @DisplayName("예외 : coupon 이 존재하지 않는 경우, NotFoundCouponException 발생")
-        public void throwExceptionWhenNotFoundCoupon() {
+        void throwExceptionWhenNotFoundCoupon() {
             // Given
             when(couponRepository.findById((any()))).thenReturn(Optional.empty());
             when(userRepository.findById(any())).thenReturn(Optional.ofNullable(givenUser));
@@ -122,7 +124,7 @@ class CouponServiceTest {
 
         @Test
         @DisplayName("예외 : 이미 발급한 coupon 발급 시, InvalidCouponException 발생")
-        public void throwExceptionWhenAlreadyIssuedCoupon() {
+        void throwExceptionWhenAlreadyIssuedCoupon() {
             // Given
             when(couponRepository.findById((any()))).thenReturn(Optional.ofNullable(givenCoupon));
             when(userRepository.findById(any())).thenReturn(Optional.ofNullable(givenUser));
@@ -140,7 +142,7 @@ class CouponServiceTest {
 
         @Test
         @DisplayName("예외 : 만료된 coupon 발급 시 , InvalidCouponException 발생")
-        public void throwExceptionWhenExpirationCoupon() {
+        void throwExceptionWhenExpirationCoupon() {
             // Given
             LocalDate expiredDate = LocalDate.now().minusDays(1); // 이미 만료된 날짜 설정
             ReflectionTestUtils.setField(givenCoupon, "endAt", expiredDate); // 쿠폰의 만료일을 변경
@@ -155,6 +157,27 @@ class CouponServiceTest {
             // Then
             assertThat(exception).isInstanceOf(InvalidCouponException.class);
             assertThat(exception.getMessage()).isEqualTo("쿠폰이 이미 만료되었습니다");
+        }
+    }
+
+    @Nested
+    @DisplayName("findCoupons 메서드 실행 시")
+    class FindCouponsTest {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // Given
+            ReflectionTestUtils.setField(givenCoupon, "couponId", 1L);
+            when(couponRepository.findByEndAtGreaterThan(any())).thenReturn(List.of(givenCoupon));
+
+            // When
+            FindCouponsResponse findCouponsResponse = couponService.findCoupons();
+
+            // Then
+            assertThat(findCouponsResponse.coupons())
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(givenCoupon));
         }
     }
 }

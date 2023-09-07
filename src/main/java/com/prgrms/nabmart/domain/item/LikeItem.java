@@ -35,4 +35,8 @@ public class LikeItem {
         this.user = user;
         this.item = item;
     }
+
+    public boolean isSameUser(final Long userId) {
+        return user.isSameUserId(userId);
+    }
 }

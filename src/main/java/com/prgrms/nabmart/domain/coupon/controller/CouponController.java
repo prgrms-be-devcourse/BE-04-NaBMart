@@ -5,6 +5,7 @@ import com.prgrms.nabmart.domain.coupon.exception.CouponException;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
+import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +36,6 @@ public class CouponController {
             registerCouponRequest);
         Long couponId = couponService.createCoupon(registerCouponCommand);
         URI location = URI.create("/api/v1/coupons/" + couponId);
-
         return ResponseEntity.created(location).build();
     }
 
@@ -47,17 +48,20 @@ public class CouponController {
             couponId);
         Long userCouponId = couponService.registerUserCoupon(registerUserCouponCommand);
         URI location = URI.create("/api/v1/my-coupons/" + userCouponId);
-
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/coupons")
+    public ResponseEntity<FindCouponsResponse> findCoupons() {
+        FindCouponsResponse findCouponsResponse = couponService.findCoupons();
+        return ResponseEntity.ok(findCouponsResponse);
     }
 
     @ExceptionHandler(CouponException.class)
     public ResponseEntity<ErrorTemplate> handleException(
         final CouponException couponException) {
         log.info(couponException.getMessage());
-
         return ResponseEntity.badRequest()
             .body(ErrorTemplate.of(couponException.getMessage()));
     }
 }
-

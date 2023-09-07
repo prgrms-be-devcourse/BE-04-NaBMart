@@ -79,4 +79,8 @@ public class User extends BaseTimeEntity {
             throw new InvalidUserException("사용할 수 없는 이메일입니다.");
         }
     }
+
+    public boolean isSameUserId(final Long userId) {
+        return this.userId.equals(userId);
+    }
 }
