@@ -102,10 +102,7 @@ class ItemServiceTest {
         @DisplayName("금액 높은 순으로 조회")
         public void orderByPriceDesc() {
             // Given
-            List<Item> items = getItems();
-            List<Item> expectedItems = items.stream()
-                .sorted(Comparator.comparing(Item::getDiscount).reversed())
-                .toList();
+            List<Item> expectedItems = getItems();
             FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
                 ItemSortType.HIGHEST_AMOUNT);
 
@@ -125,10 +122,7 @@ class ItemServiceTest {
         @DisplayName("금액 낮은 순으로 조회")
         public void orderByPriceAsc() {
             // Given
-            List<Item> items = getItems();
-            List<Item> expectedItems = items.stream()
-                .sorted(Comparator.comparing(Item::getDiscount).reversed())
-                .toList();
+            List<Item> expectedItems = getItems();
             FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
                 ItemSortType.LOWEST_AMOUNT);
 
@@ -148,10 +142,7 @@ class ItemServiceTest {
         @DisplayName("주문 많은 순으로 조회")
         public void orderByOrderedQuantity() {
             // Given
-            List<Item> items = getItems();
-            List<Item> expectedItems = items.stream()
-                .sorted(Comparator.comparing(Item::getDiscount).reversed())
-                .toList();
+            List<Item> expectedItems = getItems();
             FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
                 ItemSortType.POPULAR);
 
