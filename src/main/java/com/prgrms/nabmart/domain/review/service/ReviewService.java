@@ -9,9 +9,12 @@ import com.prgrms.nabmart.domain.review.exception.NotFoundReviewException;
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse.FindReviewByUserResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,5 +67,29 @@ public class ReviewService {
             .orElseThrow(() -> new NotFoundReviewException("해당 리뷰를 찾을 수 없습니다."));
 
         foundReview.changeRageAndContent(updateReviewCommand.rate(), updateReviewCommand.content());
+    }
+
+    @Transactional(readOnly = true)
+    public FindReviewsByUserResponse findReviewsByUser(
+        final Long userId
+    ) {
+        User foundUser = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundUserException("해당 사용자를 찾을 수 없습니다."));
+
+        List<Review> foundReviews = reviewRepository.findAllByUserOrderByCreatedAt(
+            foundUser);
+
+        return FindReviewsByUserResponse.from(
+            foundReviews
+                .stream()
+                .map(
+                    review -> FindReviewByUserResponse.of(
+                        review.getReviewId(),
+                        foundUser.getNickname(),
+                        review.getContent(),
+                        review.getCreatedAt()
+                    )
+                )
+                .toList());
     }
 }
