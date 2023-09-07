@@ -44,22 +44,20 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then&When
             mockMvc.perform(get("/api/v1/items")
-                    .queryParam("previousItemId", "5")
+                    .queryParam("lastIdx", "5")
                     .queryParam("size", "3")
                     .queryParam("main", mainCategoryName)
-                    .queryParam("sort", "NEW"))
+                    .queryParam("sort", "DISCOUNT"))
                 .andExpect(status().isOk())
                 .andDo(restDocs.document(
                     queryParameters(
-                        parameterWithName("previousItemId").description("마지막에 조회한 아이템 Id"),
+                        parameterWithName("lastIdx").description("마지막에 조회한 아이템 Id"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("main").description("대카테고리명"),
                         parameterWithName("sort").description("정렬 기준명")
                     )
                 ));
-
         }
-
     }
 
     @Nested
