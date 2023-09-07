@@ -2,8 +2,8 @@ package com.prgrms.nabmart.domain.coupon.support;
 
 import com.prgrms.nabmart.domain.coupon.Coupon;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
-import com.prgrms.nabmart.domain.coupon.service.response.FindCouponResponse;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
+import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse.FindCouponResponse;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AccessLevel;
