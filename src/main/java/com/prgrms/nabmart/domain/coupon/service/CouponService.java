@@ -9,6 +9,7 @@ import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterUserCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
+import com.prgrms.nabmart.domain.coupon.service.response.FindIssuedCouponsResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
@@ -65,15 +66,13 @@ public class CouponService {
     }
 
     @Transactional(readOnly = true)
-    public FindCouponsResponse findUserCoupons(Long userId) {
+    public FindIssuedCouponsResponse findIssuedCoupons(Long userId) {
         User findUser = findUserByUserId(userId);
-        List<Coupon> findIssuedCoupons = userCouponRepository.findByUserAndIsUsedAndCouponEndAtAfter(
-                findUser, false,
-                LocalDate.now())
-            .stream().map(UserCoupon::getCoupon)
-            .toList();
+        List<UserCoupon> findUserCoupons = userCouponRepository.findByUserAndIsUsedAndCouponEndAtAfter(
+            findUser, false,
+            LocalDate.now());
 
-        return FindCouponsResponse.from(findIssuedCoupons);
+        return FindIssuedCouponsResponse.from(findUserCoupons);
     }
 
     private void validateCouponExpiration(LocalDate expirationDate) {
