@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.delivery;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
@@ -20,6 +21,26 @@ class DeliveryTest {
 
         User user = UserFixture.user();
         Order order = OrderFixture.getDeliveringOrder(1L, user);
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            String address = "주소지";
+            LocalDateTime finishedTime = LocalDateTime.now();
+
+            //when
+            Delivery delivery = Delivery.builder()
+                .order(order)
+                .address(address)
+                .finishedTime(finishedTime)
+                .build();
+
+            //then
+            assertThat(delivery.getAddress()).isEqualTo(address);
+            assertThat(delivery.getFinishedTime()).isEqualTo(finishedTime);
+            assertThat(delivery.getOrder()).isEqualTo(order);
+        }
 
         @Test
         @DisplayName("예외: 주소 길이가 500자를 초과")
