@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record FindReviewsByUserResponse(
-    List<FindReviewByUserResponse> findReviewsByUserResponse
+    List<FindReviewByUserResponse> reviews
 ) {
 
     public record FindReviewByUserResponse(

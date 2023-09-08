@@ -159,18 +159,18 @@ class ReviewControllerTest extends BaseControllerTest {
                 .andDo(print())
                 .andDo(restDocs.document(
                     responseFields(
-                        fieldWithPath("findReviewsByUserResponse").type(JsonFieldType.ARRAY)
-                            .description("findReviewsByUserResponse"),
-                        fieldWithPath("findReviewsByUserResponse[].reviewId").type(
+                        fieldWithPath("reviews").type(JsonFieldType.ARRAY)
+                            .description("reviews"),
+                        fieldWithPath("reviews[].reviewId").type(
                                 JsonFieldType.NUMBER)
                             .description("reviewId"),
-                        fieldWithPath("findReviewsByUserResponse[].userNickname").type(
+                        fieldWithPath("reviews[].userNickname").type(
                                 JsonFieldType.STRING)
                             .description("userNickname"),
-                        fieldWithPath("findReviewsByUserResponse[].reviewContent").type(
+                        fieldWithPath("reviews[].reviewContent").type(
                                 JsonFieldType.STRING)
                             .description("reviewContent"),
-                        fieldWithPath("findReviewsByUserResponse[].createdAt").type(
+                        fieldWithPath("reviews[].createdAt").type(
                                 JsonFieldType.STRING)
                             .description("createdAt")
                     )
