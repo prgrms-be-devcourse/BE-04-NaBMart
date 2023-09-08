@@ -10,7 +10,6 @@ import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
 import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
-import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse.FindReviewByUserResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
@@ -79,17 +78,7 @@ public class ReviewService {
         List<Review> foundReviews = reviewRepository.findAllByUserOrderByCreatedAt(
             foundUser);
 
-        return FindReviewsByUserResponse.from(
-            foundReviews
-                .stream()
-                .map(
-                    review -> FindReviewByUserResponse.of(
-                        review.getReviewId(),
-                        foundUser.getNickname(),
-                        review.getContent(),
-                        review.getCreatedAt()
-                    )
-                )
-                .toList());
+        return FindReviewsByUserResponse.of(
+            foundUser, foundReviews);
     }
 }

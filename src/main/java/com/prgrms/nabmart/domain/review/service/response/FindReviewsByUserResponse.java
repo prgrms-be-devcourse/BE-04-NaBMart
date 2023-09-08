@@ -1,5 +1,7 @@
 package com.prgrms.nabmart.domain.review.service.response;
 
+import com.prgrms.nabmart.domain.review.Review;
+import com.prgrms.nabmart.domain.user.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,9 +26,21 @@ public record FindReviewsByUserResponse(
         }
     }
 
-    public static FindReviewsByUserResponse from(
-        final List<FindReviewByUserResponse> findReviewsByUserResponse
+    public static FindReviewsByUserResponse of(
+        final User user,
+        final List<Review> reviews
     ) {
-        return new FindReviewsByUserResponse(findReviewsByUserResponse);
+        List<FindReviewByUserResponse> findReviewByUserResponses = reviews
+            .stream()
+            .map(
+                review -> FindReviewByUserResponse.of(
+                    review.getReviewId(),
+                    user.getNickname(),
+                    review.getContent(),
+                    review.getCreatedAt()
+                )
+            ).toList();
+
+        return new FindReviewsByUserResponse(findReviewByUserResponses);
     }
 }

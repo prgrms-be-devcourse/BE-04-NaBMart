@@ -159,11 +159,13 @@ class ReviewServiceTest {
                 )
             );
 
+            List<Review> reviews = givenReviews.stream()
+                .filter(review -> review.getUser().getUserId() == 1L)
+                .toList();
+
             given(userRepository.findById(any())).willReturn(Optional.ofNullable(givenUser));
             given(reviewRepository.findAllByUserOrderByCreatedAt(givenUser)).willReturn(
-                givenReviews.stream()
-                    .filter(review -> review.getUser().getUserId() == 1L)
-                    .toList()
+                reviews
             );
 
             // when
@@ -171,7 +173,7 @@ class ReviewServiceTest {
                 1L);
 
             // then
-            assertThat(findReviewsByUserResponse.findReviewsByUserResponse()).hasSize(2);
+            assertThat(findReviewsByUserResponse.reviews()).hasSize(2);
         }
     }
 }

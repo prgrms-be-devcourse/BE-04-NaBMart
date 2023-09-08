@@ -19,11 +19,9 @@ import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.review.controller.request.UpdateReviewRequest;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
-import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse.FindReviewByUserResponse;
+import com.prgrms.nabmart.domain.review.support.FindReviewsByUserResponseFixture;
 import com.prgrms.nabmart.domain.review.support.RegisterReviewCommandFixture;
 import com.prgrms.nabmart.domain.review.support.UpdateReviewRequestFixture;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -139,13 +137,7 @@ class ReviewControllerTest extends BaseControllerTest {
         void findReviewsByUser() throws Exception {
             // given
             Long userId = 1L;
-            FindReviewsByUserResponse findReviewsByUserResponse = FindReviewsByUserResponse.from(
-                List.of(
-                    FindReviewByUserResponse.of(
-                        1L, "김춘배", "너무 맛있어요!", LocalDateTime.now()
-                    )
-                )
-            );
+            FindReviewsByUserResponse findReviewsByUserResponse = FindReviewsByUserResponseFixture.findReviewsByUserResponse();
 
             given(reviewService.findReviewsByUser(userId)).willReturn(findReviewsByUserResponse);
 
