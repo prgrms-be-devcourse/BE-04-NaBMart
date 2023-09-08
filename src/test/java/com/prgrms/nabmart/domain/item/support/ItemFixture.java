@@ -1,5 +1,8 @@
 package com.prgrms.nabmart.domain.item.support;
 
+import static com.prgrms.nabmart.domain.category.fixture.CategoryFixture.mainCategory;
+import static com.prgrms.nabmart.domain.category.fixture.CategoryFixture.subCategory;
+
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
@@ -35,6 +38,13 @@ public final class ItemFixture {
     private static final Long USER_ID = 1L;
     private static final Long LIKE_ITEM_ID = 1L;
     private static final String ITEM_SORT_TYPE = ItemSortType.NEW.name();
+    private static final MainCategory MAIN_CATEGORY = mainCategory();
+    private static final SubCategory SUB_CATEGORY = subCategory(MAIN_CATEGORY);
+
+    public static Item item() {
+        return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, MAIN_CATEGORY,
+            SUB_CATEGORY);
+    }
 
     public static Item item(MainCategory mainCategory, SubCategory subCategory) {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, mainCategory,
