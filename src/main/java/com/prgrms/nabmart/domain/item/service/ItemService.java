@@ -148,11 +148,25 @@ public class ItemService {
 
     private List<Item> findHotItemsFrom(FindHotItemsCommand findHotItemsCommand) {
         return switch (findHotItemsCommand.sortType()) {
-            case NEW -> itemRepository.findHotItemOrderByItemIdDesc(findHotItemsCommand.lastIdx(), findHotItemsCommand.pageRequest());
-            case LOWEST_AMOUNT -> itemRepository.findHotItemOrderByPriceAsc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
-            case HIGHEST_AMOUNT -> itemRepository.findHotItemOrderByPriceDesc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
-            case DISCOUNT -> itemRepository.findHotItemOrderByDiscountDesc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
-            default -> itemRepository.findHotItemOrderByOrdersDesc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
+            case NEW -> itemRepository.findHotItemOrderByItemIdDesc(findHotItemsCommand.lastIdx(),
+                findHotItemsCommand.pageRequest());
+            case LOWEST_AMOUNT ->
+                itemRepository.findHotItemOrderByPriceAsc(findHotItemsCommand.lastIdx().intValue(),
+                    findHotItemsCommand.pageRequest());
+            case HIGHEST_AMOUNT ->
+                itemRepository.findHotItemOrderByPriceDesc(findHotItemsCommand.lastIdx().intValue(),
+                    findHotItemsCommand.pageRequest());
+            case DISCOUNT -> itemRepository.findHotItemOrderByDiscountDesc(
+                findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
+            default -> {
+                int lastIdx = findHotItemsCommand.lastIdx().intValue();
+                if (lastIdx != Integer.MAX_VALUE) {
+                    lastIdx = orderItemRepository.countByOrderItemId(findHotItemsCommand.lastIdx())
+                        .intValue();
+                }
+                yield itemRepository.findHotItemOrderByOrdersDesc(lastIdx,
+                    findHotItemsCommand.pageRequest());
+            }
         };
     }
 }
