@@ -9,9 +9,13 @@ import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final OrderItemRepository orderItemRepository;
     private final MainCategoryRepository mainCategoryRepository;
+    private static final int NEW_PRODUCT_REFERENCE_WEEK = 2;
 
 
     @Transactional(readOnly = true)
@@ -92,5 +97,45 @@ public class ItemService {
                     totalOrderedQuantity, mainCategory, pageRequest);
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
+        List<Item> items = findNewItemsFrom(findNewItemsCommand);
+        return FindItemsResponse.from(items);
+    }
+
+    private List<Item> findNewItemsFrom(FindNewItemsCommand findNewItemsCommand) {
+        LocalDateTime createdAt = LocalDateTime.now()
+            .minus(NEW_PRODUCT_REFERENCE_WEEK, ChronoUnit.WEEKS);
+        return switch (findNewItemsCommand.sortType()) {
+            case NEW ->
+                itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(createdAt,
+                    findNewItemsCommand.lastIdx(), findNewItemsCommand.pageRequest());
+            case HIGHEST_AMOUNT ->
+                itemRepository.findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(
+                    createdAt, findNewItemsCommand.lastIdx().intValue(),
+                    findNewItemsCommand.pageRequest());
+            case LOWEST_AMOUNT ->
+                itemRepository.findByCreatedAtAfterAndPriceGreaterThanOrderByPriceAscItemIdDesc(
+                    createdAt, findNewItemsCommand.lastIdx().intValue(),
+                    findNewItemsCommand.pageRequest());
+            case DISCOUNT ->
+                itemRepository.findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(
+                    createdAt, findNewItemsCommand.lastIdx().intValue(),
+                    findNewItemsCommand.pageRequest());
+            default -> {
+                int lastIdx = findNewItemsCommand.lastIdx().intValue();
+                if (findNewItemsCommand.lastIdx() != Long.parseLong(
+                    String.valueOf(Integer.MAX_VALUE))) {
+                    lastIdx = itemRepository.findItemByTotalOrderedQuantity(
+                            findNewItemsCommand.lastIdx().intValue()).get(0).getOrderItems().stream()
+                        .mapToInt(
+                            OrderItem::getQuantity).sum();
+                }
+                yield itemRepository.findNewItemOrderByOrders(createdAt, lastIdx,
+                    findNewItemsCommand.pageRequest());
+            }
+        };
     }
 }

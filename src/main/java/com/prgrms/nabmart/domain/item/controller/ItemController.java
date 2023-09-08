@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.item.controller;
 import com.prgrms.nabmart.domain.item.service.ItemService;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,4 +43,15 @@ public class ItemController {
         FindItemDetailCommand findItemDetailCommand = FindItemDetailCommand.from(itemId);
         return ResponseEntity.ok(itemService.findItemDetail(findItemDetailCommand));
     }
+    
+    @GetMapping("/new")
+    public ResponseEntity<FindItemsResponse> findNewItems(
+        @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
+        @RequestParam int size,
+        @RequestParam(defaultValue = "POPULAR") String sort
+    ) {
+        FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(lastIdx, size, sort);
+        return ResponseEntity.ok(itemService.findNewItems(findNewItemsCommand));
+    }
 }
+    
