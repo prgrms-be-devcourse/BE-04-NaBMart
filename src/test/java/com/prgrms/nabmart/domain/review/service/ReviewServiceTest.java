@@ -15,12 +15,16 @@ import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
 import com.prgrms.nabmart.domain.review.support.RegisterReviewCommandFixture;
 import com.prgrms.nabmart.domain.review.support.ReviewFixture;
 import com.prgrms.nabmart.domain.review.support.UpdateReviewCommandFixture;
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.UserGrade;
+import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -128,6 +133,47 @@ class ReviewServiceTest {
             // then
             assertThat(givenReview.getRate()).isEqualTo(givenRate);
             assertThat(givenReview.getContent()).isEqualTo(givenContent);
+        }
+    }
+
+    @Nested
+    @DisplayName("로그인 한 사용자의 리뷰 목록 조회 Service 실행 시")
+    class findReviewsByUser {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // given
+            User newUser = new User("김춘배", "chunbae@gmail.com", "kakao", "kakaoId",
+                UserRole.ROLE_USER, UserGrade.VIP);
+
+            ReflectionTestUtils.setField(givenUser, "userId", 1L);
+            ReflectionTestUtils.setField(newUser, "userId", 2L);
+
+            List<Review> givenReviews = List.of(
+                givenReview,
+                new Review(givenUser, givenItem, 3.65, "내공냠냠2"),
+                new Review(
+                    newUser,
+                    givenItem, 4, "야미야미"
+                )
+            );
+
+            List<Review> givenUserReviews = givenReviews.stream()
+                .filter(review -> review.getUser().getUserId() == 1L)
+                .toList();
+
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(givenUser));
+            given(reviewRepository.findAllByUserOrderByCreatedAt(givenUser)).willReturn(
+                givenUserReviews
+            );
+
+            // when
+            FindReviewsByUserResponse findReviewsByUserResponse = reviewService.findReviewsByUser(
+                1L);
+
+            // then
+            assertThat(findReviewsByUserResponse.reviews()).hasSize(2);
         }
     }
 }
