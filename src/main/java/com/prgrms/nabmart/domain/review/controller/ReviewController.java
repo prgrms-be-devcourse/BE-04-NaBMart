@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.review.exception.ReviewException;
 import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,14 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/reviews")
+@RequestMapping("/api/v1")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
     private static final String BASE_URI = "/api/v1/reviews/";
 
-    @PostMapping
+    @PostMapping("/reviews")
     public ResponseEntity<Void> registerReview(
         @Valid @RequestBody RegisterReviewRequest registerReviewRequest,
         @LoginUser Long userId
@@ -49,16 +51,16 @@ public class ReviewController {
         return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping("/{reviewId}")
+    @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<Void> deleteReview(
-        @PathVariable Long reviewId
+        @PathVariable final Long reviewId
     ) {
         reviewService.deleteReview(reviewId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{reviewId}")
+    @PatchMapping("/reviews/{reviewId}")
     public ResponseEntity<Void> updateReview(
         @PathVariable final Long reviewId,
         @Valid @RequestBody UpdateReviewRequest updateReviewRequest
@@ -72,6 +74,13 @@ public class ReviewController {
         reviewService.updateReview(updateReviewCommand);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/users/my-reviews")
+    public ResponseEntity<FindReviewsByUserResponse> findReviewsByUser(
+        @LoginUser final Long userId
+    ) {
+        return ResponseEntity.ok().body(reviewService.findReviewsByUser(userId));
     }
 
     @ExceptionHandler(ReviewException.class)

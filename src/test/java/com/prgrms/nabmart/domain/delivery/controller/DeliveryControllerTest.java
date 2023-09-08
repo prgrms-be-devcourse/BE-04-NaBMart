@@ -5,15 +5,18 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -61,6 +64,39 @@ class DeliveryControllerTest extends BaseControllerTest {
                         fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
                         fieldWithPath("name").type(STRING).description("주문 이름"),
                         fieldWithPath("price").type(NUMBER).description("주문 가격")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("배달상태 갱신 - 배달시작 API 호출 시")
+    class StartDeliveryTest {
+
+        @Test
+        @DisplayName("성공")
+        void startDelivery() throws Exception {
+            //given
+            Long deliveryId = 1L;
+            int deliveryEstimateMinutes = 20;
+            StartDeliveryRequest startDeliveryRequest
+                = new StartDeliveryRequest(deliveryEstimateMinutes);
+
+            //when
+            ResultActions resultActions
+                = mockMvc.perform(patch("/api/v1/deliveries/pickup/{deliveryId}", deliveryId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(startDeliveryRequest)));
+
+            //then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(restDocs.document(
+                    pathParameters(
+                        parameterWithName("deliveryId").description("배달 ID")
+                    ),
+                    requestFields(
+                        fieldWithPath("deliveryEstimateMinutes").type(NUMBER)
+                            .description("배달 예상 소요 시간(분)")
                     )
                 ));
         }

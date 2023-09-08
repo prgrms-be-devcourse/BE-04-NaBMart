@@ -23,9 +23,7 @@ class RegisterReviewRequestTest {
         @DisplayName("성공")
         void success() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
-                1L, 5, "내공 냠냠"
-            );
+            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest();
 
             // when
             Set<ConstraintViolation<RegisterReviewRequest>> violations = validator.validate(
@@ -39,7 +37,7 @@ class RegisterReviewRequestTest {
         @DisplayName("예외 : itemId 가 null")
         void throwExceptionWhenItemIdIsNull() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
+            RegisterReviewRequest registerReviewRequest = new RegisterReviewRequest(
                 null, 5, "내공 냠냠"
             );
 
@@ -55,7 +53,7 @@ class RegisterReviewRequestTest {
         @DisplayName("예외 : itemId 가 양수가 아닌 경우")
         void throwExceptionWhenItemIdIsNotPositive() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
+            RegisterReviewRequest registerReviewRequest = new RegisterReviewRequest(
                 -1L, 5, "내공 냠냠"
             );
 
@@ -71,7 +69,7 @@ class RegisterReviewRequestTest {
         @DisplayName("예외 : rate 가 0미만인 경우")
         void throwExceptionWhenRateIsMinus() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
+            RegisterReviewRequest registerReviewRequest = new RegisterReviewRequest(
                 1L, -1, "내공 냠냠"
             );
 
@@ -87,7 +85,7 @@ class RegisterReviewRequestTest {
         @DisplayName("예외 : rate 가 5점 초과")
         void throwExceptionWhenRateIsMoreThanMaxLength() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
+            RegisterReviewRequest registerReviewRequest = new RegisterReviewRequest(
                 1L, 6, "내공 냠냠"
             );
 
@@ -103,7 +101,7 @@ class RegisterReviewRequestTest {
         @DisplayName("예외 : content 가 null")
         void throwExceptionWhenContentIsNull() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
+            RegisterReviewRequest registerReviewRequest = new RegisterReviewRequest(
                 1L, 5, null
             );
 
@@ -119,7 +117,7 @@ class RegisterReviewRequestTest {
         @DisplayName("예외 : content 가 빈 칸인 경우")
         void throwExceptionWhenContentIsBlank() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
+            RegisterReviewRequest registerReviewRequest = new RegisterReviewRequest(
                 1L, 5, ""
             );
 
@@ -135,7 +133,7 @@ class RegisterReviewRequestTest {
         @DisplayName("예외 : content 가 100자 초과인 경우")
         void throwExceptionWhenContentIsMoreThanMaxLength() {
             // given
-            RegisterReviewRequest registerReviewRequest = RegisterReviewRequestFixture.registerReviewRequest(
+            RegisterReviewRequest registerReviewRequest = new RegisterReviewRequest(
                 1L, 5, "1".repeat(101)
             );
 
