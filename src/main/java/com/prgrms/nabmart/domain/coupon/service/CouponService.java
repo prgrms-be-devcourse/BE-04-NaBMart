@@ -59,7 +59,7 @@ public class CouponService {
 
     @Transactional(readOnly = true)
     public FindCouponsResponse findCoupons() {
-        List<Coupon> findCoupons = couponRepository.findByEndAtGreaterThan(
+        List<Coupon> findCoupons = couponRepository.findByEndAtGreaterThanEqual(
             LocalDate.now());
 
         return FindCouponsResponse.from(findCoupons);
