@@ -33,12 +33,12 @@ class DeliveryTest {
             Delivery delivery = Delivery.builder()
                 .order(order)
                 .address(address)
-                .finishedTime(finishedTime)
+                .arriveTime(finishedTime)
                 .build();
 
             //then
             assertThat(delivery.getAddress()).isEqualTo(address);
-            assertThat(delivery.getFinishedTime()).isEqualTo(finishedTime);
+            assertThat(delivery.getArriveTime()).isEqualTo(finishedTime);
             assertThat(delivery.getOrder()).isEqualTo(order);
         }
 
