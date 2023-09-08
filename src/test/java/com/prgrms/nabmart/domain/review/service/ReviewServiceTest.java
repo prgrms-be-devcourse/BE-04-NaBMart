@@ -159,13 +159,13 @@ class ReviewServiceTest {
                 )
             );
 
-            List<Review> reviews = givenReviews.stream()
+            List<Review> givenUserReviews = givenReviews.stream()
                 .filter(review -> review.getUser().getUserId() == 1L)
                 .toList();
 
             given(userRepository.findById(any())).willReturn(Optional.ofNullable(givenUser));
             given(reviewRepository.findAllByUserOrderByCreatedAt(givenUser)).willReturn(
-                reviews
+                givenUserReviews
             );
 
             // when
