@@ -39,9 +39,7 @@ class ReviewControllerTest extends BaseControllerTest {
         @DisplayName("성공")
         void registerReview() throws Exception {
             // given
-            RegisterReviewCommand registerReviewCommand = RegisterReviewCommandFixture.registerReviewRequest(
-                1L, 1L, 5, "내공냠냠"
-            );
+            RegisterReviewCommand registerReviewCommand = RegisterReviewCommandFixture.registerReviewCommand();
 
             given(reviewService.registerReview(any())).willReturn(1L);
 
@@ -104,9 +102,7 @@ class ReviewControllerTest extends BaseControllerTest {
         void updateReview() throws Exception {
             // given
             Long reviewId = 1L;
-            UpdateReviewRequest updateReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
-                5, "내공냠냠"
-            );
+            UpdateReviewRequest updateReviewRequest = UpdateReviewRequestFixture.updateReviewRequest();
 
             // when
             ResultActions resultActions = mockMvc.perform(
