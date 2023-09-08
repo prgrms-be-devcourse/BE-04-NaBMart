@@ -78,7 +78,7 @@ public class CouponService {
     }
 
     @Async
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteExpiredCoupon() {
         List<Coupon> expiredCoupons = couponRepository.findByEndAtBefore(LocalDate.now());
