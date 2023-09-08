@@ -356,8 +356,8 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item2, item3);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.POPULAR);
 
-            when(itemRepository.findItemByTotalOrderedQuantity(anyInt()))
-                .thenReturn(List.of(item1));
+            when(orderItemRepository.countByOrderItemId(anyLong()))
+                .thenReturn(Long.MAX_VALUE);
             when(itemRepository.findNewItemOrderByOrders(any(), anyInt(), any()))
                 .thenReturn(expectedItems);
 
