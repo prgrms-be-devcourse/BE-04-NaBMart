@@ -32,7 +32,7 @@ class DeliveryTest {
             assertThatThrownBy(() ->
                     Delivery.builder()
                         .order(order)
-                        .finishedTime(LocalDateTime.now())
+                        .arriveTime(LocalDateTime.now())
                         .address(invalidAddress)
                         .build())
                 .isInstanceOf(InvalidDeliveryException.class);

@@ -56,7 +56,7 @@ class DeliveryControllerTest extends BaseControllerTest {
                     responseFields(
                         fieldWithPath("deliveryId").type(NUMBER).description("배달 ID"),
                         fieldWithPath("deliveryStatus").type(STRING).description("배달 ID"),
-                        fieldWithPath("finishedTime").type(STRING).description("도착 시간"),
+                        fieldWithPath("arriveTime").type(STRING).description("도착 시간"),
                         fieldWithPath("address").type(STRING).description("주소"),
                         fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
                         fieldWithPath("name").type(STRING).description("주문 이름"),
