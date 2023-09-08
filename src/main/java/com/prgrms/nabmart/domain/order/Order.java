@@ -51,4 +51,8 @@ public class Order extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
+
+    public boolean isOwnByUser(User user) {
+        return this.user.equals(user);
+    }
 }
