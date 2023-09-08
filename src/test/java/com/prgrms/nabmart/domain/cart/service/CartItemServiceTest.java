@@ -34,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class CartItemServiceTest {
@@ -60,7 +61,6 @@ class CartItemServiceTest {
     SubCategory givenSubCategory;
     CartItem givenCartItem;
     int givenQuantity;
-
 
     @BeforeEach
     void setUp() {
@@ -119,26 +119,30 @@ class CartItemServiceTest {
     }
 
     @Nested
-    @DisplayName("장바구니 상품 목록 조회 Service 실행 시")
+    @DisplayName("로그인 한 사용자의 장바구니 상품 목록 조회 Service 실행 시")
     class FindCartItemsTest {
 
         @Test
         @DisplayName("성공")
-        void findCartItems() {
+        void success() {
             // given
-            Long cartItemId = 1L;
             List<CartItem> cartItems = Collections.singletonList(
                 givenCartItem
             );
 
-            given(cartItemRepository.findAllByCartItemIdOrderByCreatedAt(cartItemId)).willReturn(
+            ReflectionTestUtils.setField(givenCart, "cartId", 1L);
+
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(givenUser));
+            given(cartRepository.findByUser(any())).willReturn(Optional.ofNullable(givenCart));
+            given(cartItemRepository.findAllByCartOrderByCreatedAt(givenCart)).willReturn(
                 cartItems);
 
             // when
-            FindCartItemsResponse findCartItemsResponse = cartItemService.findCartItems(cartItemId);
+            FindCartItemsResponse findCartItemsResponse = cartItemService.findCartItemsByUserId(
+                givenUser.getUserId());
 
             // then
-            assertThat(findCartItemsResponse.findCartItemsResponse()).hasSize(1);
+            assertThat(findCartItemsResponse.cartItems()).hasSize(1);
         }
     }
 
