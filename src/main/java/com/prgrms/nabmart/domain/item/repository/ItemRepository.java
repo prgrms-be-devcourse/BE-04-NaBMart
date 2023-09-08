@@ -70,11 +70,4 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(
         LocalDateTime createdAt, int discount, Pageable pageable);
 
-    // 총 주문 수의 아이템 찾기
-    @Query("SELECT i FROM Item i "
-        + "LEFT JOIN OrderItem oi ON oi.item = i "
-        + "GROUP BY i.itemId "
-        + "HAVING SUM(oi.quantity) = :totalOrderedQuantity "
-        + "ORDER BY i.itemId ASC")
-    List<Item> findItemByTotalOrderedQuantity(@Param("totalOrderedQuantity") int totalOrderedQuantity);
 }
