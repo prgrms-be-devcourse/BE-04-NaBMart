@@ -129,9 +129,9 @@ class CartItemControllerTest extends BaseControllerTest {
 
             @Test
             @DisplayName("성공")
-            void findCartItems() throws Exception {
+            void findCartItemsByUserId() throws Exception {
                 // given
-                Long cartItemId = 1L;
+                Long userId = 1L;
                 Long cartId = 1L;
                 Long itemId = 1L;
                 int quantity = 5;
@@ -140,30 +140,28 @@ class CartItemControllerTest extends BaseControllerTest {
                         cartId, itemId, quantity
                     )));
 
-                given(cartItemService.findCartItems(cartItemId)).willReturn(findCartItemsResponse);
+                given(cartItemService.findCartItemsByUserId(userId)).willReturn(
+                    findCartItemsResponse);
 
                 // when
                 ResultActions resultActions = mockMvc.perform(
-                    get("/api/v1/cart-items/{cartItemId}/list", cartItemId)
+                    get("/api/v1/my-cart-items")
                         .contentType(MediaType.APPLICATION_JSON));
 
                 // then
                 resultActions.andExpect(status().isOk())
                     .andDo(print())
                     .andDo(restDocs.document(
-                        pathParameters(
-                            parameterWithName("cartItemId").description("cartItemId")
-                        ),
                         responseFields(
-                            fieldWithPath("findCartItemsResponse").type(JsonFieldType.ARRAY)
-                                .description("List of cart items"),
-                            fieldWithPath("findCartItemsResponse[].cartId").type(
+                            fieldWithPath("cartItems").type(JsonFieldType.ARRAY)
+                                .description("cartItems"),
+                            fieldWithPath("cartItems[].cartId").type(
                                     JsonFieldType.NUMBER)
                                 .description("cartId"),
-                            fieldWithPath("findCartItemsResponse[].itemId").type(
+                            fieldWithPath("cartItems[].itemId").type(
                                     JsonFieldType.NUMBER)
                                 .description("itemId"),
-                            fieldWithPath("findCartItemsResponse[].quantity").type(
+                            fieldWithPath("cartItems[].quantity").type(
                                     JsonFieldType.NUMBER)
                                 .description("quantity")
                         )

@@ -38,6 +38,7 @@ public class UserCoupon extends BaseTimeEntity {
     public UserCoupon(User user, Coupon coupon) {
         this.user = user;
         this.coupon = coupon;
-        isUsed = true;
+        isUsed = false;
     }
 }
+

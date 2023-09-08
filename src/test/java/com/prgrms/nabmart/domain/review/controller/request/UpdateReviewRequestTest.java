@@ -23,9 +23,7 @@ class UpdateReviewRequestTest {
         @DisplayName("성공")
         void success() {
             // given
-            UpdateReviewRequest registerReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
-                5, "내공 냠냠"
-            );
+            UpdateReviewRequest registerReviewRequest = UpdateReviewRequestFixture.updateReviewRequest();
 
             // when
             Set<ConstraintViolation<UpdateReviewRequest>> violations = validator.validate(
@@ -39,7 +37,7 @@ class UpdateReviewRequestTest {
         @DisplayName("예외 : rate 가 0미만인 경우")
         void throwExceptionWhenRateIsNull() {
             // given
-            UpdateReviewRequest registerReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
+            UpdateReviewRequest registerReviewRequest = new UpdateReviewRequest(
                 -1, "내공 냠냠"
             );
 
@@ -55,7 +53,7 @@ class UpdateReviewRequestTest {
         @DisplayName("예외 : rate 가 5점 초과")
         void throwExceptionWhenRateIsMoreThanMaxLength() {
             // given
-            UpdateReviewRequest registerReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
+            UpdateReviewRequest registerReviewRequest = new UpdateReviewRequest(
                 6, "내공 냠냠"
             );
 
@@ -71,7 +69,7 @@ class UpdateReviewRequestTest {
         @DisplayName("예외 : content 가 null")
         void throwExceptionWhenContentIsNull() {
             // given
-            UpdateReviewRequest registerReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
+            UpdateReviewRequest registerReviewRequest = new UpdateReviewRequest(
                 5, null
             );
 
@@ -87,7 +85,7 @@ class UpdateReviewRequestTest {
         @DisplayName("예외 : content 가 빈 칸인 경우")
         void throwExceptionWhenContentIsBlank() {
             // given
-            UpdateReviewRequest registerReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
+            UpdateReviewRequest registerReviewRequest = new UpdateReviewRequest(
                 5, ""
             );
 
@@ -103,7 +101,7 @@ class UpdateReviewRequestTest {
         @DisplayName("예외 : content 가 100자 초과인 경우")
         void throwExceptionWhenContentIsMoreThanMaxLength() {
             // given
-            UpdateReviewRequest registerReviewRequest = UpdateReviewRequestFixture.updateReviewRequest(
+            UpdateReviewRequest registerReviewRequest = new UpdateReviewRequest(
                 5, "z".repeat(101)
             );
 

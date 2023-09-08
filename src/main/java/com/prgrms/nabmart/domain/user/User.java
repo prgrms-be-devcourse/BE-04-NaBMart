@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -82,5 +83,23 @@ public class User extends BaseTimeEntity {
 
     public boolean isSameUserId(final Long userId) {
         return this.userId.equals(userId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(getProvider(), user.getProvider()) && Objects.equals(
+            getProviderId(), user.getProviderId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProvider(), getProviderId());
     }
 }

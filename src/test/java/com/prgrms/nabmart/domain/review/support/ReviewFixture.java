@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ReviewFixture {
 
+    private static final double RATE = 5;
+    private static final String CONTENT = "맛있어요!";
+
     public static Review review(
         User user,
-        Item item,
-        double rate,
-        String content
+        Item item
     ) {
-        return new Review(user, item, rate, content);
+        return new Review(user, item, RATE, CONTENT);
     }
 }
