@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 public class Delivery {
 
     private static final int ADDRESS_LENGTH = 500;
+    private static final int ZERO = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +48,7 @@ public class Delivery {
         validateAddress(address);
         this.order = order;
         this.address = address;
-        this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDERS;
+        this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
     }
 
     private void validateAddress(String address) {
@@ -58,5 +59,17 @@ public class Delivery {
 
     public boolean isOwnByUser(final User user) {
         return this.order.isOwnByUser(user);
+    }
+
+    public void startDelivery(final int estimateMinutes) {
+        validateEstimateMinutes(estimateMinutes);
+        this.arrivedAt = LocalDateTime.now().plusMinutes(estimateMinutes);
+        this.deliveryStatus = DeliveryStatus.START_DELIVERY;
+    }
+
+    private void validateEstimateMinutes(final int estimateMinutes) {
+        if(estimateMinutes < ZERO) {
+            throw new InvalidDeliveryException("배송 예상 소요 시간은 음수일 수 없습니다.");
+        }
     }
 }

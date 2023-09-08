@@ -15,11 +15,12 @@ public final class DeliveryFixture {
     private static final Long DELIVERY_ID = 1L;
     private static final String ADDRESS = "주소지";
     private static final LocalDateTime ARRIVED_AT = LocalDateTime.now();
-    private static final DeliveryStatus DELIVERY_STATUS = DeliveryStatus.ACCEPTING_ORDERS;
+    private static final DeliveryStatus DELIVERY_STATUS = DeliveryStatus.ACCEPTING_ORDER;
     private static final Long USER_ID = 1L;
     private static final Long ORDER_ID = 1L;
     private static final String ORDER_NAME = "비비고 왕교자 외 2개";
     private static final int ORDER_PRICE = 1000;
+    private static final int ESTIMATE_MINUTES = 20;
 
     public static Delivery delivery(Order order) {
         return Delivery.builder()
