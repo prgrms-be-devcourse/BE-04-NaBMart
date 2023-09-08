@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.delivery.service;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
+import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
@@ -39,6 +40,12 @@ public class DeliveryService {
     public void startDelivery(StartDeliveryCommand startDeliveryCommand) {
         Delivery delivery = findDeliveryByDeliveryId(startDeliveryCommand.deliveryId());
         delivery.startDelivery(startDeliveryCommand.deliveryEstimateMinutes());
+    }
+
+    @Transactional
+    public void completeDelivery(CompleteDeliveryCommand completeDeliveryCommand) {
+        Delivery delivery = findDeliveryByDeliveryId(completeDeliveryCommand.deliveryId());
+        delivery.completeDelivery();
     }
 
     private User findUserByUserId(final Long userId) {
