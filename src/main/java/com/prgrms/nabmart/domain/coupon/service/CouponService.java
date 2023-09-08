@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,14 @@ public class CouponService {
             LocalDate.now());
 
         return FindIssuedCouponsResponse.from(findUserCoupons);
+    }
+
+    @Async
+    @Scheduled(cron = "0 0 * * *")
+    @Transactional
+    public void deleteExpiredCoupon() {
+        List<Coupon> expiredCoupons = couponRepository.findByEndAtBefore(LocalDate.now());
+        couponRepository.deleteAll(expiredCoupons);
     }
 
     private void validateCouponExpiration(LocalDate expirationDate) {
