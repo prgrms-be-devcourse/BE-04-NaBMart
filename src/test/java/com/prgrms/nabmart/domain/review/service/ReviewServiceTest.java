@@ -63,16 +63,14 @@ class ReviewServiceTest {
         givenMainCategory = CategoryFixture.mainCategory();
         givenSubCategory = CategoryFixture.subCategory(givenMainCategory);
         givenItem = ItemFixture.item(givenMainCategory, givenSubCategory);
-        givenReview = ReviewFixture.review(givenUser, givenItem, 5, "내공냠냠");
+        givenReview = ReviewFixture.review(givenUser, givenItem);
     }
 
     @Nested
     @DisplayName("리뷰 등록 Service 실행 시")
     class RegisterReviewTest {
 
-        RegisterReviewCommand registerReviewCommand = RegisterReviewCommandFixture.registerReviewRequest(
-            1L, 1L, 5, "내공냠냠"
-        );
+        RegisterReviewCommand registerReviewCommand = RegisterReviewCommandFixture.registerReviewCommand();
 
         @Test
         @DisplayName("성공")
@@ -118,12 +116,7 @@ class ReviewServiceTest {
         @DisplayName("성공")
         void updateReview() {
             // given
-            Long givenReviewId = 1L;
-            double givenRate = 5;
-            String givenContent = "내공냠냠";
-            UpdateReviewCommand updateReviewCommand = UpdateReviewCommandFixture.updateReviewCommand(
-                givenReviewId, givenRate, givenContent
-            );
+            UpdateReviewCommand updateReviewCommand = UpdateReviewCommandFixture.updateReviewCommand();
 
             given(reviewRepository.findById(any())).willReturn(Optional.ofNullable(givenReview));
 
@@ -131,8 +124,8 @@ class ReviewServiceTest {
             reviewService.updateReview(updateReviewCommand);
 
             // then
-            assertThat(givenReview.getRate()).isEqualTo(givenRate);
-            assertThat(givenReview.getContent()).isEqualTo(givenContent);
+            assertThat(givenReview.getRate()).isEqualTo(updateReviewCommand.rate());
+            assertThat(givenReview.getContent()).isEqualTo(updateReviewCommand.content());
         }
     }
 

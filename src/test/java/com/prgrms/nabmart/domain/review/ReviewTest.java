@@ -45,7 +45,7 @@ class ReviewTest {
             // given
 
             // when
-            givenReview = ReviewFixture.review(givenUser, givenItem, 4.1, "내공 냠냠");
+            givenReview = ReviewFixture.review(givenUser, givenItem);
 
             // then
             assertThat(givenReview.getUser()).isEqualTo(givenUser);
