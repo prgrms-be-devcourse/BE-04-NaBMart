@@ -37,16 +37,15 @@ public class Delivery {
     private DeliveryStatus deliveryStatus;
 
     @Column
-    private LocalDateTime arriveTime;
+    private LocalDateTime arrivedAt;
 
     @Column(nullable = false)
     private String address;
 
     @Builder
-    public Delivery(final Order order, final LocalDateTime arriveTime, final String address) {
+    public Delivery(final Order order, final String address) {
         validateAddress(address);
         this.order = order;
-        this.arriveTime = arriveTime;
         this.address = address;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDERS;
     }

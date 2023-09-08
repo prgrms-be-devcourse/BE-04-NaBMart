@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record FindDeliveryDetailResponse(
     Long deliveryId,
     DeliveryStatus deliveryStatus,
-    LocalDateTime arriveTime,
+    LocalDateTime arrivedAt,
     String address,
     Long orderId,
     String name,
@@ -17,7 +17,7 @@ public record FindDeliveryDetailResponse(
         return new FindDeliveryDetailResponse(
             delivery.getDeliveryId(),
             delivery.getDeliveryStatus(),
-            delivery.getArriveTime(),
+            delivery.getArrivedAt(),
             delivery.getAddress(),
             delivery.getOrder().getOrderId(),
             delivery.getOrder().getName(),

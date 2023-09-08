@@ -14,7 +14,7 @@ public final class DeliveryFixture {
 
     private static final Long DELIVERY_ID = 1L;
     private static final String ADDRESS = "주소지";
-    private static final LocalDateTime ARRIVE_TIME = LocalDateTime.now();
+    private static final LocalDateTime ARRIVED_AT = LocalDateTime.now();
     private static final DeliveryStatus DELIVERY_STATUS = DeliveryStatus.ACCEPTING_ORDERS;
     private static final Long USER_ID = 1L;
     private static final Long ORDER_ID = 1L;
@@ -25,7 +25,6 @@ public final class DeliveryFixture {
         return Delivery.builder()
             .order(order)
             .address(ADDRESS)
-            .arriveTime(ARRIVE_TIME)
             .build();
     }
 
@@ -37,7 +36,7 @@ public final class DeliveryFixture {
         return new FindDeliveryDetailResponse(
             DELIVERY_ID,
             DELIVERY_STATUS,
-            ARRIVE_TIME,
+            ARRIVED_AT,
             ADDRESS,
             ORDER_ID,
             ORDER_NAME,

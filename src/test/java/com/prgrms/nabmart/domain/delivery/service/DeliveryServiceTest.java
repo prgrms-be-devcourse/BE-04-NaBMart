@@ -67,8 +67,8 @@ class DeliveryServiceTest {
                 .isEqualTo(delivery.getDeliveryStatus());
             assertThat(findDeliveryDetailResponse.address())
                 .isEqualTo(delivery.getAddress());
-            assertThat(findDeliveryDetailResponse.arriveTime())
-                .isEqualTo(delivery.getArriveTime());
+            assertThat(findDeliveryDetailResponse.arrivedAt())
+                .isEqualTo(delivery.getArrivedAt());
             assertThat(findDeliveryDetailResponse.name())
                 .isEqualTo(delivery.getOrder().getName());
             assertThat(findDeliveryDetailResponse.price())

@@ -8,7 +8,6 @@ import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.support.OrderFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,18 +26,15 @@ class DeliveryTest {
         void success() {
             //given
             String address = "주소지";
-            LocalDateTime finishedTime = LocalDateTime.now();
 
             //when
             Delivery delivery = Delivery.builder()
                 .order(order)
                 .address(address)
-                .arriveTime(finishedTime)
                 .build();
 
             //then
             assertThat(delivery.getAddress()).isEqualTo(address);
-            assertThat(delivery.getArriveTime()).isEqualTo(finishedTime);
             assertThat(delivery.getOrder()).isEqualTo(order);
         }
 
@@ -53,7 +49,6 @@ class DeliveryTest {
             assertThatThrownBy(() ->
                     Delivery.builder()
                         .order(order)
-                        .arriveTime(LocalDateTime.now())
                         .address(invalidAddress)
                         .build())
                 .isInstanceOf(InvalidDeliveryException.class);
