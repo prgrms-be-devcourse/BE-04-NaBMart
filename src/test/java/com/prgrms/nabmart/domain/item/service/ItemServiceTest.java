@@ -15,6 +15,7 @@ import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
@@ -212,12 +213,13 @@ class ItemServiceTest {
             // Given
             Item item = ItemFixture.item(CategoryFixture.mainCategory(),
                 CategoryFixture.subCategory(CategoryFixture.mainCategory()));
-            FindItemDetailCommand command = FindItemDetailCommand.from(item.getItemId());
+            FindItemDetailCommand findItemDetailCommand = FindItemDetailCommand.from(
+                item.getItemId());
 
             when(itemRepository.findById(item.getItemId())).thenReturn(Optional.of(item));
 
             // When
-            FindItemDetailResponse response = itemService.findItemDetail(command);
+            FindItemDetailResponse response = itemService.findItemDetail(findItemDetailCommand);
 
             // Then
             assertThat(response).isNotNull();
@@ -229,6 +231,146 @@ class ItemServiceTest {
             assertThat(response.rate()).isEqualTo(item.getRate());
             assertThat(response.discount()).isEqualTo(item.getDiscount());
             assertThat(response.maxBuyQuantity()).isEqualTo(item.getMaxBuyQuantity());
+        }
+    }
+
+    @Nested
+    @DisplayName("findNewItems 메서드 실행 시")
+    class FindNewItemsTests {
+
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = new SubCategory(mainCategory, "sub");
+        private static final int DEFAULT_PAGE_NUM = 0;
+        private static final int DEFAULT_PAGE_SIZE = 3;
+
+        Item item1 = Item.builder()
+            .name("name1")
+            .price(10)
+            .quantity(10)
+            .discount(1)
+            .maxBuyQuantity(50)
+            .mainCategory(mainCategory)
+            .subCategory(subCategory)
+            .build();
+
+        Item item2 = Item.builder()
+            .name("name2")
+            .price(100)
+            .quantity(10)
+            .discount(10)
+            .maxBuyQuantity(50)
+            .mainCategory(mainCategory)
+            .subCategory(subCategory)
+            .build();
+
+        Item item3 = Item.builder()
+            .name("name3")
+            .price(1000)
+            .quantity(10)
+            .discount(100)
+            .maxBuyQuantity(50)
+            .mainCategory(mainCategory)
+            .subCategory(subCategory)
+            .build();
+
+        @Test
+        @DisplayName("최신 등록 순으로 신상품 조회")
+        public void orderByLatest() {
+            // Given
+            List<Item> expectedItems = List.of(item1, item2, item3);
+            FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.NEW);
+
+            when(itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(any(), any(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findNewItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item1.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item3.getName());
+        }
+
+        @Test
+        @DisplayName("할인율 높은 순으로 신상품 조회")
+        public void orderByDiscount() {
+            // Given
+            List<Item> expectedItems = List.of(item3, item2, item1);
+            FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.DISCOUNT);
+
+            when(itemRepository.findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(any(), anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findNewItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item3.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item1.getName());
+        }
+
+        @Test
+        @DisplayName("금액 높은 순으로 신상품 조회")
+        public void orderByPriceDesc() {
+            // Given
+            List<Item> expectedItems = List.of(item3, item2, item1);
+            FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.HIGHEST_AMOUNT);
+
+            when(itemRepository.findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(any(), anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findNewItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item3.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item1.getName());
+        }
+
+        @Test
+        @DisplayName("금액 낮은 순으로 신상품 조회")
+        public void orderByPriceAsc() {
+            // Given
+            List<Item> expectedItems = List.of(item1, item2, item3);
+            FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.LOWEST_AMOUNT);
+
+            when(itemRepository.findByCreatedAtAfterAndPriceGreaterThanOrderByPriceAscItemIdDesc(any(), anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findNewItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item1.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item3.getName());
+        }
+
+        @Test
+        @DisplayName("주문 많은 순으로 신상품 조회")
+        public void orderByOrderedQuantity() {
+            // Given
+            List<Item> expectedItems = List.of(item2, item3);
+            FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.POPULAR);
+
+            when(orderItemRepository.countByOrderItemId(anyLong()))
+                .thenReturn(Long.MAX_VALUE);
+            when(itemRepository.findNewItemOrderByOrders(any(), anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findNewItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE - 1);
+        }
+
+        private FindNewItemsCommand getFindNewItemsCommand(ItemSortType itemSortType) {
+            return new FindNewItemsCommand(-1L, PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
+                itemSortType);
         }
     }
 }
