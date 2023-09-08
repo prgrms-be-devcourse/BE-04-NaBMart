@@ -26,16 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/cart-items")
+@RequestMapping("/api/v1")
 public class CartItemController {
 
     private final CartItemService cartItemService;
     private static final String BASE_URI = "/api/v1/cart-items/";
 
-    @PostMapping
+    @PostMapping("/cart-items")
     public ResponseEntity<Void> registerCartItem(
         @Valid @RequestBody RegisterCartItemRequest registerCartItemRequest,
-        @LoginUser Long userId
+        @LoginUser final Long userId
     ) {
         RegisterCartItemCommand registerCartItemCommand = RegisterCartItemCommand.of(userId,
             registerCartItemRequest.itemId(), registerCartItemRequest.quantity());
@@ -47,24 +47,24 @@ public class CartItemController {
         return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping("/{cartItemId}")
+    @DeleteMapping("/cart-items/{cartItemId}")
     public ResponseEntity<Void> deleteCartItem(
-        @PathVariable Long cartItemId
+        @PathVariable final Long cartItemId
     ) {
         cartItemService.deleteCartItem(cartItemId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{cartItemId}/list")
-    public ResponseEntity<FindCartItemsResponse> findCartItems(
-        @PathVariable Long cartItemId
+    @GetMapping("my-cart-items")
+    public ResponseEntity<FindCartItemsResponse> findCartItemsByUserId(
+        @LoginUser final Long userId
     ) {
         return ResponseEntity.ok()
-            .body(cartItemService.findCartItems(cartItemId));
+            .body(cartItemService.findCartItemsByUserId(userId));
     }
 
-    @PatchMapping("/{cartItemId}")
+    @PatchMapping("/cart-items/{cartItemId}")
     public ResponseEntity<Void> updateCartItemQuantity(
         @PathVariable final Long cartItemId,
         @Valid @RequestBody final int quantity
