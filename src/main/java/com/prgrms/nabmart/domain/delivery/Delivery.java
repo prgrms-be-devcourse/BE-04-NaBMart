@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,16 +37,15 @@ public class Delivery {
     private DeliveryStatus deliveryStatus;
 
     @Column
-    private LocalDateTime finishedTime;
+    private LocalDateTime arrivedAt;
 
     @Column(nullable = false)
     private String address;
 
     @Builder
-    public Delivery(final Order order, final LocalDateTime finishedTime, final String address) {
+    public Delivery(final Order order, final String address) {
         validateAddress(address);
         this.order = order;
-        this.finishedTime = finishedTime;
         this.address = address;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDERS;
     }
@@ -54,5 +54,9 @@ public class Delivery {
         if (nonNull(address) && address.length() > ADDRESS_LENGTH) {
             throw new InvalidDeliveryException("주소의 길이는 500자를 넘을 수 없습니다.");
         }
+    }
+
+    public boolean isOwnByUser(final User user) {
+        return this.order.isOwnByUser(user);
     }
 }
