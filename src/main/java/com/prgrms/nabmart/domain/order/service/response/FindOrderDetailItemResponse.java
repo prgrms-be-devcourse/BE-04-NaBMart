@@ -9,7 +9,7 @@ public record FindOrderDetailItemResponse(
     Integer price
 ) {
 
-    public static FindOrderDetailItemResponse from(OrderItem orderItem) {
+    public static FindOrderDetailItemResponse from(final OrderItem orderItem) {
         return new FindOrderDetailItemResponse(
             orderItem.getItem().getItemId(),
             orderItem.getItem().getName(),

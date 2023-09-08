@@ -11,8 +11,9 @@ public record FindOrderDetailResponse(
     List<FindOrderDetailItemResponse> orderItems
 ) {
 
-    public static FindOrderDetailResponse of(Order order,
-        List<FindOrderDetailItemResponse> orderItems) {
+    public static FindOrderDetailResponse of(
+        final Order order,
+        final List<FindOrderDetailItemResponse> orderItems) {
         return new FindOrderDetailResponse(
             order.getCreatedAt(),
             order.getPrice(),

@@ -18,8 +18,8 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public FindOrderDetailResponse findOrderByIdAndUserId(final Long userId, final Long orderId) {
-        Order order = getOrderByOrderIdAndUserId(orderId, userId);
-        List<FindOrderDetailItemResponse> orderItems = order.getOrderItems()
+        final Order order = getOrderByOrderIdAndUserId(orderId, userId);
+        final List<FindOrderDetailItemResponse> orderItems = order.getOrderItems()
             .stream()
             .map(FindOrderDetailItemResponse::from)
             .toList();
