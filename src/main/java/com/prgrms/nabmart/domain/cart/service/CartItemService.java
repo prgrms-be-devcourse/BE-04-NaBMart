@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.cart.service;
 
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.cart.CartItem;
+import com.prgrms.nabmart.domain.cart.exception.NotFoundCartException;
 import com.prgrms.nabmart.domain.cart.exception.NotFoundCartItemException;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
@@ -67,13 +68,19 @@ public class CartItemService {
     }
 
     @Transactional(readOnly = true)
-    public FindCartItemsResponse findCartItems(
-        final Long cartItemId
+    public FindCartItemsResponse findCartItemsByUserId(
+        final Long userId
     ) {
-        List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdOrderByCreatedAt(
-            cartItemId);
+        User foundUser = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundUserException("해당 사용자를 찾을 수 없습니다."));
 
-        return FindCartItemsResponse.from(cartItems
+        Cart foundCart = cartRepository.findByUser(foundUser)
+            .orElseThrow(() -> new NotFoundCartException("해당 장바구니를 찾을 수 없습니다."));
+
+        List<CartItem> foundCartItems = cartItemRepository.findAllByCartOrderByCreatedAt(
+            foundCart);
+
+        return FindCartItemsResponse.from(foundCartItems
             .stream()
             .map(
                 cartItem -> FindCartItemResponse.of(
