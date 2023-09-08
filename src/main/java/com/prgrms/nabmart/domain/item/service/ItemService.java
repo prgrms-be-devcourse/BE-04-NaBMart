@@ -7,6 +7,7 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
+import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
@@ -136,6 +137,22 @@ public class ItemService {
                 yield itemRepository.findNewItemOrderByOrders(createdAt, lastIdx,
                     findNewItemsCommand.pageRequest());
             }
+        };
+    }
+
+    @Transactional(readOnly = true)
+    public FindItemsResponse findHotItems(FindHotItemsCommand findHotItemsCommand) {
+        List<Item> items = findHotItemsFrom(findHotItemsCommand);
+        return FindItemsResponse.from(items);
+    }
+
+    private List<Item> findHotItemsFrom(FindHotItemsCommand findHotItemsCommand) {
+        return switch (findHotItemsCommand.sortType()) {
+            case NEW -> itemRepository.findHotItemOrderByItemIdDesc(findHotItemsCommand.lastIdx(), findHotItemsCommand.pageRequest());
+            case LOWEST_AMOUNT -> itemRepository.findHotItemOrderByPriceAsc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
+            case HIGHEST_AMOUNT -> itemRepository.findHotItemOrderByPriceDesc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
+            case DISCOUNT -> itemRepository.findHotItemOrderByDiscountDesc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
+            default -> itemRepository.findHotItemOrderByOrdersDesc(findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
         };
     }
 }
