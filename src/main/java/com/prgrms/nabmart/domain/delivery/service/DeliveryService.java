@@ -51,7 +51,7 @@ public class DeliveryService {
             .orElseThrow(() -> new NotFoundDeliveryException("존재하지 않는 배달입니다."));
     }
 
-    private Delivery findDeliveryByDeliveryId(Long deliveryId) {
+    private Delivery findDeliveryByDeliveryId(final Long deliveryId) {
         return deliveryRepository.findById(deliveryId)
             .orElseThrow(() -> new NotFoundDeliveryException("존재하지 않는 배달입니다."));
     }
