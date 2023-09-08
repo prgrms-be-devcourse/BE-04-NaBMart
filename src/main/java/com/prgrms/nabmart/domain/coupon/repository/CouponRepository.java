@@ -9,6 +9,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     List<Coupon> findByEndAtGreaterThanEqual(LocalDate currentDate);
 
+    List<Coupon> findByEndAtBefore(LocalDate currentDate);
+
 }
 
 
