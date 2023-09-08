@@ -1,11 +1,11 @@
 package com.prgrms.nabmart.domain.delivery;
 
+import static com.prgrms.nabmart.domain.order.support.OrderFixture.deliveringOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.order.Order;
-import com.prgrms.nabmart.domain.order.support.OrderFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ class DeliveryTest {
     class NewDeliveryTest {
 
         User user = UserFixture.user();
-        Order order = OrderFixture.getDeliveringOrder(1L, user);
+        Order order = deliveringOrder(1L, user);
 
         @Test
         @DisplayName("성공")
@@ -47,10 +47,10 @@ class DeliveryTest {
             //when
             //then
             assertThatThrownBy(() ->
-                    Delivery.builder()
-                        .order(order)
-                        .address(invalidAddress)
-                        .build())
+                Delivery.builder()
+                    .order(order)
+                    .address(invalidAddress)
+                    .build())
                 .isInstanceOf(InvalidDeliveryException.class);
         }
     }
