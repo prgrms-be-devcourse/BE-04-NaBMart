@@ -13,7 +13,6 @@ import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCom
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
-import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -129,10 +128,7 @@ public class ItemService {
                 int lastIdx = findNewItemsCommand.lastIdx().intValue();
                 if (findNewItemsCommand.lastIdx() != Long.parseLong(
                     String.valueOf(Integer.MAX_VALUE))) {
-                    lastIdx = itemRepository.findItemByTotalOrderedQuantity(
-                            findNewItemsCommand.lastIdx().intValue()).get(0).getOrderItems().stream()
-                        .mapToInt(
-                            OrderItem::getQuantity).sum();
+                    lastIdx = orderItemRepository.countByOrderItemId(findNewItemsCommand.lastIdx()).intValue();
                 }
                 yield itemRepository.findNewItemOrderByOrders(createdAt, lastIdx,
                     findNewItemsCommand.pageRequest());

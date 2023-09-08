@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
+import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.item.service.LikeItemService;
@@ -80,8 +81,10 @@ public abstract class BaseControllerTest {
     @MockBean
     protected LikeItemService likeItemService;
 
-    protected static final String AUTHORIZATION = "Authorization";
+    @MockBean
+    protected DeliveryService deliveryService;
 
+    protected static final String AUTHORIZATION = "Authorization";
 
     protected String accessToken;
 
