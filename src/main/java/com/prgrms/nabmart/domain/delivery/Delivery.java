@@ -51,7 +51,7 @@ public class Delivery {
     }
 
     private void validateAddress(String address) {
-        if (nonNull(address)) {
+        if (nonNull(address) && address.length() > ADDRESS_LENGTH) {
             throw new InvalidDeliveryException("주소의 길이는 500자를 넘을 수 없습니다.");
         }
     }
