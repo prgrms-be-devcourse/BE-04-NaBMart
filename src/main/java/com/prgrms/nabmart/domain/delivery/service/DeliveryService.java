@@ -28,18 +28,18 @@ public class DeliveryService {
         return FindDeliveryDetailResponse.from(delivery);
     }
 
-    private void checkAuthority(Delivery delivery, User user) {
+    private void checkAuthority(final Delivery delivery, final User user) {
         if (!delivery.isOwnByUser(user)) {
             throw new AuthorizationException("권한이 없습니다.");
         }
     }
 
-    private User findUserByUserId(Long userId) {
+    private User findUserByUserId(final Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundUserException("존재하지 않는 유저입니다."));
     }
 
-    private Delivery findDeliveryByOrderWithOrder(Long orderId) {
+    private Delivery findDeliveryByOrderWithOrder(final Long orderId) {
         return deliveryRepository.findByOrderIdWithOrder(orderId)
             .orElseThrow(() -> new NotFoundDeliveryException("존재하지 않는 배달입니다."));
     }

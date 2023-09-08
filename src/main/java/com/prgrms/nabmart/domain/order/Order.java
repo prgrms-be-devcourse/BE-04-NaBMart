@@ -52,7 +52,7 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
-    public boolean isOwnByUser(User user) {
+    public boolean isOwnByUser(final User user) {
         return this.user.equals(user);
     }
 }

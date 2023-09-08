@@ -57,7 +57,7 @@ public class Delivery {
         }
     }
 
-    public boolean isOwnByUser(User user) {
+    public boolean isOwnByUser(final User user) {
         return this.order.isOwnByUser(user);
     }
 }
