@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
@@ -34,6 +35,12 @@ public class DeliveryService {
         }
     }
 
+    @Transactional
+    public void startDelivery(StartDeliveryCommand startDeliveryCommand) {
+        Delivery delivery = findDeliveryByDeliveryId(startDeliveryCommand.deliveryId());
+        delivery.startDelivery(startDeliveryCommand.deliveryEstimateMinutes());
+    }
+
     private User findUserByUserId(final Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundUserException("존재하지 않는 유저입니다."));
@@ -44,4 +51,8 @@ public class DeliveryService {
             .orElseThrow(() -> new NotFoundDeliveryException("존재하지 않는 배달입니다."));
     }
 
+    private Delivery findDeliveryByDeliveryId(final Long deliveryId) {
+        return deliveryRepository.findById(deliveryId)
+            .orElseThrow(() -> new NotFoundDeliveryException("존재하지 않는 배달입니다."));
+    }
 }
