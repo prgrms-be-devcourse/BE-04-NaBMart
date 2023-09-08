@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.item;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.exception.InvalidItemException;
+import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
@@ -68,6 +69,9 @@ public class Item extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
     private List<LikeItem> likeItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @Builder
     public Item(String name, int price, String description, int quantity, int discount,
