@@ -5,9 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record FindOrderDetailResponse(
-    Long orderId,
     LocalDateTime createdAt,
-    Integer total_price,
+    Integer totalPrice,
     String status,
     List<FindOrderDetailItemResponse> orderItems
 ) {
@@ -15,7 +14,6 @@ public record FindOrderDetailResponse(
     public static FindOrderDetailResponse of(Order order,
         List<FindOrderDetailItemResponse> orderItems) {
         return new FindOrderDetailResponse(
-            order.getOrderId(),
             order.getCreatedAt(),
             order.getPrice(),
             order.getStatus().toString(),

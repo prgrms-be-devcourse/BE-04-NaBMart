@@ -49,6 +49,7 @@ public class Order extends BaseTimeEntity {
     private OrderStatus status = OrderStatus.PENDING; // 주문 상태 정보, 기본값 'PENDING'
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

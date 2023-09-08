@@ -42,7 +42,7 @@ public class OrderServiceTest {
             Order order = completedOrder(1L, user);
             FindOrderDetailResponse expected = orderDetailResponse(order);
 
-            when(orderRepository.findByIdAndUserId(order.getOrderId(), user.getUserId()))
+            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
                 .thenReturn(Optional.of(order));
 
             // when
@@ -59,9 +59,8 @@ public class OrderServiceTest {
             // given
             User user = user();
             Order order = completedOrder(1L, user);
-            FindOrderDetailResponse expected = orderDetailResponse(order);
 
-            when(orderRepository.findByIdAndUserId(order.getOrderId(), user.getUserId()))
+            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
                 .thenReturn(Optional.empty());
 
             // when
