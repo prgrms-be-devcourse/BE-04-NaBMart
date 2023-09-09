@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.item.controller;
 
 import com.prgrms.nabmart.domain.item.service.ItemService;
+import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
@@ -52,6 +53,16 @@ public class ItemController {
     ) {
         FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(lastIdx, size, sort);
         return ResponseEntity.ok(itemService.findNewItems(findNewItemsCommand));
+    }
+
+    @GetMapping("/hot")
+    public ResponseEntity<FindItemsResponse> findHotItems(
+        @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
+        @RequestParam int size,
+        @RequestParam(defaultValue = "POPULAR") String sort
+    ) {
+        FindHotItemsCommand findHotItemsCommand = FindHotItemsCommand.of(lastIdx, size, sort);
+        return ResponseEntity.ok(itemService.findHotItems(findHotItemsCommand));
     }
 }
     
