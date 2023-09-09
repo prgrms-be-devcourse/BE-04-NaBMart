@@ -171,7 +171,8 @@ class CouponServiceTest {
         void success() {
             // Given
             ReflectionTestUtils.setField(givenCoupon, "couponId", 1L);
-            when(couponRepository.findByEndAtGreaterThan(any())).thenReturn(List.of(givenCoupon));
+            when(couponRepository.findByEndAtGreaterThanEqual(any())).thenReturn(
+                List.of(givenCoupon));
 
             // When
             FindCouponsResponse findCouponsResponse = couponService.findCoupons();

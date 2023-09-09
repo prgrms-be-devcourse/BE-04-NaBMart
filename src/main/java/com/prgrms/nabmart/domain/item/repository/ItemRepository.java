@@ -70,4 +70,64 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(
         LocalDateTime createdAt, int discount, Pageable pageable);
 
+    // 총 주문 수의 아이템 찾기
+    @Query("SELECT i FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "GROUP BY i.itemId "
+        + "HAVING SUM(oi.quantity) = :totalOrderedQuantity "
+        + "ORDER BY i.itemId ASC")
+    List<Item> findItemByTotalOrderedQuantity(@Param("totalOrderedQuantity") int totalOrderedQuantity);
+
+    // 인기 상품 -> 주문 10회 이상 & 평점 3.8 이상
+    // 인기 상품 - 가격 높은 순
+    @Query("SELECT i FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "WHERE i.rate >= 3.8 "
+        + "AND i.price < :price "
+        + "GROUP BY i.itemId "
+        + "HAVING SUM(oi.quantity) >= 10 "
+        + "ORDER BY i.price DESC, i.itemId DESC ")
+    List<Item> findHotItemOrderByPriceDesc(@Param("price") int price, Pageable pageable);
+
+    // 인기 상품 - 가격 낮은 순
+    @Query("SELECT i FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "WHERE i.rate >= 3.8 "
+        + "AND i.price > :price "
+        + "GROUP BY i.itemId "
+        + "HAVING SUM(oi.quantity) >= 10 "
+        + "ORDER BY i.price ASC, i.itemId DESC ")
+    List<Item> findHotItemOrderByPriceAsc(@Param("price") int price, Pageable pageable);
+
+    // 인기 상품 - 최근 등록 순
+    @Query("SELECT i FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "WHERE i.rate >= 3.8 "
+        + "AND i.itemId < :itemId "
+        + "GROUP BY i.itemId "
+        + "HAVING SUM(oi.quantity) >= 10 "
+        + "ORDER BY i.itemId DESC ")
+    List<Item> findHotItemOrderByItemIdDesc(@Param("itemId") Long itemId, Pageable pageable);
+
+    // 인기 상품 - 할인순
+    @Query("SELECT i FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "WHERE i.rate >= 3.8 "
+        + "AND i.discount < :discount "
+        + "GROUP BY i.itemId "
+        + "HAVING SUM(oi.quantity) >= 10 "
+        + "ORDER BY i.discount DESC, i.itemId DESC ")
+    List<Item> findHotItemOrderByDiscountDesc(@Param("discount") int discount, Pageable pageable);
+
+    // 인기 상품 - 주문 많은 순
+    @Query("SELECT i "
+        + "FROM Item i "
+        + "LEFT JOIN OrderItem oi ON oi.item = i "
+        + "WHERE i.rate >= 3.8 "
+        + "GROUP BY i "
+        + "HAVING SUM(oi.quantity) >= 10 AND "
+        + "SUM(oi.quantity) < :totalOrders "
+        + "ORDER BY SUM(oi.quantity) DESC, i.itemId DESC ")
+    List<Item> findHotItemOrderByOrdersDesc(@Param("totalOrders") int totalOrders, Pageable pageable);
+
 }
