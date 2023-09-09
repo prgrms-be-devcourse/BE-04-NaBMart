@@ -14,6 +14,7 @@ public final class DeliveryFixture {
 
     private static final Long DELIVERY_ID = 1L;
     private static final String ADDRESS = "주소지";
+    private static final int DELIVERY_FEE = 3000;
     private static final LocalDateTime ARRIVED_AT = LocalDateTime.now();
     private static final DeliveryStatus DELIVERY_STATUS = DeliveryStatus.ACCEPTING_ORDER;
     private static final Long USER_ID = 1L;
@@ -26,6 +27,7 @@ public final class DeliveryFixture {
         return Delivery.builder()
             .order(order)
             .address(ADDRESS)
+            .deliveryFee(DELIVERY_FEE)
             .build();
     }
 
@@ -39,6 +41,7 @@ public final class DeliveryFixture {
             DELIVERY_STATUS,
             ARRIVED_AT,
             ADDRESS,
+            DELIVERY_FEE,
             ORDER_ID,
             ORDER_NAME,
             ORDER_PRICE

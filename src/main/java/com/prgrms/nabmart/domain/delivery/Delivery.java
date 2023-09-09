@@ -43,11 +43,15 @@ public class Delivery {
     @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
+    private int deliveryFee;
+
     @Builder
-    public Delivery(final Order order, final String address) {
+    public Delivery(final Order order, final String address, int deliveryFee) {
         validateAddress(address);
         this.order = order;
         this.address = address;
+        this.deliveryFee = deliveryFee;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
     }
 

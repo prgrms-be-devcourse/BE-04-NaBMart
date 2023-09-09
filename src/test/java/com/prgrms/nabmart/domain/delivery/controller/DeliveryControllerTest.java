@@ -62,6 +62,7 @@ class DeliveryControllerTest extends BaseControllerTest {
                         fieldWithPath("deliveryStatus").type(STRING).description("배달 ID"),
                         fieldWithPath("arrivedAt").type(STRING).description("도착 시간"),
                         fieldWithPath("address").type(STRING).description("주소"),
+                        fieldWithPath("deliveryFee").type(NUMBER).description("배달비"),
                         fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
                         fieldWithPath("name").type(STRING).description("주문 이름"),
                         fieldWithPath("price").type(NUMBER).description("주문 가격")
