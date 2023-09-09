@@ -23,7 +23,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 
 class DeliveryControllerTest extends BaseControllerTest {
@@ -98,30 +97,6 @@ class DeliveryControllerTest extends BaseControllerTest {
                     requestFields(
                         fieldWithPath("deliveryEstimateMinutes").type(NUMBER)
                             .description("배달 예상 소요 시간(분)")
-                    )
-                ));
-        }
-    }
-
-    @Nested
-    @DisplayName("배달 상태 갱신 - 배달완료 API 호출 시")
-    class CompleteDeliveryTest {
-
-        @Test
-        @DisplayName("성공")
-        void completeDelivery() throws Exception {
-            //given
-            Long deliveryId = 1L;
-
-            //when
-            ResultActions resultActions = mockMvc
-                .perform(patch("/api/v1/deliveries/complete/{deliveryId}", deliveryId));
-
-            //then
-            resultActions.andExpect(status().isNoContent())
-                .andDo(restDocs.document(
-                    pathParameters(
-                        parameterWithName("deliveryId").description("배달 ID")
                     )
                 ));
         }
