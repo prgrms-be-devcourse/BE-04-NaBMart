@@ -72,9 +72,4 @@ public class Delivery {
             throw new InvalidDeliveryException("배송 예상 소요 시간은 음수일 수 없습니다.");
         }
     }
-
-    public void completeDelivery() {
-        this.arrivedAt = LocalDateTime.now();
-        this.deliveryStatus = DeliveryStatus.DELIVERED;
-    }
 }
