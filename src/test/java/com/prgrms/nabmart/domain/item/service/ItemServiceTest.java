@@ -366,7 +366,7 @@ class ItemServiceTest {
             FindItemsResponse itemsResponse = itemService.findNewItems(command);
 
             // Then
-            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE - 1);
+            assertThat(itemsResponse.items()).hasSize(DEFAULT_PAGE_SIZE - 1);
         }
 
         private FindNewItemsCommand getFindNewItemsCommand(ItemSortType itemSortType) {
@@ -506,7 +506,7 @@ class ItemServiceTest {
             FindItemsResponse itemsResponse = itemService.findHotItems(command);
 
             // Then
-            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE - 1);
+            assertThat(itemsResponse.items()).hasSize(DEFAULT_PAGE_SIZE - 1);
         }
 
         private FindHotItemsCommand getFindHotItemsCommand(ItemSortType itemSortType) {
