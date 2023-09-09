@@ -1,6 +1,6 @@
 package com.prgrms.nabmart.domain.payment.controller;
 
-import static com.prgrms.nabmart.domain.order.support.OrderFixture.getPendingOrder;
+import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponse;
@@ -28,14 +28,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @AutoConfigureRestDocs
 @WebMvcTest(PaymentController.class)
-@AutoConfigureMockMvc(addFilters = false)
 public class PaymentControllerTest extends BaseControllerTest {
 
     @Value("${payment.toss.success_url}")
@@ -53,7 +51,7 @@ public class PaymentControllerTest extends BaseControllerTest {
         void postPay() throws Exception {
             // given
             User user = UserFixture.user();
-            Order order = getPendingOrder(1, user);
+            Order order = pendingOrder(1, user);
             PaymentRequest paymentRequest = paymentRequestWithCard();
             PaymentCommand paymentCommand = paymentCommandWithCard();
             PaymentResponse paymentResponse = paymentResponse(order, successCallBackUrl,
