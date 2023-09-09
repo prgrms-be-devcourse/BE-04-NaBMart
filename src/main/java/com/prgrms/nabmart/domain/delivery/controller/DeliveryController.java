@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.delivery.controller;
 
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
+import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
@@ -41,6 +42,13 @@ public class DeliveryController {
             deliveryId,
             startDeliveryRequest.deliveryEstimateMinutes());
         deliveryService.startDelivery(startDeliveryCommand);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/complete/{deliveryId}")
+    public ResponseEntity<Void> completeDelivery(@PathVariable final Long deliveryId) {
+        CompleteDeliveryCommand completeDeliveryCommand = CompleteDeliveryCommand.of(deliveryId);
+        deliveryService.completeDelivery(completeDeliveryCommand);
         return ResponseEntity.noContent().build();
     }
 }
