@@ -25,9 +25,11 @@ import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+
 import org.assertj.core.data.TemporalUnitOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
