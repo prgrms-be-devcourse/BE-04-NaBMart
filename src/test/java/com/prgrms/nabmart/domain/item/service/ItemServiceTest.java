@@ -13,6 +13,7 @@ import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
+import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
@@ -365,11 +366,151 @@ class ItemServiceTest {
             FindItemsResponse itemsResponse = itemService.findNewItems(command);
 
             // Then
-            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE - 1);
+            assertThat(itemsResponse.items()).hasSize(DEFAULT_PAGE_SIZE - 1);
         }
 
         private FindNewItemsCommand getFindNewItemsCommand(ItemSortType itemSortType) {
             return new FindNewItemsCommand(-1L, PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
+                itemSortType);
+        }
+    }
+
+    @Nested
+    @DisplayName("findHotItems 메서드 실행 시")
+    class FindHotItemsTests {
+
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = new SubCategory(mainCategory, "sub");
+        private static final int DEFAULT_PAGE_NUM = 0;
+        private static final int DEFAULT_PAGE_SIZE = 3;
+
+        Item item1 = Item.builder()
+            .name("name1")
+            .price(10)
+            .quantity(10)
+            .discount(1)
+            .maxBuyQuantity(50)
+            .mainCategory(mainCategory)
+            .subCategory(subCategory)
+            .build();
+
+        Item item2 = Item.builder()
+            .name("name2")
+            .price(100)
+            .quantity(10)
+            .discount(10)
+            .maxBuyQuantity(50)
+            .mainCategory(mainCategory)
+            .subCategory(subCategory)
+            .build();
+
+        Item item3 = Item.builder()
+            .name("name3")
+            .price(1000)
+            .quantity(10)
+            .discount(100)
+            .maxBuyQuantity(50)
+            .mainCategory(mainCategory)
+            .subCategory(subCategory)
+            .build();
+
+        @Test
+        @DisplayName("최신 등록 순으로 인기 상품 조회")
+        public void orderByLatest() {
+            // Given
+            List<Item> expectedItems = List.of(item1, item2, item3);
+            FindHotItemsCommand command = getFindHotItemsCommand(ItemSortType.NEW);
+
+            when(itemRepository.findHotItemOrderByItemIdDesc(anyLong(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findHotItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item1.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item3.getName());
+        }
+
+        @Test
+        @DisplayName("할인율 높은 순으로 인기 상품 조회")
+        public void orderByDiscount() {
+            // Given
+            List<Item> expectedItems = List.of(item3, item2, item1);
+            FindHotItemsCommand command = getFindHotItemsCommand(ItemSortType.DISCOUNT);
+
+            when(itemRepository.findHotItemOrderByDiscountDesc(anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findHotItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item3.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item1.getName());
+        }
+
+        @Test
+        @DisplayName("금액 높은 순으로 인기 상품 조회")
+        public void orderByPriceDesc() {
+            // Given
+            List<Item> expectedItems = List.of(item3, item2, item1);
+            FindHotItemsCommand command = getFindHotItemsCommand(ItemSortType.HIGHEST_AMOUNT);
+
+            when(itemRepository.findHotItemOrderByPriceDesc(anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findHotItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item3.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item1.getName());
+        }
+
+        @Test
+        @DisplayName("금액 낮은 순으로 인기 상품 조회")
+        public void orderByPriceAsc() {
+            // Given
+            List<Item> expectedItems = List.of(item1, item2, item3);
+            FindHotItemsCommand command = getFindHotItemsCommand(ItemSortType.LOWEST_AMOUNT);
+
+            when(itemRepository.findHotItemOrderByPriceAsc(anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findHotItems(command);
+
+            // Then
+            assertThat(itemsResponse.items().get(0).name()).isEqualTo(item1.getName());
+            assertThat(itemsResponse.items().get(1).name()).isEqualTo(item2.getName());
+            assertThat(itemsResponse.items().get(2).name()).isEqualTo(item3.getName());
+        }
+
+        @Test
+        @DisplayName("주문 많은 순으로 인기 상품 조회")
+        public void orderByOrderedQuantity() {
+            // Given
+            List<Item> expectedItems = List.of(item2, item3);
+            FindHotItemsCommand command = getFindHotItemsCommand(ItemSortType.POPULAR);
+
+            when(orderItemRepository.countByOrderItemId(anyLong()))
+                .thenReturn(Long.MAX_VALUE);
+            when(itemRepository.findHotItemOrderByOrdersDesc(anyInt(), any()))
+                .thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findHotItems(command);
+
+            // Then
+            assertThat(itemsResponse.items()).hasSize(DEFAULT_PAGE_SIZE - 1);
+        }
+
+        private FindHotItemsCommand getFindHotItemsCommand(ItemSortType itemSortType) {
+            return new FindHotItemsCommand(-1L, PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
                 itemSortType);
         }
     }
