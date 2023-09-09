@@ -11,6 +11,7 @@ import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
+import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
@@ -24,9 +25,11 @@ import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+
 import org.assertj.core.data.TemporalUnitOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,12 +53,13 @@ class DeliveryServiceTest {
 
     User user = UserFixture.user();
     Order order = OrderFixture.getDeliveringOrder(1L, user);
+    Delivery delivery = DeliveryFixture.delivery(order);
+    TemporalUnitOffset withInOneSeconds = within(1, ChronoUnit.SECONDS);
 
     @Nested
     @DisplayName("findDelivery 메서드 실행 시")
     class FindDeliveryTest {
 
-        Delivery delivery = DeliveryFixture.delivery(order);
         FindDeliveryCommand findDeliveryCommand = DeliveryFixture.findDeliveryCommand();
 
         @Test
@@ -140,9 +144,6 @@ class DeliveryServiceTest {
     @DisplayName("updateDelivery 메서드 실행 시")
     class UpdateDeliveryTest {
 
-        Delivery delivery = DeliveryFixture.delivery(order);
-        TemporalUnitOffset withInOneSeconds = within(1, ChronoUnit.SECONDS);
-
         @Test
         @DisplayName("성공: 배달시작으로 업데이트")
         void successOnStartDelivery() {
@@ -191,6 +192,39 @@ class DeliveryServiceTest {
             //when
             assertThatThrownBy(() -> deliveryService.startDelivery(startDeliveryCommand))
                 .isInstanceOf(InvalidDeliveryException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("completeDelivery 메서드 실행 시")
+    class CompleteDeliveryTest {
+
+        CompleteDeliveryCommand completeDeliveryCommand = new CompleteDeliveryCommand(1L);
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            given(deliveryRepository.findById(any())).willReturn(Optional.ofNullable(delivery));
+
+            //when
+            deliveryService.completeDelivery(completeDeliveryCommand);
+
+            //then
+            LocalDateTime now = LocalDateTime.now();
+            assertThat(delivery.getArrivedAt()).isCloseTo(now, withInOneSeconds);
+            assertThat(delivery.getDeliveryStatus()).isEqualTo(DeliveryStatus.DELIVERED);
+        }
+
+        @Test
+        @DisplayName("예외: 존재하지 않는 배달")
+        void throwExceptionWhenNotFoundDelivery() {
+            //given
+            given(deliveryRepository.findById(any())).willReturn(Optional.empty());
+
+            //when
+            assertThatThrownBy(() -> deliveryService.completeDelivery(completeDeliveryCommand))
+                .isInstanceOf(NotFoundDeliveryException.class);
         }
     }
 }
