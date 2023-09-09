@@ -3,9 +3,7 @@ package com.prgrms.nabmart.domain.order.service;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
-import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailItemResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +17,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public FindOrderDetailResponse findOrderByIdAndUserId(final Long userId, final Long orderId) {
         final Order order = getOrderByOrderIdAndUserId(orderId, userId);
-        final List<FindOrderDetailItemResponse> orderItems = order.getOrderItems()
-            .stream()
-            .map(FindOrderDetailItemResponse::from)
-            .toList();
-
-        return FindOrderDetailResponse.of(order, orderItems);
+        return FindOrderDetailResponse.from(order);
     }
 
     private Order getOrderByOrderIdAndUserId(final Long orderId, final Long userId) {

@@ -5,7 +5,6 @@ import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.OrderStatus;
-import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailItemResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
 import java.util.List;
@@ -56,11 +55,6 @@ public class OrderFixture {
     }
 
     public static FindOrderDetailResponse orderDetailResponse(Order order) {
-        List<FindOrderDetailItemResponse> orderItems = order.getOrderItems()
-            .stream()
-            .map(FindOrderDetailItemResponse::from)
-            .toList();
-
-        return FindOrderDetailResponse.of(order, orderItems);
+        return FindOrderDetailResponse.from(order);
     }
 }

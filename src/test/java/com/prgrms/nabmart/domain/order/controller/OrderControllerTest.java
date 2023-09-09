@@ -23,13 +23,9 @@ import com.prgrms.nabmart.domain.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@AutoConfigureRestDocs
-@WebMvcTest(OrderController.class)
 public class OrderControllerTest extends BaseControllerTest {
 
     @Nested
