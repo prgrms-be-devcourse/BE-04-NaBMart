@@ -9,6 +9,7 @@ public record FindDeliveryDetailResponse(
     DeliveryStatus deliveryStatus,
     LocalDateTime arrivedAt,
     String address,
+    int deliveryFee,
     Long orderId,
     String name,
     int price) {
@@ -19,6 +20,7 @@ public record FindDeliveryDetailResponse(
             delivery.getDeliveryStatus(),
             delivery.getArrivedAt(),
             delivery.getAddress(),
+            delivery.getDeliveryFee(),
             delivery.getOrder().getOrderId(),
             delivery.getOrder().getName(),
             delivery.getOrder().getPrice());
