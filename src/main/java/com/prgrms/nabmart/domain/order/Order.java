@@ -1,6 +1,6 @@
 package com.prgrms.nabmart.domain.order;
 
-import com.prgrms.nabmart.domain.coupon.Coupon;
+import com.prgrms.nabmart.domain.coupon.UserCoupon;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Builder
 @Table(name = "orders")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,10 +56,11 @@ public class Order extends BaseTimeEntity {
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id")
-    private Coupon coupon;
+    @JoinColumn(name = "user_coupon_id")
+    private UserCoupon userCoupon;
 
     public boolean isOwnByUser(final User user) {
         return this.user.equals(user);
     }
 }
+
