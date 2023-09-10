@@ -2,7 +2,7 @@ package com.prgrms.nabmart.domain.delivery.exception;
 
 public abstract class RiderException extends RuntimeException {
 
-    protected RiderException(String message) {
+    protected RiderException(final String message) {
         super(message);
     }
 }

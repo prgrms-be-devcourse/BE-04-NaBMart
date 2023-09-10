@@ -29,7 +29,7 @@ public class Rider {
     private String address;
 
     @Builder
-    public Rider(String username, String password, String address) {
+    public Rider(final String username, final String password, final String address) {
         this.username = username;
         this.password = password;
         this.address = address;
