@@ -4,29 +4,32 @@ import com.prgrms.nabmart.domain.category.exception.NotFoundCategoryException;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import org.springframework.data.domain.PageRequest;
 
-public record FindItemsByMainCategoryCommand(
+public record FindItemsBySubCategoryCommand(
     Long lastIdx,
     String mainCategoryName,
+    String subCategoryName,
     PageRequest pageRequest,
     ItemSortType itemSortType) {
 
     private static final int DEFAULT_PAGE_NUMBER = 0;
 
-    public static FindItemsByMainCategoryCommand of(
-        Long lastIdx, String mainCategoryName, int pageSize, String sortType
+    public static FindItemsBySubCategoryCommand of(
+        Long lastIdx, String mainCategoryName, String subCategoryName, int pageSize, String sortType
     ) {
 
-        validateMainCategoryName(mainCategoryName);
+        validateCategoryName(mainCategoryName);
+        validateCategoryName(subCategoryName);
         ItemSortType itemSortType = ItemSortType.from(sortType);
         PageRequest pageRequest = PageRequest.of(DEFAULT_PAGE_NUMBER, pageSize);
         if (isFirstItemId(lastIdx)) {
             lastIdx = redeclareLastIdx(itemSortType);
         }
-        return new FindItemsByMainCategoryCommand(lastIdx, mainCategoryName, pageRequest,
+        return new FindItemsBySubCategoryCommand(lastIdx, mainCategoryName, subCategoryName,
+            pageRequest,
             itemSortType);
     }
 
-    private static void validateMainCategoryName(String mainCategoryName) {
+    private static void validateCategoryName(String mainCategoryName) {
         if (mainCategoryName == null || mainCategoryName.isBlank()) {
             throw new NotFoundCategoryException("카테고리명은 필수 항목입니다.");
         }
