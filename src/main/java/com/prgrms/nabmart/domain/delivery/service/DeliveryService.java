@@ -4,10 +4,10 @@ import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveriesCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
@@ -52,11 +52,11 @@ public class DeliveryService {
     }
 
     @Transactional
-    public FindDeliveriesResponse findWaitingDeliveries(
-        FindDeliveriesCommand findDeliveriesCommand) {
+    public FindWaitingDeliveriesResponse findWaitingDeliveries(
+        FindWaitingDeliveriesCommand findWaitingDeliveriesCommand) {
         Page<Delivery> deliveriesPage
-            = deliveryRepository.findWaitingDeliveries(findDeliveriesCommand.pageable());
-        return FindDeliveriesResponse.from(deliveriesPage);
+            = deliveryRepository.findWaitingDeliveries(findWaitingDeliveriesCommand.pageable());
+        return FindWaitingDeliveriesResponse.from(deliveriesPage);
     }
 
     private User findUserByUserId(final Long userId) {

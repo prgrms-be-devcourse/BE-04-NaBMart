@@ -12,10 +12,10 @@ import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveriesCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
@@ -44,7 +44,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
@@ -262,18 +261,18 @@ class DeliveryServiceTest {
             List<Delivery> deliveries = createDeliveries(totalElement);
             PageImpl<Delivery> deliveriesPage = new PageImpl<>(deliveries);
             PageRequest pageRequest = PageRequest.of(pageNumber, totalElement);
-            FindDeliveriesCommand findDeliveriesCommand = FindDeliveriesCommand.from(pageRequest);
+            FindWaitingDeliveriesCommand findWaitingDeliveriesCommand = FindWaitingDeliveriesCommand.from(pageRequest);
 
             given(deliveryRepository.findWaitingDeliveries(any())).willReturn(deliveriesPage);
 
             //when
-            FindDeliveriesResponse findDeliveriesResponse
-                = deliveryService.findWaitingDeliveries(findDeliveriesCommand);
+            FindWaitingDeliveriesResponse findWaitingDeliveriesResponse
+                = deliveryService.findWaitingDeliveries(findWaitingDeliveriesCommand);
 
             //then
-            assertThat(findDeliveriesResponse.totalElements()).isEqualTo(totalElement);
-            assertThat(findDeliveriesResponse.page()).isEqualTo(pageNumber);
-            assertThat(findDeliveriesResponse.deliveries()).hasSize(totalElement);
+            assertThat(findWaitingDeliveriesResponse.totalElements()).isEqualTo(totalElement);
+            assertThat(findWaitingDeliveriesResponse.page()).isEqualTo(pageNumber);
+            assertThat(findWaitingDeliveriesResponse.deliveries()).hasSize(totalElement);
         }
     }
 }

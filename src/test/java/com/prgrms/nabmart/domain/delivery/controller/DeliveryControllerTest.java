@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -140,7 +140,7 @@ class DeliveryControllerTest extends BaseControllerTest {
             //given
             int page = 0;
             int size = 10;
-            FindDeliveriesResponse deliveriesResponse = DeliveryFixture.findDeliveriesResponse();
+            FindWaitingDeliveriesResponse deliveriesResponse = DeliveryFixture.findDeliveriesResponse();
 
             given(deliveryService.findWaitingDeliveries(any())).willReturn(deliveriesResponse);
 

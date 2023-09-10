@@ -3,10 +3,10 @@ package com.prgrms.nabmart.domain.delivery.controller;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveriesCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
@@ -56,10 +56,11 @@ public class DeliveryController {
     }
 
     @GetMapping("/waiting")
-    public ResponseEntity<FindDeliveriesResponse> findWaitingDeliveries(Pageable pageable) {
-        FindDeliveriesCommand findDeliveriesCommand = FindDeliveriesCommand.from(pageable);
-        FindDeliveriesResponse findDeliveriesResponse
-            = deliveryService.findWaitingDeliveries(findDeliveriesCommand);
-        return ResponseEntity.ok(findDeliveriesResponse);
+    public ResponseEntity<FindWaitingDeliveriesResponse> findWaitingDeliveries(Pageable pageable) {
+        FindWaitingDeliveriesCommand findWaitingDeliveriesCommand
+            = FindWaitingDeliveriesCommand.from(pageable);
+        FindWaitingDeliveriesResponse findWaitingDeliveriesResponse
+            = deliveryService.findWaitingDeliveries(findWaitingDeliveriesCommand);
+        return ResponseEntity.ok(findWaitingDeliveriesResponse);
     }
 }

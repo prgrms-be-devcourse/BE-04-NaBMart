@@ -3,8 +3,8 @@ package com.prgrms.nabmart.domain.delivery.support;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse.FindDeliveryResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse.FindWaitingDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.order.Order;
 import java.time.LocalDateTime;
@@ -52,9 +52,9 @@ public final class DeliveryFixture {
         );
     }
 
-    public static FindDeliveriesResponse findDeliveriesResponse() {
-        FindDeliveryResponse findDeliveryResponse
-            = new FindDeliveryResponse(DELIVERY_ID, ADDRESS, DELIVERY_FEE);
-        return new FindDeliveriesResponse(List.of(findDeliveryResponse), PAGE, 1);
+    public static FindWaitingDeliveriesResponse findDeliveriesResponse() {
+        FindWaitingDeliveryResponse findWaitingDeliveryResponse
+            = new FindWaitingDeliveryResponse(DELIVERY_ID, ADDRESS, DELIVERY_FEE);
+        return new FindWaitingDeliveriesResponse(List.of(findWaitingDeliveryResponse), PAGE, 1);
     }
 }
