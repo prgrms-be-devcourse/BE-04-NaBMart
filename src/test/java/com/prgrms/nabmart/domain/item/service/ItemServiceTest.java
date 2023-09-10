@@ -10,12 +10,14 @@ import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
+import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsBySubCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -41,6 +43,9 @@ class ItemServiceTest {
 
     @Mock
     private MainCategoryRepository mainCategoryRepository;
+
+    @Mock
+    private SubCategoryRepository subCategoryRepository;
 
     @Mock
     private OrderItemRepository orderItemRepository;
@@ -205,6 +210,170 @@ class ItemServiceTest {
 
 
     @Nested
+    @DisplayName("findItemsBySubCategory 메서드 실행 시")
+    class FindItemsBySubCategoryTests {
+
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = new SubCategory(mainCategory, "sub1");
+        private static final int DEFAULT_PAGE_NUM = 0;
+        private static final int DEFAULT_PAGE_SIZE = 3;
+
+        @Test
+        @DisplayName("최신 등록 순으로 조회")
+        public void orderByLatest() {
+            // Given
+            List<Item> expectedItems = getItems();
+            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+                ItemSortType.NEW);
+
+            when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
+            when(itemRepository.findByItemIdLessThanAndMainCategoryAndSubCategoryOrderByItemIdDesc(
+                anyLong(), any(), any(), any())).thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
+                findItemsBySubCategoryCommand);
+
+            // Then
+            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
+        }
+
+        @Test
+        @DisplayName("할인율 높은 순으로 조회")
+        public void orderByDiscountRateDesc() {
+            // Given
+            List<Item> items = getItems();
+            List<Item> expectedItems = items.stream()
+                .sorted(Comparator.comparing(Item::getDiscount).reversed())
+                .toList();
+            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+                ItemSortType.DISCOUNT);
+
+            when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
+            when(
+                itemRepository.findByDiscountLessThanAndMainCategoryAndSubCategoryOrderByDiscountDescItemIdDesc(
+                    anyInt(), any(), any(), any())).thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
+                findItemsBySubCategoryCommand);
+
+            // Then
+            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
+        }
+
+        @Test
+        @DisplayName("금액 높은 순으로 조회")
+        public void orderByPriceDesc() {
+            // Given
+            List<Item> expectedItems = getItems();
+            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+                ItemSortType.HIGHEST_AMOUNT);
+
+            when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
+            when(
+                itemRepository.findByPriceLessThanAndMainCategoryAndSubCategoryOrderByPriceDescItemIdDesc(
+                    anyInt(), any(), any(), any())).thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
+                findItemsBySubCategoryCommand);
+
+            // Then
+            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
+        }
+
+        @Test
+        @DisplayName("금액 낮은 순으로 조회")
+        public void orderByPriceAsc() {
+            // Given
+            List<Item> expectedItems = getItems();
+            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+                ItemSortType.LOWEST_AMOUNT);
+
+            when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
+            when(
+                itemRepository.findByPriceGreaterThanAndMainCategoryAndSubCategoryOrderByPriceAscItemIdDesc(
+                    anyInt(), any(), any(), any())).thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
+                findItemsBySubCategoryCommand);
+
+            // Then
+            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
+        }
+
+        @Test
+        @DisplayName("주문 많은 순으로 조회")
+        public void orderByOrderedQuantity() {
+            // Given
+            List<Item> expectedItems = getItems();
+            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+                ItemSortType.POPULAR);
+
+            when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
+            when(orderItemRepository.countByOrderItemId(anyLong())).thenReturn(Long.MAX_VALUE);
+            when(itemRepository.findByOrderedQuantityAndMainCategory(
+                anyLong(), any(), any())).thenReturn(expectedItems);
+
+            // When
+            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
+                findItemsBySubCategoryCommand);
+
+            // Then
+            assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
+        }
+
+        private FindItemsBySubCategoryCommand getFindItemsBySubCategoryCommand(
+            ItemSortType itemSortType) {
+            return new FindItemsBySubCategoryCommand(
+                -1L, mainCategory.getName(), subCategory.getName(),
+                PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
+                itemSortType);
+        }
+
+        private List<Item> getItems() {
+            Item item1 = Item.builder()
+                .name("name1")
+                .price(10)
+                .quantity(10)
+                .discount(1)
+                .maxBuyQuantity(50)
+                .mainCategory(mainCategory)
+                .subCategory(subCategory)
+                .build();
+
+            Item item2 = Item.builder()
+                .name("name2")
+                .price(100)
+                .quantity(10)
+                .discount(10)
+                .maxBuyQuantity(50)
+                .mainCategory(mainCategory)
+                .subCategory(subCategory)
+                .build();
+
+            Item item3 = Item.builder()
+                .name("name3")
+                .price(1000)
+                .quantity(10)
+                .discount(100)
+                .maxBuyQuantity(50)
+                .mainCategory(mainCategory)
+                .subCategory(subCategory)
+                .build();
+
+            return List.of(item1, item2, item3);
+        }
+    }
+
+    @Nested
     @DisplayName("findItemDetail 메서드 실행 시")
     class FindItemDetailTests {
 
@@ -281,7 +450,8 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item1, item2, item3);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.NEW);
 
-            when(itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(any(), any(), any()))
+            when(itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(any(),
+                any(), any()))
                 .thenReturn(expectedItems);
 
             // When
@@ -300,7 +470,9 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item3, item2, item1);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.DISCOUNT);
 
-            when(itemRepository.findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(any(), anyInt(), any()))
+            when(
+                itemRepository.findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(
+                    any(), anyInt(), any()))
                 .thenReturn(expectedItems);
 
             // When
@@ -319,7 +491,9 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item3, item2, item1);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.HIGHEST_AMOUNT);
 
-            when(itemRepository.findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(any(), anyInt(), any()))
+            when(
+                itemRepository.findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(any(),
+                    anyInt(), any()))
                 .thenReturn(expectedItems);
 
             // When
@@ -338,7 +512,8 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item1, item2, item3);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.LOWEST_AMOUNT);
 
-            when(itemRepository.findByCreatedAtAfterAndPriceGreaterThanOrderByPriceAscItemIdDesc(any(), anyInt(), any()))
+            when(itemRepository.findByCreatedAtAfterAndPriceGreaterThanOrderByPriceAscItemIdDesc(
+                any(), anyInt(), any()))
                 .thenReturn(expectedItems);
 
             // When
