@@ -20,6 +20,7 @@ import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveries
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.support.OrderFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
@@ -240,14 +241,14 @@ class DeliveryServiceTest {
 
         private List<Order> createOrders(int end) {
             return IntStream.range(0, end)
-                .mapToObj(i -> OrderFixture.getCompletedOrder(i, user))
+                .mapToObj(i -> OrderFixture.deliveringOrder(i, user))
                 .toList();
         }
 
         private List<Delivery> createDeliveries(int end) {
             return IntStream.range(0, end)
                 .mapToObj(i -> {
-                    Order completedOrder = OrderFixture.getCompletedOrder(i, user);
+                    Order completedOrder = OrderFixture.deliveringOrder(i, user);
                     return DeliveryFixture.delivery(completedOrder);
                 }).toList();
         }

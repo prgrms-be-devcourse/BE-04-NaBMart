@@ -7,7 +7,6 @@ import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
-import com.prgrms.nabmart.domain.order.support.OrderFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
@@ -35,12 +34,10 @@ class DeliveryRepositoryTest {
     DeliveryRepository deliveryRepository;
 
     User user = UserFixture.user();
-    Order order = OrderFixture.getDeliveringOrder(1L, user);
 
     @BeforeEach
     void init() {
         userRepository.save(user);
-        orderRepository.save(order);
     }
 
     private List<Order> createAndSaveOrders(int end) {
