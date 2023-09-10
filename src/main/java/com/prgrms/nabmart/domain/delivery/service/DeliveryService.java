@@ -51,7 +51,7 @@ public class DeliveryService {
         delivery.completeDelivery();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public FindWaitingDeliveriesResponse findWaitingDeliveries(
         FindWaitingDeliveriesCommand findWaitingDeliveriesCommand) {
         Page<Delivery> deliveriesPage
