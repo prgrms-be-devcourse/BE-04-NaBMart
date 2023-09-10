@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.delivery.service;
 
+import static com.prgrms.nabmart.domain.order.support.OrderFixture.deliveringOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
@@ -19,7 +20,6 @@ import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveries
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
-import com.prgrms.nabmart.domain.order.support.OrderFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
@@ -58,7 +58,7 @@ class DeliveryServiceTest {
     UserRepository userRepository;
 
     User user = UserFixture.user();
-    Order order = OrderFixture.getDeliveringOrder(1L, user);
+    Order order = deliveringOrder(1L, user);
     Delivery delivery = DeliveryFixture.delivery(order);
     TemporalUnitOffset withInOneSeconds = within(1, ChronoUnit.SECONDS);
 

@@ -7,7 +7,11 @@ import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,8 +22,8 @@ public class PaymentController {
 
     @PostMapping("/{orderId}")
     public ResponseEntity<PaymentResponse> pay(
-            @RequestBody @Valid PaymentRequest paymentRequest,
-            @PathVariable Long orderId
+        @RequestBody @Valid PaymentRequest paymentRequest,
+        @PathVariable Long orderId
     ) {
         PaymentCommand paymentCommand = PaymentCommand.from(paymentRequest.paymentType());
         return ResponseEntity.ok(paymentService.pay(orderId, paymentCommand));
