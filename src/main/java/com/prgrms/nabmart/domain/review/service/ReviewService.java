@@ -9,6 +9,7 @@ import com.prgrms.nabmart.domain.review.exception.NotFoundReviewException;
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByItemResponse;
 import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
@@ -80,5 +81,18 @@ public class ReviewService {
 
         return FindReviewsByUserResponse.of(
             foundUser, foundReviews);
+    }
+
+    @Transactional(readOnly = true)
+    public FindReviewsByItemResponse findReviewsByItem(
+        final Long itemId
+    ) {
+        Item foundItem = itemRepository.findById(itemId)
+            .orElseThrow(() -> new NotFoundItemException("해당 상품을 찾을 수 없습니다."));
+
+        List<Review> foundReviews = reviewRepository.findAllByItemOrderByCreatedAt(
+            foundItem);
+
+        return FindReviewsByItemResponse.of(foundItem.getItemId(), foundReviews);
     }
 }
