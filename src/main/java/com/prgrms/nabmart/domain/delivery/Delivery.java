@@ -47,7 +47,7 @@ public class Delivery {
     private int deliveryFee;
 
     @Builder
-    public Delivery(final Order order, final String address, int deliveryFee) {
+    public Delivery(final Order order, final String address, final int deliveryFee) {
         validateAddress(address);
         this.order = order;
         this.address = address;
@@ -55,7 +55,7 @@ public class Delivery {
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
     }
 
-    private void validateAddress(String address) {
+    private void validateAddress(final String address) {
         if (nonNull(address) && address.length() > ADDRESS_LENGTH) {
             throw new InvalidDeliveryException("주소의 길이는 500자를 넘을 수 없습니다.");
         }
