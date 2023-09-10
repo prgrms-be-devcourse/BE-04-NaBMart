@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.order;
 
 import com.prgrms.nabmart.domain.coupon.UserCoupon;
+import com.prgrms.nabmart.domain.order.exception.NotFoundOrderItemException;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
@@ -28,6 +29,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "orders")
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseTimeEntity {
@@ -44,11 +46,9 @@ public class Order extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private OrderStatus status = OrderStatus.PENDING; // 주문 상태 정보, 기본값 'PENDING'
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -59,16 +59,38 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
 
-    @Builder
-    public Order(String name, User user) {
-        this.name = name;
+    public Order(User user, List<OrderItem> orderItems) {
         this.user = user;
+        validateOrderItems(orderItems);
+        createOrderName(orderItems);
+        setOrderItems(orderItems);
         calculateTotalPrice();
     }
 
-    public void calculateTotalPrice() {
+    private void createOrderName(List<OrderItem> orderItems) {
+        this.name = (orderItems.size() == 1) ?
+            orderItems.get(0).getItem().getName() :
+            orderItems.get(0).getItem().getName() + "외 " + (orderItems.size() - 1) + "개";
+    }
+
+    private void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
         for (OrderItem orderItem : orderItems) {
-            price += orderItem.calculateSubtotal();
+            orderItem.setOrder(this);
+        }
+    }
+
+    private void calculateTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.calculateSubtotal();
+        }
+        this.price = totalPrice;
+    }
+
+    private void validateOrderItems(List<OrderItem> orderItems) {
+        if (orderItems == null || orderItems.isEmpty()) {
+            throw new NotFoundOrderItemException("주문 아이템이 비어 있습니다.");
         }
     }
 
@@ -76,4 +98,3 @@ public class Order extends BaseTimeEntity {
         return this.user.equals(user);
     }
 }
-
