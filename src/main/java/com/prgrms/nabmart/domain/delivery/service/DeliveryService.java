@@ -4,14 +4,17 @@ import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +49,14 @@ public class DeliveryService {
     public void completeDelivery(CompleteDeliveryCommand completeDeliveryCommand) {
         Delivery delivery = findDeliveryByDeliveryId(completeDeliveryCommand.deliveryId());
         delivery.completeDelivery();
+    }
+
+    @Transactional
+    public FindDeliveriesResponse findWaitingDeliveries(
+        FindDeliveriesCommand findDeliveriesCommand) {
+        Page<Delivery> deliveriesPage
+            = deliveryRepository.findWaitingDeliveries(findDeliveriesCommand.pageable());
+        return FindDeliveriesResponse.from(deliveriesPage);
     }
 
     private User findUserByUserId(final Long userId) {
