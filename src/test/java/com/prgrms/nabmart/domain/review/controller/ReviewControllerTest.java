@@ -18,7 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.review.controller.request.UpdateReviewRequest;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByItemResponse;
 import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
+import com.prgrms.nabmart.domain.review.support.FindReviewsByItemResponseFixture;
 import com.prgrms.nabmart.domain.review.support.FindReviewsByUserResponseFixture;
 import com.prgrms.nabmart.domain.review.support.RegisterReviewCommandFixture;
 import com.prgrms.nabmart.domain.review.support.UpdateReviewRequestFixture;
@@ -154,6 +156,48 @@ class ReviewControllerTest extends BaseControllerTest {
                             .description("reviewId"),
                         fieldWithPath("reviews[].userNickname").type(
                                 JsonFieldType.STRING)
+                            .description("userNickname"),
+                        fieldWithPath("reviews[].reviewContent").type(
+                                JsonFieldType.STRING)
+                            .description("reviewContent"),
+                        fieldWithPath("reviews[].createdAt").type(
+                                JsonFieldType.STRING)
+                            .description("createdAt")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("상품에 따른 리뷰 목록 조회 API 실행 시")
+    class findReviewsByItemAPITest {
+
+        @Test
+        @DisplayName("성공")
+        void findReviewsByItem() throws Exception {
+            // given
+            Long itemId = 1L;
+            FindReviewsByItemResponse findReviewsByItemResponse = FindReviewsByItemResponseFixture.findReviewsByItemResponse();
+
+            given(reviewService.findReviewsByItem(itemId)).willReturn(findReviewsByItemResponse);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/v1/items/{itemId}/reviews", itemId)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                .andDo(print())
+                .andDo(restDocs.document(
+                    responseFields(
+                        fieldWithPath("reviews").type(JsonFieldType.ARRAY)
+                            .description("reviews"),
+                        fieldWithPath("reviews[].reviewId").type(
+                                JsonFieldType.NUMBER)
+                            .description("reviewId"),
+                        fieldWithPath("reviews[].itemId").type(
+                                JsonFieldType.NUMBER)
                             .description("userNickname"),
                         fieldWithPath("reviews[].reviewContent").type(
                                 JsonFieldType.STRING)
