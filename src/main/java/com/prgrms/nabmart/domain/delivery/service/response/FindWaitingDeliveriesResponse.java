@@ -9,7 +9,7 @@ public record FindWaitingDeliveriesResponse(
     int page,
     long totalElements) {
 
-    public static FindWaitingDeliveriesResponse from(Page<Delivery> deliveries) {
+    public static FindWaitingDeliveriesResponse from(final Page<Delivery> deliveries) {
         Page<FindWaitingDeliveryResponse> deliveryResponses
             = deliveries.map(FindWaitingDeliveryResponse::from);
 
@@ -21,7 +21,7 @@ public record FindWaitingDeliveriesResponse(
 
     public record FindWaitingDeliveryResponse(Long deliveryId, String address, int deliveryFee) {
 
-        public static FindWaitingDeliveryResponse from(Delivery delivery) {
+        public static FindWaitingDeliveryResponse from(final Delivery delivery) {
             return new FindWaitingDeliveryResponse(
                 delivery.getDeliveryId(),
                 delivery.getAddress(),

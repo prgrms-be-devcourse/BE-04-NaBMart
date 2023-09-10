@@ -56,7 +56,8 @@ public class DeliveryController {
     }
 
     @GetMapping("/waiting")
-    public ResponseEntity<FindWaitingDeliveriesResponse> findWaitingDeliveries(Pageable pageable) {
+    public ResponseEntity<FindWaitingDeliveriesResponse> findWaitingDeliveries(
+        final Pageable pageable) {
         FindWaitingDeliveriesCommand findWaitingDeliveriesCommand
             = FindWaitingDeliveriesCommand.from(pageable);
         FindWaitingDeliveriesResponse findWaitingDeliveriesResponse
