@@ -3,12 +3,15 @@ package com.prgrms.nabmart.domain.delivery.controller;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -50,5 +53,15 @@ public class DeliveryController {
         CompleteDeliveryCommand completeDeliveryCommand = CompleteDeliveryCommand.from(deliveryId);
         deliveryService.completeDelivery(completeDeliveryCommand);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/waiting")
+    public ResponseEntity<FindWaitingDeliveriesResponse> findWaitingDeliveries(
+        final Pageable pageable) {
+        FindWaitingDeliveriesCommand findWaitingDeliveriesCommand
+            = FindWaitingDeliveriesCommand.from(pageable);
+        FindWaitingDeliveriesResponse findWaitingDeliveriesResponse
+            = deliveryService.findWaitingDeliveries(findWaitingDeliveriesCommand);
+        return ResponseEntity.ok(findWaitingDeliveriesResponse);
     }
 }

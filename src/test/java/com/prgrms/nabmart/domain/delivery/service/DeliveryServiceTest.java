@@ -13,11 +13,14 @@ import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.support.OrderFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
@@ -28,8 +31,10 @@ import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
+import java.util.stream.IntStream;
 import org.assertj.core.data.TemporalUnitOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,6 +43,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
@@ -225,6 +232,48 @@ class DeliveryServiceTest {
             //when
             assertThatThrownBy(() -> deliveryService.completeDelivery(completeDeliveryCommand))
                 .isInstanceOf(NotFoundDeliveryException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("findWaitingDeliveries 메서드 실행 시")
+    class FindWaitingDeliveriesTest {
+
+        private List<Order> createOrders(int end) {
+            return IntStream.range(0, end)
+                .mapToObj(i -> OrderFixture.deliveringOrder(i, user))
+                .toList();
+        }
+
+        private List<Delivery> createDeliveries(int end) {
+            return IntStream.range(0, end)
+                .mapToObj(i -> {
+                    Order completedOrder = OrderFixture.deliveringOrder(i, user);
+                    return DeliveryFixture.delivery(completedOrder);
+                }).toList();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            int totalElement = 3;
+            int pageNumber = 0;
+            List<Delivery> deliveries = createDeliveries(totalElement);
+            PageImpl<Delivery> deliveriesPage = new PageImpl<>(deliveries);
+            PageRequest pageRequest = PageRequest.of(pageNumber, totalElement);
+            FindWaitingDeliveriesCommand findWaitingDeliveriesCommand = FindWaitingDeliveriesCommand.from(pageRequest);
+
+            given(deliveryRepository.findWaitingDeliveries(any())).willReturn(deliveriesPage);
+
+            //when
+            FindWaitingDeliveriesResponse findWaitingDeliveriesResponse
+                = deliveryService.findWaitingDeliveries(findWaitingDeliveriesCommand);
+
+            //then
+            assertThat(findWaitingDeliveriesResponse.totalElements()).isEqualTo(totalElement);
+            assertThat(findWaitingDeliveriesResponse.page()).isEqualTo(pageNumber);
+            assertThat(findWaitingDeliveriesResponse.deliveries()).hasSize(totalElement);
         }
     }
 }
