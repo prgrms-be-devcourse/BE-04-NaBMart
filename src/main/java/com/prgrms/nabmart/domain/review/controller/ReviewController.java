@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.review.exception.ReviewException;
 import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByItemResponse;
 import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
@@ -81,6 +82,14 @@ public class ReviewController {
         @LoginUser final Long userId
     ) {
         return ResponseEntity.ok().body(reviewService.findReviewsByUser(userId));
+    }
+
+    @GetMapping("/items/{itemId}/reviews")
+    public ResponseEntity<FindReviewsByItemResponse> findReviewsByItem(
+        @PathVariable final Long itemId
+    ) {
+        return ResponseEntity.ok()
+            .body(reviewService.findReviewsByItem(itemId));
     }
 
     @ExceptionHandler(ReviewException.class)
