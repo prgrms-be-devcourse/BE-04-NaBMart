@@ -6,6 +6,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -13,17 +14,18 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 
 class DeliveryControllerTest extends BaseControllerTest {
@@ -87,8 +89,8 @@ class DeliveryControllerTest extends BaseControllerTest {
             //when
             ResultActions resultActions
                 = mockMvc.perform(patch("/api/v1/deliveries/pickup/{deliveryId}", deliveryId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(startDeliveryRequest)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(startDeliveryRequest)));
 
             //then
             resultActions.andExpect(status().isNoContent())
@@ -123,6 +125,45 @@ class DeliveryControllerTest extends BaseControllerTest {
                 .andDo(restDocs.document(
                     pathParameters(
                         parameterWithName("deliveryId").description("배달 ID")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("배달 대기 상태의 배달 목록 조회 호출 시")
+    class FindWaitingDeliveriesTest {
+
+        @Test
+        @DisplayName("성공")
+        void findWaitingDeliveries() throws Exception {
+            //given
+            int page = 0;
+            int size = 10;
+            FindDeliveriesResponse deliveriesResponse = DeliveryFixture.findDeliveriesResponse();
+
+            given(deliveryService.findWaitingDeliveries(any())).willReturn(deliveriesResponse);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(get("/api/v1/deliveries/waiting")
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+                .accept(MediaType.APPLICATION_JSON));
+
+            //then
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    queryParameters(
+                        parameterWithName("page").description("페이지"),
+                        parameterWithName("size").description("사이즈")
+                    ),
+                    responseFields(
+                        fieldWithPath("deliveries").type(ARRAY).description("배달 목록"),
+                        fieldWithPath("deliveries[].deliveryId").type(NUMBER).description("배달 ID"),
+                        fieldWithPath("deliveries[].address").type(STRING).description("배달 주소"),
+                        fieldWithPath("deliveries[].deliveryFee").type(NUMBER).description("배달 비"),
+                        fieldWithPath("page").type(NUMBER).description("페이지"),
+                        fieldWithPath("totalElements").type(NUMBER).description("사이즈")
                     )
                 ));
         }

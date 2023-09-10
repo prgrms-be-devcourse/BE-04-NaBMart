@@ -3,9 +3,12 @@ package com.prgrms.nabmart.domain.delivery.support;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveriesResponse.FindDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.order.Order;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +25,7 @@ public final class DeliveryFixture {
     private static final String ORDER_NAME = "비비고 왕교자 외 2개";
     private static final int ORDER_PRICE = 1000;
     private static final int ESTIMATE_MINUTES = 20;
+    private static final int PAGE = 0;
 
     public static Delivery delivery(Order order) {
         return Delivery.builder()
@@ -46,5 +50,11 @@ public final class DeliveryFixture {
             ORDER_NAME,
             ORDER_PRICE
         );
+    }
+
+    public static FindDeliveriesResponse findDeliveriesResponse() {
+        FindDeliveryResponse findDeliveryResponse
+            = new FindDeliveryResponse(DELIVERY_ID, ADDRESS, DELIVERY_FEE);
+        return new FindDeliveriesResponse(List.of(findDeliveryResponse), PAGE, 1);
     }
 }
