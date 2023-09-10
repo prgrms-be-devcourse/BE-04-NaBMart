@@ -37,4 +37,8 @@ public class OrderItem extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+    public int calculateSubtotal() {
+        return item.getPrice() * quantity;
+    }
 }

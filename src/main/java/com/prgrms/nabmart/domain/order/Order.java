@@ -59,6 +59,19 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
 
+    @Builder
+    public Order(String name, User user) {
+        this.name = name;
+        this.user = user;
+        calculateTotalPrice();
+    }
+
+    public void calculateTotalPrice() {
+        for (OrderItem orderItem : orderItems) {
+            price += orderItem.calculateSubtotal();
+        }
+    }
+
     public boolean isOwnByUser(final User user) {
         return this.user.equals(user);
     }
