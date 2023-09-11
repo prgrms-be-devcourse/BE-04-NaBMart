@@ -51,7 +51,7 @@ public class Order extends BaseTimeEntity {
     @Column
     private String riderRequest;
 
-    @Column(nullable = false)
+    @Column
     private Integer deliveryFee;
 
     @Enumerated(EnumType.STRING)
