@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.order;
 
 import com.prgrms.nabmart.domain.coupon.UserCoupon;
+import com.prgrms.nabmart.domain.order.exception.InvalidOrderException;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderItemException;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
@@ -44,6 +45,15 @@ public class Order extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer price;
 
+    @Column
+    private String address;
+
+    @Column
+    private String riderRequest;
+
+    @Column(nullable = false)
+    private int deliveryFee;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status = OrderStatus.PENDING; // 주문 상태 정보, 기본값 'PENDING'
@@ -61,6 +71,7 @@ public class Order extends BaseTimeEntity {
 
     public Order(final User user, final List<OrderItem> orderItems) {
         this.user = user;
+        this.address = user.getAddress();
         validateOrderItems(orderItems);
         createOrderName(orderItems);
         setOrderItems(orderItems);
@@ -86,6 +97,17 @@ public class Order extends BaseTimeEntity {
             totalPrice += orderItem.calculateSubtotal();
         }
         this.price = totalPrice;
+        calculateDeliveryFee(totalPrice);
+    }
+
+    private void calculateDeliveryFee(final int totalPrice) {
+        if (totalPrice >= 43000) {
+            this.deliveryFee = 0;
+        } else if (totalPrice >= 15000) {
+            this.deliveryFee = 3000;
+        } else {
+            throw new InvalidOrderException("주문 최소 금액은 15000원 이상 입니다");
+        }
     }
 
     private void validateOrderItems(final List<OrderItem> orderItems) {
