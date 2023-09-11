@@ -5,12 +5,14 @@ import com.prgrms.nabmart.domain.payment.PaymentType;
 import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
+import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
 
 public class PaymentDtoFixture {
 
-    private static String PAYMENT_TYPE_CARD = PaymentType.CARD.toString();
+    private static final String PAYMENT_TYPE_CARD = PaymentType.CARD.toString();
 
-    public static PaymentRequestResponse paymentResponse(Order order, String successCallBackUrl,
+    public static PaymentRequestResponse paymentRequestResponse(Order order,
+        String successCallBackUrl,
         String failCallBackUrl) {
         return new PaymentRequestResponse(
             PAYMENT_TYPE_CARD,
@@ -22,6 +24,14 @@ public class PaymentDtoFixture {
             successCallBackUrl,
             failCallBackUrl
         );
+    }
+
+    public static PaymentResponse paymentResponseWithSuccess() {
+        return new PaymentResponse("SUCCESS");
+    }
+
+    public static PaymentResponse paymentResponseWithFail() {
+        return new PaymentResponse("FAIL");
     }
 
     public static PaymentCommand paymentCommandWithCard() {
