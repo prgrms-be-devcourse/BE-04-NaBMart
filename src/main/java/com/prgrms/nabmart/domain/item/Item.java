@@ -22,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.ColumnDefault;
 
 @Getter
@@ -46,6 +47,7 @@ public class Item extends BaseTimeEntity {
     private double rate;
 
     @Column(nullable = false)
+    @Check(constraints = "quantity >= 0")
     private int quantity;
 
     @ColumnDefault("0")

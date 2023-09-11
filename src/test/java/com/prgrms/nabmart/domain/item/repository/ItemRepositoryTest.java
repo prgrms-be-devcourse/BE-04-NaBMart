@@ -1,6 +1,8 @@
 package com.prgrms.nabmart.domain.item.repository;
 
+import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
@@ -12,12 +14,14 @@ import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
@@ -144,6 +148,53 @@ class ItemRepositoryTest {
 
             // Then
             assertThat(items.size()).isEqualTo(5);
+        }
+    }
+
+    @Nested
+    @DisplayName("decreaseItemQuantity 메서드 실행 시")
+    class decreaseItemQuantityTest {
+
+        @Test
+        @DisplayName("성공: 재고가 감소된다.")
+        public void success() {
+            // Given
+            int originQuantity = 10;
+            int orderItemQuantity = 3;
+            Item item = item(originQuantity);
+
+            mainCategoryRepository.save(item.getMainCategory());
+            subCategoryRepository.save(item.getSubCategory());
+            itemRepository.save(item);
+
+            // When
+            itemRepository.decreaseStock(item.getItemId(), orderItemQuantity);
+            Optional<Item> persistItem = itemRepository.findById(item.getItemId());
+
+            // Then
+            assertThat(persistItem).isPresent();
+            assertThat(persistItem.get().getQuantity()).isEqualTo(
+                originQuantity - orderItemQuantity);
+        }
+
+        @Test
+        @DisplayName("실패: 재고가 부족할 경우, DataIntegrityViolationException 발생")
+        public void failWhenOutOfStock() {
+            // Given
+            int originQuantity = 10;
+            int orderItemQuantity = 12;
+            Item item = item(originQuantity);
+
+            mainCategoryRepository.save(item.getMainCategory());
+            subCategoryRepository.save(item.getSubCategory());
+            itemRepository.save(item);
+
+            // When
+            Exception exception = catchException(
+                () -> itemRepository.decreaseStock(item.getItemId(), orderItemQuantity));
+
+            // Then
+            assertThat(exception).isInstanceOf(DataIntegrityViolationException.class);
         }
     }
 }

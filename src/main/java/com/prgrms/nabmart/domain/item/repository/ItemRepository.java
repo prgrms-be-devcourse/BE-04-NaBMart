@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -225,4 +226,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
         + "ORDER BY SUM(oi.quantity) DESC, i.itemId DESC ")
     List<Item> findHotItemOrderByOrdersDesc(@Param("totalOrders") int totalOrders,
         Pageable pageable);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Item i set i.quantity = i.quantity - :quantity where i.itemId = :itemId")
+    void decreaseStock(@Param("itemId") Long itemId, @Param("quantity") Integer quantity);
 }
