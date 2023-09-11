@@ -73,7 +73,7 @@ class ReviewRepositoryTest {
             reviewRepository.save(givenReview);
 
             User newUser = new User("김춘배", "chunbae@gmail.com", "kakao", "kakaoId",
-                UserRole.ROLE_USER, UserGrade.VIP);
+                UserRole.ROLE_USER, UserGrade.VIP, "주소");
             userRepository.save(newUser);
             reviewRepository.save(new Review(newUser, givenItem, 5, "내공냠냠"));
 
