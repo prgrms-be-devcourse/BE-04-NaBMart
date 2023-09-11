@@ -62,7 +62,7 @@ public class RiderAuthenticationService {
             .orElseThrow(() -> new InvalidUsernameException("사용자의 정보와 일치하지 않습니다."));
     }
 
-    private void checkRiderPassword(RiderLoginCommand riderLoginCommand, Rider rider) {
+    private void checkRiderPassword(RiderLoginCommand riderLoginCommand, final Rider rider) {
         if (!passwordEncoder.matches(riderLoginCommand.password(), rider.getPassword())) {
             throw new InvalidPasswordException("사용자의 정보와 일치하지 않습니다.");
         }
