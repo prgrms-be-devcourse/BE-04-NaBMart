@@ -59,7 +59,7 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "user_coupon_id")
     private UserCoupon userCoupon;
 
-    public Order(User user, List<OrderItem> orderItems) {
+    public Order(final User user, final List<OrderItem> orderItems) {
         this.user = user;
         validateOrderItems(orderItems);
         createOrderName(orderItems);
@@ -67,13 +67,13 @@ public class Order extends BaseTimeEntity {
         calculateTotalPrice();
     }
 
-    private void createOrderName(List<OrderItem> orderItems) {
+    private void createOrderName(final List<OrderItem> orderItems) {
         this.name = (orderItems.size() == 1) ?
             orderItems.get(0).getItem().getName() :
             orderItems.get(0).getItem().getName() + "외 " + (orderItems.size() - 1) + "개";
     }
 
-    private void setOrderItems(List<OrderItem> orderItems) {
+    private void setOrderItems(final List<OrderItem> orderItems) {
         this.orderItems = orderItems;
         for (OrderItem orderItem : orderItems) {
             orderItem.setOrder(this);
@@ -88,7 +88,7 @@ public class Order extends BaseTimeEntity {
         this.price = totalPrice;
     }
 
-    private void validateOrderItems(List<OrderItem> orderItems) {
+    private void validateOrderItems(final List<OrderItem> orderItems) {
         if (orderItems == null || orderItems.isEmpty()) {
             throw new NotFoundOrderItemException("주문 아이템이 비어 있습니다.");
         }

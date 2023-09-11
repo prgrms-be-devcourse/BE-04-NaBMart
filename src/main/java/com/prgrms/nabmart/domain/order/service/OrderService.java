@@ -28,7 +28,7 @@ public class OrderService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public long createOrder(CreateOrdersCommand createOrdersCommand) {
+    public long createOrder(final CreateOrdersCommand createOrdersCommand) {
         User findUser = findUserByUserId(createOrdersCommand.userId());
         List<OrderItem> orderItem = createOrderItem(createOrdersCommand.createOrderRequest()
             .createOrderItemRequests());
@@ -43,7 +43,7 @@ public class OrderService {
         return FindOrderDetailResponse.from(order);
     }
 
-    private List<OrderItem> createOrderItem(List<CreateOrderItemRequest> orderItemRequests) {
+    private List<OrderItem> createOrderItem(final List<CreateOrderItemRequest> orderItemRequests) {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (CreateOrderItemRequest createOrderRequest : orderItemRequests) {
@@ -60,12 +60,12 @@ public class OrderService {
             .orElseThrow(() -> new NotFoundOrderException("order 가 존재하지 않습니다"));
     }
 
-    private User findUserByUserId(Long userId) {
+    private User findUserByUserId(final Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundUserException("존재하지 않은 사용자입니다."));
     }
 
-    private Item findItemByItemId(Long itemId) {
+    private Item findItemByItemId(final Long itemId) {
         return itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
     }
