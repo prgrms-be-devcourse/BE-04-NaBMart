@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.delivery;
 import static java.util.Objects.nonNull;
 
 import com.prgrms.nabmart.domain.delivery.exception.InvalidRiderException;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Rider {
+public class Rider extends BaseTimeEntity {
 
     private static final Pattern USERNAME_PATTERN
         = Pattern.compile("^(?=.*[a-z])[a-z0-9]{6,20}$");

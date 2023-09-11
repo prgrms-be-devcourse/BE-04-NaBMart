@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.UnauthorizedDeliveryException;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Delivery {
+public class Delivery extends BaseTimeEntity {
 
     private static final int ADDRESS_LENGTH = 500;
     private static final int ZERO = 0;
