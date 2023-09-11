@@ -59,7 +59,7 @@ public class DeliveryService {
         delivery.completeDelivery();
     }
 
-    private Rider findRiderByRiderId(Long riderId) {
+    private Rider findRiderByRiderId(final Long riderId) {
         return riderRepository.findById(riderId)
             .orElseThrow(() -> new NotFoundRiderException("존재하지 않는 라이더입니다."));
     }

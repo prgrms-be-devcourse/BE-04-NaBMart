@@ -71,7 +71,7 @@ public class Delivery {
         this.deliveryStatus = DeliveryStatus.DELIVERED;
     }
 
-    public void checkAuthority(Rider rider) {
+    public void checkAuthority(final Rider rider) {
         if (!this.rider.equals(rider)) {
             throw new UnauthorizedDeliveryException("권한이 없습니다.");
         }

@@ -41,7 +41,7 @@ public class DeliveryController {
     public ResponseEntity<Void> startDelivery(
         @PathVariable final Long deliveryId,
         @RequestBody @Valid StartDeliveryRequest startDeliveryRequest,
-        @LoginUser Long riderId) {
+        @LoginUser final Long riderId) {
         StartDeliveryCommand startDeliveryCommand = StartDeliveryCommand.of(
             deliveryId,
             startDeliveryRequest.deliveryEstimateMinutes(),
