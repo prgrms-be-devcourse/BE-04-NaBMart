@@ -2,10 +2,13 @@ package com.prgrms.nabmart.domain.item.service.request;
 
 import com.prgrms.nabmart.domain.category.exception.NotFoundCategoryException;
 import com.prgrms.nabmart.domain.item.ItemSortType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 
-public record FindItemsBySubCategoryCommand(
+@Slf4j
+public record FindItemsByCategoryCommand(
     Long lastIdx,
+    Long option,
     String mainCategoryName,
     String subCategoryName,
     PageRequest pageRequest,
@@ -13,23 +16,24 @@ public record FindItemsBySubCategoryCommand(
 
     private static final int DEFAULT_PAGE_NUMBER = 0;
 
-    public static FindItemsBySubCategoryCommand of(
-        Long lastIdx, String mainCategoryName, String subCategoryName, int pageSize, String sortType
+    public static FindItemsByCategoryCommand of(
+        Long lastIdx, Long option, String mainCategoryName, String subCategoryName, int pageSize,
+        String sortType
     ) {
 
-        validateCategoryName(mainCategoryName);
-        validateCategoryName(subCategoryName);
+        validateMainCategoryName(mainCategoryName);
         ItemSortType itemSortType = ItemSortType.from(sortType);
         PageRequest pageRequest = PageRequest.of(DEFAULT_PAGE_NUMBER, pageSize);
-        if (isFirstItemId(lastIdx)) {
-            lastIdx = redeclareLastIdx(itemSortType);
+        if (isFirstItemId(option)) {
+            option = redeclareLastIdx(itemSortType);
+            lastIdx = Long.MAX_VALUE;
         }
-        return new FindItemsBySubCategoryCommand(lastIdx, mainCategoryName, subCategoryName,
+        return new FindItemsByCategoryCommand(lastIdx, option, mainCategoryName, subCategoryName,
             pageRequest,
             itemSortType);
     }
 
-    private static void validateCategoryName(String mainCategoryName) {
+    private static void validateMainCategoryName(String mainCategoryName) {
         if (mainCategoryName == null || mainCategoryName.isBlank()) {
             throw new NotFoundCategoryException("카테고리명은 필수 항목입니다.");
         }
