@@ -2,8 +2,8 @@ package com.prgrms.nabmart.domain.payment.controller;
 
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
+import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestResponse;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestWithCard;
-import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -59,7 +59,8 @@ public class PaymentControllerTest extends BaseControllerTest {
             Order order = pendingOrder(1, user);
             PaymentRequest paymentRequest = paymentRequestWithCard();
             PaymentCommand paymentCommand = paymentCommandWithCard();
-            PaymentRequestResponse paymentResponse = paymentResponse(order, successCallBackUrl,
+            PaymentRequestResponse paymentResponse = paymentRequestResponse(order,
+                successCallBackUrl,
                 failCallBackUrl);
 
             when(paymentService.pay(eq(order.getOrderId()), any(), eq(paymentCommand)))
