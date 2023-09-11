@@ -36,7 +36,6 @@ public class ItemService {
     private final SubCategoryRepository subCategoryRepository;
     private static final int NEW_PRODUCT_REFERENCE_WEEK = 2;
 
-
     @Transactional(readOnly = true)
     public FindItemsResponse findItemsByCategory(
         FindItemsByCategoryCommand findItemsByCategoryCommand) {
@@ -49,22 +48,6 @@ public class ItemService {
         List<Item> items = findItemsBySubCategoryFrom(findItemsByCategoryCommand);
         return FindItemsResponse.from(items);
     }
-
-//    @Transactional(readOnly = true)
-//    public FindItemsResponse findItemsByMainCategory(
-//        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand) {
-//
-//        List<Item> items = findItemsByMainCategoryFrom(findItemsByMainCategoryCommand);
-//        return FindItemsResponse.from(items);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public FindItemsResponse findItemsBySubCategory(
-//        FindItemsBySubCategoryCommand findItemsBySubCategoryCommand) {
-//
-//        List<Item> items = findItemsBySubCategoryFrom(findItemsBySubCategoryCommand);
-//        return FindItemsResponse.from(items);
-//    }
 
     @Transactional(readOnly = true)
     public FindItemDetailResponse findItemDetail(FindItemDetailCommand findItemDetailCommand) {

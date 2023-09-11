@@ -20,7 +20,6 @@ public record FindItemsByCategoryCommand(
         Long lastIdx, Long option, String mainCategoryName, String subCategoryName, int pageSize,
         String sortType
     ) {
-
         validateMainCategoryName(mainCategoryName);
         ItemSortType itemSortType = ItemSortType.from(sortType);
         PageRequest pageRequest = PageRequest.of(DEFAULT_PAGE_NUMBER, pageSize);
