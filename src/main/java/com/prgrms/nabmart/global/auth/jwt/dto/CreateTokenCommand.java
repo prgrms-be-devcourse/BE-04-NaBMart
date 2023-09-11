@@ -8,4 +8,8 @@ public record CreateTokenCommand(Long userId, UserRole userRole) {
     public static CreateTokenCommand from(RegisterUserResponse userResponse) {
         return new CreateTokenCommand(userResponse.userId(), userResponse.userRole());
     }
+
+    public static CreateTokenCommand of(Long userId, UserRole userRole) {
+        return new CreateTokenCommand(userId, userRole);
+    }
 }
