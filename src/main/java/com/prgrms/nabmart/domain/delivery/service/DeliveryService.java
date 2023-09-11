@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
+import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
@@ -41,6 +42,13 @@ public class DeliveryService {
         if (!delivery.isOwnByUser(user)) {
             throw new AuthorizationException("권한이 없습니다.");
         }
+    }
+
+    @Transactional
+    public void acceptDelivery(AcceptDeliveryCommand acceptDeliveryCommand) {
+        Rider rider = findRiderByRiderId(acceptDeliveryCommand.riderId());
+        Delivery delivery = findDeliveryByDeliveryId(acceptDeliveryCommand.deliveryId());
+        delivery.assignRider(rider);
     }
 
     @Transactional

@@ -67,18 +67,18 @@ public class Delivery extends BaseTimeEntity {
         }
     }
 
-    public void completeDelivery() {
-        this.arrivedAt = LocalDateTime.now();
-        this.deliveryStatus = DeliveryStatus.DELIVERED;
-    }
-
     public void checkAuthority(final Rider rider) {
         if (!this.rider.equals(rider)) {
             throw new UnauthorizedDeliveryException("권한이 없습니다.");
         }
     }
 
-    public void acceptDelivery(Rider rider) {
+    public void assignRider(Rider rider) {
         this.rider = rider;
+    }
+
+    public void completeDelivery() {
+        this.arrivedAt = LocalDateTime.now();
+        this.deliveryStatus = DeliveryStatus.DELIVERED;
     }
 }

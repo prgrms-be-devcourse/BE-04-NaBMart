@@ -16,6 +16,7 @@ import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
 import com.prgrms.nabmart.domain.delivery.exception.UnauthorizedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
+import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
@@ -318,7 +319,7 @@ class DeliveryServiceTest {
             return IntStream.range(0, end)
                 .mapToObj(i -> {
                     Order completedOrder = OrderFixture.deliveringOrder(i, user);
-                    return DeliveryFixture.delivery(completedOrder);
+                    return DeliveryFixture.waitingDelivery(completedOrder);
                 }).toList();
         }
 
@@ -344,6 +345,53 @@ class DeliveryServiceTest {
             assertThat(findWaitingDeliveriesResponse.totalElements()).isEqualTo(totalElement);
             assertThat(findWaitingDeliveriesResponse.page()).isEqualTo(pageNumber);
             assertThat(findWaitingDeliveriesResponse.deliveries()).hasSize(totalElement);
+        }
+    }
+
+    @Nested
+    @DisplayName("acceptDelivery 메서드 실행 시")
+    class AcceptDeliveryTest {
+
+        AcceptDeliveryCommand acceptDeliveryCommand = new AcceptDeliveryCommand(1L, 1L);
+        Delivery delivery = DeliveryFixture.waitingDelivery(order);
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
+            given(deliveryRepository.findById(any())).willReturn(Optional.ofNullable(delivery));
+
+            //when
+            deliveryService.acceptDelivery(acceptDeliveryCommand);
+
+            //then
+            assertThat(delivery.getRider()).isEqualTo(rider);
+        }
+
+        @Test
+        @DisplayName("예외: 존재하지 않는 라이더")
+        void throwExceptionWhenNotFoundRider() {
+            //given
+            given(riderRepository.findById(any())).willReturn(Optional.empty());
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.acceptDelivery(acceptDeliveryCommand))
+                .isInstanceOf(NotFoundRiderException.class);
+        }
+
+        @Test
+        @DisplayName("예외: 존재하지 않는 배달")
+        void throwExceptionWhenNotFoundDelivery() {
+            //given
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
+            given(deliveryRepository.findById(any())).willReturn(Optional.empty());
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.acceptDelivery(acceptDeliveryCommand))
+                .isInstanceOf(NotFoundDeliveryException.class);
         }
     }
 }
