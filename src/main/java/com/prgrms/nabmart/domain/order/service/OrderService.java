@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.order.service;
 
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.exception.InvalidItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.order.Order;
@@ -48,11 +49,20 @@ public class OrderService {
 
         for (CreateOrderItemRequest createOrderRequest : orderItemRequests) {
             Item findItem = findItemByItemId(createOrderRequest.itemId());
+            Integer quantity = createOrderRequest.quantity();
+            validateItemQuantity(findItem, quantity);
+            findItem.decreaseQuantity(quantity);
             // OrderItem 생성 및 초기화
-            OrderItem orderItem = new OrderItem(findItem, createOrderRequest.quantity());
+            OrderItem orderItem = new OrderItem(findItem, quantity);
             orderItems.add(orderItem);
         }
         return orderItems;
+    }
+
+    private static void validateItemQuantity(Item findItem, Integer quantity) {
+        if (findItem.getMaxBuyQuantity() - quantity < 0) {
+            throw new InvalidItemException("상품의 재고 수량이 부족합니다");
+        }
     }
 
     private Order getOrderByOrderIdAndUserId(final Long orderId, final Long userId) {
