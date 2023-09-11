@@ -7,6 +7,7 @@ import java.util.List;
 @Getter
 public enum UserRole {
     ROLE_USER(Constants.ROLE_USER, List.of(Constants.ROLE_USER)),
+    ROLE_RIDER(Constants.ROLE_RIDER, List.of(Constants.ROLE_RIDER)),
     ROLE_ADMIN(Constants.ROLE_ADMIN, List.of(Constants.ROLE_ADMIN, Constants.ROLE_USER));
 
     private final String value;
@@ -19,6 +20,7 @@ public enum UserRole {
 
     private static class Constants {
         private static final String ROLE_USER = "ROLE_USER";
+        private static final String ROLE_RIDER = "ROLE_RIDER";
         private static final String ROLE_ADMIN = "ROLE_ADMIN";
     }
 }

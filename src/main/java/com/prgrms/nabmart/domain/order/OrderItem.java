@@ -12,13 +12,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem extends BaseTimeEntity {
@@ -37,4 +35,17 @@ public class OrderItem extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+    public OrderItem(Item item, int quantity) {
+        this.item = item;
+        this.quantity = quantity;
+    }
+
+    public int calculateSubtotal() {
+        return item.getPrice() * quantity;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

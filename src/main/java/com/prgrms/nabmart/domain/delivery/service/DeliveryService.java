@@ -3,14 +3,18 @@ package com.prgrms.nabmart.domain.delivery.service;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
+import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +43,20 @@ public class DeliveryService {
     public void startDelivery(StartDeliveryCommand startDeliveryCommand) {
         Delivery delivery = findDeliveryByDeliveryId(startDeliveryCommand.deliveryId());
         delivery.startDelivery(startDeliveryCommand.deliveryEstimateMinutes());
+    }
+
+    @Transactional
+    public void completeDelivery(CompleteDeliveryCommand completeDeliveryCommand) {
+        Delivery delivery = findDeliveryByDeliveryId(completeDeliveryCommand.deliveryId());
+        delivery.completeDelivery();
+    }
+
+    @Transactional(readOnly = true)
+    public FindWaitingDeliveriesResponse findWaitingDeliveries(
+        FindWaitingDeliveriesCommand findWaitingDeliveriesCommand) {
+        Page<Delivery> deliveriesPage
+            = deliveryRepository.findWaitingDeliveries(findWaitingDeliveriesCommand.pageable());
+        return FindWaitingDeliveriesResponse.from(deliveriesPage);
     }
 
     private User findUserByUserId(final Long userId) {

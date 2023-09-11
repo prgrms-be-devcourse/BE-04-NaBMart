@@ -95,8 +95,8 @@ class ItemRepositoryTest {
 
             // When
             PageRequest pageRequest = PageRequest.of(0, 5);
-            List<Item> items = itemRepository.findByDiscountLessThanAndMainCategoryOrderByDiscountDescItemIdDesc(
-                100, mainCategory, pageRequest);
+            List<Item> items = itemRepository.findByMainCategoryAndDiscountDesc(
+                Long.MAX_VALUE, 100, mainCategory, pageRequest);
 
             // Then
             assertThat(items.size()).isEqualTo(5);
@@ -117,8 +117,8 @@ class ItemRepositoryTest {
 
             // When
             PageRequest pageRequest = PageRequest.of(0, 5);
-            List<Item> items = itemRepository.findByPriceLessThanAndMainCategoryOrderByPriceDescItemIdDesc(
-                10000, mainCategory, pageRequest);
+            List<Item> items = itemRepository.findByMainCategoryAndPriceDesc(
+                Long.MAX_VALUE, 10000, mainCategory, pageRequest);
 
             // Then
             assertThat(items.size()).isEqualTo(5);
@@ -139,8 +139,8 @@ class ItemRepositoryTest {
 
             // When
             PageRequest pageRequest = PageRequest.of(0, 5);
-            List<Item> items = itemRepository.findByPriceGreaterThanAndMainCategoryOrderByPriceAscItemIdDesc(
-                0, mainCategory, pageRequest);
+            List<Item> items = itemRepository.findByByMainCategoryAndPriceAsc(
+                Long.MAX_VALUE, 0, mainCategory, pageRequest);
 
             // Then
             assertThat(items.size()).isEqualTo(5);

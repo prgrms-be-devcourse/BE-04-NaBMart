@@ -43,15 +43,19 @@ public class Delivery {
     @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
+    private int deliveryFee;
+
     @Builder
-    public Delivery(final Order order, final String address) {
+    public Delivery(final Order order, final String address, final int deliveryFee) {
         validateAddress(address);
         this.order = order;
         this.address = address;
+        this.deliveryFee = deliveryFee;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
     }
 
-    private void validateAddress(String address) {
+    private void validateAddress(final String address) {
         if (nonNull(address) && address.length() > ADDRESS_LENGTH) {
             throw new InvalidDeliveryException("주소의 길이는 500자를 넘을 수 없습니다.");
         }
@@ -71,5 +75,10 @@ public class Delivery {
         if(estimateMinutes < ZERO) {
             throw new InvalidDeliveryException("배송 예상 소요 시간은 음수일 수 없습니다.");
         }
+    }
+
+    public void completeDelivery() {
+        this.arrivedAt = LocalDateTime.now();
+        this.deliveryStatus = DeliveryStatus.DELIVERED;
     }
 }

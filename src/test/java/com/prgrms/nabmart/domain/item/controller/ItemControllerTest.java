@@ -13,7 +13,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
-import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
@@ -27,19 +27,22 @@ import org.springframework.test.web.servlet.ResultActions;
 class ItemControllerTest extends BaseControllerTest {
 
     @Nested
-    @DisplayName("findItemsByMainCategory 메서드 호출 시")
+    @DisplayName("findItemsByCategory 메서드 호출 시")
     class FindItemsByMainCategory {
 
         FindItemsResponse findItemsResponse = ItemFixture.findItemsResponse();
         String mainCategoryName = "main category";
-        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = ItemFixture.findItemsByMainCategoryCommand(
-            mainCategoryName);
+        String subCategoryName = "sub category";
+        FindItemsByCategoryCommand findItemsByMainCategoryCommand = ItemFixture.findItemsByCategoryCommand(
+            mainCategoryName, null);
+        FindItemsByCategoryCommand findItemsBySubCategoryCommand = ItemFixture.findItemsByCategoryCommand(
+            mainCategoryName, subCategoryName);
 
         @Test
-        @DisplayName("성공")
+        @DisplayName("성공: 대카테고리 전체품목 조회")
         void findItemsByMainCategory() throws Exception {
             // Given
-            when(itemService.findItemsByMainCategory(findItemsByMainCategoryCommand)).thenReturn(
+            when(itemService.findItemsByCategory(findItemsByMainCategoryCommand)).thenReturn(
                 findItemsResponse);
 
             // Then&When
@@ -54,6 +57,32 @@ class ItemControllerTest extends BaseControllerTest {
                         parameterWithName("lastIdx").description("마지막에 조회한 아이템 Id"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("main").description("대카테고리명"),
+                        parameterWithName("sort").description("정렬 기준명")
+                    )
+                ));
+        }
+
+        @Test
+        @DisplayName("성공: 소카테고리 전체품목 조회")
+        void findItemsBySubCategory() throws Exception {
+            // Given
+            when(itemService.findItemsByCategory(findItemsBySubCategoryCommand)).thenReturn(
+                findItemsResponse);
+
+            // Then&When
+            mockMvc.perform(get("/api/v1/items")
+                    .queryParam("lastIdx", "5")
+                    .queryParam("size", "3")
+                    .queryParam("main", mainCategoryName)
+                    .queryParam("sub", subCategoryName)
+                    .queryParam("sort", "DISCOUNT"))
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    queryParameters(
+                        parameterWithName("lastIdx").description("마지막에 조회한 아이템 Id"),
+                        parameterWithName("size").description("조회할 아이템 수"),
+                        parameterWithName("main").description("대카테고리명"),
+                        parameterWithName("sub").description("대카테고리에 속한 소카테고리명"),
                         parameterWithName("sort").description("정렬 기준명")
                     )
                 ));

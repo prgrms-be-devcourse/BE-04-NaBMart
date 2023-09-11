@@ -1,5 +1,8 @@
 package com.prgrms.nabmart.domain.item.support;
 
+import static com.prgrms.nabmart.domain.category.fixture.CategoryFixture.mainCategory;
+import static com.prgrms.nabmart.domain.category.fixture.CategoryFixture.subCategory;
+
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
@@ -7,7 +10,7 @@ import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
-import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindLikeItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -36,6 +39,13 @@ public final class ItemFixture {
     private static final Long USER_ID = 1L;
     private static final Long LIKE_ITEM_ID = 1L;
     private static final String ITEM_SORT_TYPE = ItemSortType.NEW.name();
+    private static final MainCategory MAIN_CATEGORY = mainCategory();
+    private static final SubCategory SUB_CATEGORY = subCategory(MAIN_CATEGORY);
+
+    public static Item item() {
+        return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, MAIN_CATEGORY,
+            SUB_CATEGORY);
+    }
 
     public static Item item(MainCategory mainCategory, SubCategory subCategory) {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, mainCategory,
@@ -56,9 +66,10 @@ public final class ItemFixture {
             RATE);
     }
 
-    public static FindItemsByMainCategoryCommand findItemsByMainCategoryCommand(
-        String mainCategoryName) {
-        return FindItemsByMainCategoryCommand.of(10L, mainCategoryName, 3, ITEM_SORT_TYPE);
+    public static FindItemsByCategoryCommand findItemsByCategoryCommand(
+        String mainCategoryName, String subCategoryName) {
+        return FindItemsByCategoryCommand.of(-1L, -1L, mainCategoryName, subCategoryName, 3,
+            ITEM_SORT_TYPE);
     }
 
 

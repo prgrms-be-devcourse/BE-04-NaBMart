@@ -1,7 +1,7 @@
 package com.prgrms.nabmart.domain.payment.service;
 
-import static com.prgrms.nabmart.domain.order.support.OrderFixture.getDeliveringOrder;
-import static com.prgrms.nabmart.domain.order.support.OrderFixture.getPendingOrder;
+import static com.prgrms.nabmart.domain.order.support.OrderFixture.deliveringOrder;
+import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,7 +58,7 @@ class PaymentServiceTest {
         void pay() {
             // given
             User user = UserFixture.user();
-            Order order = getPendingOrder(1L, user);
+            Order order = pendingOrder(1L, user);
 
             PaymentCommand paymentCommand = paymentCommandWithCard();
             PaymentResponse expected = paymentResponse(order, successCallBackUrl, failCallBackUrl);
@@ -97,7 +97,7 @@ class PaymentServiceTest {
         void throwExceptionWhenNotPendingOrder() {
             // given
             User user = UserFixture.user();
-            Order order = getDeliveringOrder(1L, user);
+            Order order = deliveringOrder(1L, user);
 
             PaymentCommand paymentCommand = new PaymentCommand(PaymentType.CARD.toString());
 

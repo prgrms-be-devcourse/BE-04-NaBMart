@@ -91,6 +91,9 @@ public class Item extends BaseTimeEntity {
         this.subCategory = subCategory;
     }
 
+    public void decreaseQuantity(final int quantity) {
+        this.quantity -= quantity;
+    }
 
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
