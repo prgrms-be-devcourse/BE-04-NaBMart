@@ -20,7 +20,7 @@ class NabmartApplicationTests {
         properties.setProperty("REDIRECT_URI",
             "http://localhost:8080/login/oauth2/code/{registrationId}");
         properties.setProperty("EXPIRY_SECONDS", "60");
-        properties.setProperty("TOSS_SUCCESS_URL", "tossSUCCESSUrl");
+        properties.setProperty("TOSS_SUCCESS_URL", "tossSuccessUrl");
         properties.setProperty("TOSS_FAIL_URL", "tossFailUrl");
     }
 
