@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.domain.delivery.controller.request;
+package com.prgrms.nabmart.global.auth.controller.request;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class RiderSignupRequestTest {
+class SignupRiderRequestTest {
 
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
@@ -33,12 +33,12 @@ class RiderSignupRequestTest {
         @DisplayName("성공")
         void success(String validUsername) {
             //given
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(validUsername, password, address);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(validUsername, password, address);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(0);
@@ -51,12 +51,12 @@ class RiderSignupRequestTest {
         @DisplayName("예외: 유효하지 않은 사용자 이름")
         void throwExceptionWhenInvalidUsername(String invalidUsername) {
             //given
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(invalidUsername, password, address);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(invalidUsername, password, address);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -69,12 +69,12 @@ class RiderSignupRequestTest {
         void throwExceptionWhenUsernameIsNull() {
             //given
             String nullUsername = null;
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(nullUsername, password, address);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(nullUsername, password, address);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -94,12 +94,12 @@ class RiderSignupRequestTest {
         @DisplayName("성공")
         void success(String validPassword) {
             //given
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(username, validPassword, address);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(username, validPassword, address);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(0);
@@ -112,12 +112,12 @@ class RiderSignupRequestTest {
         @DisplayName("예외: 유효하지 않은 패스워드")
         void throwExceptionWhenInvalidPassword(String invalidPassword) {
             //given
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(username, invalidPassword, address);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(username, invalidPassword, address);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -130,12 +130,12 @@ class RiderSignupRequestTest {
         void throwExceptionWhenPasswordIsNull() {
             //given
             String nullPassword = null;
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(username, nullPassword, address);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(username, nullPassword, address);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -153,12 +153,12 @@ class RiderSignupRequestTest {
         void success() {
             //given
             String validAddress = "address";
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(username, password, validAddress);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(username, password, validAddress);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(0);
@@ -169,12 +169,12 @@ class RiderSignupRequestTest {
         void throwExceptionWhenAddressHasInvalidLength() {
             //given
             String invalidAddress = "a".repeat(201);
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(username, password, invalidAddress);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(username, password, invalidAddress);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -187,12 +187,12 @@ class RiderSignupRequestTest {
         void throwExceptionWhenAddressIsBlank() {
             //given
             String invalidAddress = "  ";
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(username, password, invalidAddress);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(username, password, invalidAddress);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -205,12 +205,12 @@ class RiderSignupRequestTest {
         void throwExceptionWhenAddressIsNull() {
             //given
             String nullAddress = null;
-            RiderSignupRequest riderSignupRequest
-                = new RiderSignupRequest(username, password, nullAddress);
+            SignupRiderRequest signupRiderRequest
+                = new SignupRiderRequest(username, password, nullAddress);
 
             //when
-            Set<ConstraintViolation<RiderSignupRequest>> result
-                = validator.validate(riderSignupRequest);
+            Set<ConstraintViolation<SignupRiderRequest>> result
+                = validator.validate(signupRiderRequest);
 
             //then
             assertThat(result).hasSize(1);

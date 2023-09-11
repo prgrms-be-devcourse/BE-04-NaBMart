@@ -9,6 +9,7 @@ import com.prgrms.nabmart.global.auth.jwt.JavaJwtTokenProvider;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
 import com.prgrms.nabmart.global.auth.jwt.dto.CreateTokenCommand;
 import com.prgrms.nabmart.global.auth.jwt.dto.JwtAuthentication;
+import com.prgrms.nabmart.global.auth.service.request.SignupRiderCommand;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -60,6 +61,10 @@ public final class AuthFixture {
     public static Rider rider() {
         String encodePassword = mockPasswordEncoder().encode(RIDER_PASSWORD);
         return new Rider(RIDER_USERNAME, encodePassword, RIDER_ADDRESS);
+    }
+
+    public static SignupRiderCommand riderSignupCommand() {
+        return new SignupRiderCommand(RIDER_USERNAME, RIDER_PASSWORD, RIDER_ADDRESS);
     }
 
     public static PasswordEncoder mockPasswordEncoder() {

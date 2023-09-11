@@ -1,7 +1,9 @@
 package com.prgrms.nabmart.global.auth.service;
 
 import com.prgrms.nabmart.domain.delivery.Rider;
+import com.prgrms.nabmart.global.auth.exception.DuplicateUsernameException;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
+import com.prgrms.nabmart.global.auth.service.request.SignupRiderCommand;
 import com.prgrms.nabmart.global.auth.service.request.RiderLoginCommand;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.global.auth.exception.InvalidPasswordException;
@@ -21,6 +23,29 @@ public class RiderAuthenticationService {
     private final RiderRepository riderRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+
+    @Transactional
+    public Long signupRider(SignupRiderCommand signupRiderCommand) {
+        checkUsernameDuplication(signupRiderCommand.username());
+        Rider rider = createRider(signupRiderCommand);
+        riderRepository.save(rider);
+        return rider.getRiderId();
+    }
+
+    private void checkUsernameDuplication(final String username) {
+        if (riderRepository.existsByUsername(username)) {
+            throw new DuplicateUsernameException("사용할 수 없는 아이디입니다.");
+        }
+    }
+
+    private Rider createRider(SignupRiderCommand signupRiderCommand) {
+        String encodedPassword = passwordEncoder.encode(signupRiderCommand.password());
+        return Rider.builder()
+            .username(signupRiderCommand.username())
+            .password(encodedPassword)
+            .address(signupRiderCommand.address())
+            .build();
+    }
 
     @Transactional(readOnly = true)
     public RiderLoginResponse riderLogin(RiderLoginCommand riderLoginCommand) {
