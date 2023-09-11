@@ -8,43 +8,31 @@ import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
 import java.util.List;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class OrderFixture {
 
-    private static final int PRICE = 10000;
-    private static final String NAME = "orderName";
-
     public static Order pendingOrder(long orderId, User user) {
-        return Order.builder()
-            .orderId(orderId)
-            .name(NAME)
-            .price(PRICE)
-            .status(OrderStatus.PENDING)
-            .orderItems(List.of(orderItem()))
-            .user(user)
-            .build();
+        Order order = new Order(user, List.of(orderItem()));
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+
+        return order;
     }
 
     public static Order deliveringOrder(long orderId, User user) {
-        return Order.builder()
-            .orderId(orderId)
-            .name(NAME)
-            .price(PRICE)
-            .status(OrderStatus.DELIVERING)
-            .orderItems(List.of(orderItem()))
-            .user(user)
-            .build();
+        Order order = new Order(user, List.of(orderItem()));
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+        ReflectionTestUtils.setField(order, "status", OrderStatus.DELIVERING);
+
+        return order;
     }
 
     public static Order completedOrder(long orderId, User user) {
-        return Order.builder()
-            .orderId(orderId)
-            .name(NAME)
-            .price(PRICE)
-            .status(OrderStatus.COMPLETED)
-            .orderItems(List.of(orderItem()))
-            .user(user)
-            .build();
+        Order order = new Order(user, List.of(orderItem()));
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+        ReflectionTestUtils.setField(order, "status", OrderStatus.COMPLETED);
+
+        return order;
     }
 
     private static OrderItem orderItem() {
