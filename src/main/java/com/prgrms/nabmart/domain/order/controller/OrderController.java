@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
 import com.prgrms.nabmart.domain.order.service.OrderService;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
+import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,7 +32,7 @@ public class OrderController {
     ) {
         CreateOrdersCommand createOrdersCommand = CreateOrdersCommand.of(userId,
             createOrderRequest);
-        Long orderId = orderService.createOrder(createOrdersCommand);
+        long orderId = orderService.createOrder(createOrdersCommand);
         URI location = URI.create("/api/v1/orders" + orderId);
         return ResponseEntity.created(location).build();
     }
@@ -41,6 +43,14 @@ public class OrderController {
         @LoginUser Long userId
     ) {
         return ResponseEntity.ok(orderService.findOrderByIdAndUserId(orderId, userId));
+    }
+
+    @GetMapping
+    public ResponseEntity<FindOrdersResponse> findOrders(
+        @RequestParam(defaultValue = "0") Integer page,
+        @LoginUser Long userId
+    ) {
+        return ResponseEntity.ok(orderService.findOrders(userId, page));
     }
 
 }
