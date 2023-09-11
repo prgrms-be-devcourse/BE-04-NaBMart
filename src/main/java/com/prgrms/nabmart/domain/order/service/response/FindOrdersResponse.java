@@ -6,15 +6,15 @@ import java.util.stream.Collectors;
 
 public record FindOrdersResponse(
     List<FindOrderResponse> orders,
-    Integer totalPage
+    Integer totalPages
 ) {
 
-    public static FindOrdersResponse of(List<Order> orders, Integer totalPage) {
+    public static FindOrdersResponse of(List<Order> orders, Integer totalPages) {
         return new FindOrdersResponse(
             orders.stream()
                 .map(FindOrderResponse::from)
                 .collect(Collectors.toList()),
-            totalPage
+            totalPages
         );
     }
 }
