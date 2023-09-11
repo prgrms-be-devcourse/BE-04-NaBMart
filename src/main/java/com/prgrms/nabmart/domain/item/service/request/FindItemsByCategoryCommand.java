@@ -2,27 +2,33 @@ package com.prgrms.nabmart.domain.item.service.request;
 
 import com.prgrms.nabmart.domain.category.exception.NotFoundCategoryException;
 import com.prgrms.nabmart.domain.item.ItemSortType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 
-public record FindItemsByMainCategoryCommand(
+@Slf4j
+public record FindItemsByCategoryCommand(
     Long lastIdx,
+    Long option,
     String mainCategoryName,
+    String subCategoryName,
     PageRequest pageRequest,
     ItemSortType itemSortType) {
 
     private static final int DEFAULT_PAGE_NUMBER = 0;
 
-    public static FindItemsByMainCategoryCommand of(
-        Long lastIdx, String mainCategoryName, int pageSize, String sortType
+    public static FindItemsByCategoryCommand of(
+        Long lastIdx, Long option, String mainCategoryName, String subCategoryName, int pageSize,
+        String sortType
     ) {
-
         validateMainCategoryName(mainCategoryName);
         ItemSortType itemSortType = ItemSortType.from(sortType);
         PageRequest pageRequest = PageRequest.of(DEFAULT_PAGE_NUMBER, pageSize);
-        if (isFirstItemId(lastIdx)) {
-            lastIdx = redeclareLastIdx(itemSortType);
+        if (isFirstItemId(option)) {
+            option = redeclareLastIdx(itemSortType);
+            lastIdx = Long.MAX_VALUE;
         }
-        return new FindItemsByMainCategoryCommand(lastIdx, mainCategoryName, pageRequest,
+        return new FindItemsByCategoryCommand(lastIdx, option, mainCategoryName, subCategoryName,
+            pageRequest,
             itemSortType);
     }
 
@@ -37,6 +43,6 @@ public record FindItemsByMainCategoryCommand(
     }
 
     private static long redeclareLastIdx(ItemSortType itemSortType) {
-        return itemSortType.isLowestSort() ? 0L : Long.MAX_VALUE;
+        return itemSortType.getDefaultValue();
     }
 }
