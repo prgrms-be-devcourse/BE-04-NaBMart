@@ -1,8 +1,8 @@
 package com.prgrms.nabmart.domain.delivery.service.request;
 
-public record CompleteDeliveryCommand(Long deliveryId) {
+public record CompleteDeliveryCommand(Long deliveryId, Long riderId) {
 
-    public static CompleteDeliveryCommand from(final Long deliveryId) {
-        return new CompleteDeliveryCommand(deliveryId);
+    public static CompleteDeliveryCommand of(final Long deliveryId, final Long riderId) {
+        return new CompleteDeliveryCommand(deliveryId, riderId);
     }
 }

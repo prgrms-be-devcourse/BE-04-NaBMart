@@ -40,17 +40,22 @@ public class DeliveryController {
     @PatchMapping("/pickup/{deliveryId}")
     public ResponseEntity<Void> startDelivery(
         @PathVariable final Long deliveryId,
-        @RequestBody @Valid StartDeliveryRequest startDeliveryRequest) {
+        @RequestBody @Valid StartDeliveryRequest startDeliveryRequest,
+        @LoginUser final Long riderId) {
         StartDeliveryCommand startDeliveryCommand = StartDeliveryCommand.of(
             deliveryId,
-            startDeliveryRequest.deliveryEstimateMinutes());
+            startDeliveryRequest.deliveryEstimateMinutes(),
+            riderId);
         deliveryService.startDelivery(startDeliveryCommand);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/complete/{deliveryId}")
-    public ResponseEntity<Void> completeDelivery(@PathVariable final Long deliveryId) {
-        CompleteDeliveryCommand completeDeliveryCommand = CompleteDeliveryCommand.from(deliveryId);
+    public ResponseEntity<Void> completeDelivery(
+        @PathVariable final Long deliveryId,
+        @LoginUser final Long riderId) {
+        CompleteDeliveryCommand completeDeliveryCommand
+            = CompleteDeliveryCommand.of(deliveryId, riderId);
         deliveryService.completeDelivery(completeDeliveryCommand);
         return ResponseEntity.noContent().build();
     }
