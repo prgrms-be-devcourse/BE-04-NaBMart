@@ -51,8 +51,11 @@ public class DeliveryController {
     }
 
     @PatchMapping("/complete/{deliveryId}")
-    public ResponseEntity<Void> completeDelivery(@PathVariable final Long deliveryId) {
-        CompleteDeliveryCommand completeDeliveryCommand = CompleteDeliveryCommand.from(deliveryId);
+    public ResponseEntity<Void> completeDelivery(
+        @PathVariable final Long deliveryId,
+        @LoginUser final Long riderId) {
+        CompleteDeliveryCommand completeDeliveryCommand
+            = CompleteDeliveryCommand.of(deliveryId, riderId);
         deliveryService.completeDelivery(completeDeliveryCommand);
         return ResponseEntity.noContent().build();
     }

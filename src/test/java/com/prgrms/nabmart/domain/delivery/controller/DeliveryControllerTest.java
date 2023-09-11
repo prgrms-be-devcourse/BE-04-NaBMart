@@ -122,11 +122,15 @@ class DeliveryControllerTest extends BaseControllerTest {
 
             //when
             ResultActions resultActions = mockMvc
-                .perform(patch("/api/v1/deliveries/complete/{deliveryId}", deliveryId));
+                .perform(patch("/api/v1/deliveries/complete/{deliveryId}", deliveryId)
+                    .header(AUTHORIZATION, accessToken));
 
             //then
             resultActions.andExpect(status().isNoContent())
                 .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
                     pathParameters(
                         parameterWithName("deliveryId").description("배달 ID")
                     )

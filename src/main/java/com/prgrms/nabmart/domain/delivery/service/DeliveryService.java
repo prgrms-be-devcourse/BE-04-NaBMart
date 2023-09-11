@@ -51,15 +51,17 @@ public class DeliveryService {
         delivery.startDelivery(startDeliveryCommand.deliveryEstimateMinutes());
     }
 
+    @Transactional
+    public void completeDelivery(CompleteDeliveryCommand completeDeliveryCommand) {
+        Rider rider = findRiderByRiderId(completeDeliveryCommand.riderId());
+        Delivery delivery = findDeliveryByDeliveryId(completeDeliveryCommand.deliveryId());
+        delivery.checkAuthority(rider);
+        delivery.completeDelivery();
+    }
+
     private Rider findRiderByRiderId(Long riderId) {
         return riderRepository.findById(riderId)
             .orElseThrow(() -> new NotFoundRiderException("존재하지 않는 라이더입니다."));
-    }
-
-    @Transactional
-    public void completeDelivery(CompleteDeliveryCommand completeDeliveryCommand) {
-        Delivery delivery = findDeliveryByDeliveryId(completeDeliveryCommand.deliveryId());
-        delivery.completeDelivery();
     }
 
     @Transactional(readOnly = true)

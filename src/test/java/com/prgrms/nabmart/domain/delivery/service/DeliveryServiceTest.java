@@ -65,8 +65,8 @@ class DeliveryServiceTest {
 
     User user = UserFixture.user();
     Order order = deliveringOrder(1L, user);
-    Delivery delivery = DeliveryFixture.delivery(order);
     Rider rider = DeliveryFixture.rider();
+    Delivery delivery = DeliveryFixture.acceptedDelivery(order, rider);
     TemporalUnitOffset withInOneSeconds = within(1, ChronoUnit.SECONDS);
 
     @Nested
@@ -248,12 +248,14 @@ class DeliveryServiceTest {
     @DisplayName("completeDelivery 메서드 실행 시")
     class CompleteDeliveryTest {
 
-        CompleteDeliveryCommand completeDeliveryCommand = new CompleteDeliveryCommand(1L);
+        CompleteDeliveryCommand completeDeliveryCommand
+            = new CompleteDeliveryCommand(1L, 1L);
 
         @Test
         @DisplayName("성공")
         void success() {
             //given
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
             given(deliveryRepository.findById(any())).willReturn(Optional.ofNullable(delivery));
 
             //when
@@ -266,14 +268,41 @@ class DeliveryServiceTest {
         }
 
         @Test
+        @DisplayName("예외: 존재하지 않는 라이더")
+        void throwExceptionWhenNotFoundRider() {
+            //given
+            given(riderRepository.findById(any())).willReturn(Optional.empty());
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.completeDelivery(completeDeliveryCommand))
+                .isInstanceOf(NotFoundRiderException.class);
+        }
+
+        @Test
         @DisplayName("예외: 존재하지 않는 배달")
         void throwExceptionWhenNotFoundDelivery() {
             //given
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
             given(deliveryRepository.findById(any())).willReturn(Optional.empty());
 
             //when
             assertThatThrownBy(() -> deliveryService.completeDelivery(completeDeliveryCommand))
                 .isInstanceOf(NotFoundDeliveryException.class);
+        }
+
+        @Test
+        @DisplayName("예외: 권한이 없는 라이더")
+        void throwExceptionWhenUnauthorizedRider() {
+            //given
+            Rider unauthorizedRider
+                = new Rider("unauthorized", "password", "address");
+            given(riderRepository.findById(any())).willReturn(Optional.of(unauthorizedRider));
+            given(deliveryRepository.findById(any())).willReturn(Optional.ofNullable(delivery));
+
+            //when
+            assertThatThrownBy(() -> deliveryService.completeDelivery(completeDeliveryCommand))
+                .isInstanceOf(UnauthorizedDeliveryException.class);
         }
     }
 
