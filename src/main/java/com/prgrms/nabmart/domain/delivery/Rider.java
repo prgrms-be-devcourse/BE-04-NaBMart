@@ -3,11 +3,13 @@ package com.prgrms.nabmart.domain.delivery;
 import static java.util.Objects.nonNull;
 
 import com.prgrms.nabmart.domain.delivery.exception.InvalidRiderException;
+import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Rider {
+public class Rider extends BaseTimeEntity {
 
     private static final Pattern USERNAME_PATTERN
         = Pattern.compile("^(?=.*[a-z])[a-z0-9]{6,20}$");
@@ -64,5 +66,22 @@ public class Rider {
         if (nonNull(address) && address.length() > ADDRESS_LENGTH) {
             throw new InvalidRiderException("주소의 길이는 최대 200자 입니다.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Rider rider = (Rider) o;
+        return Objects.equals(username, rider.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
 }
