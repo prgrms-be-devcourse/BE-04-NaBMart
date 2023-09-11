@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.delivery.support;
 
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
+import com.prgrms.nabmart.domain.delivery.Rider;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse.FindWaitingDeliveryResponse;
@@ -26,13 +27,20 @@ public final class DeliveryFixture {
     private static final int ORDER_PRICE = 1000;
     private static final int ESTIMATE_MINUTES = 20;
     private static final int PAGE = 0;
+    private static final String RIDER_USERNAME = "username";
+    private static final String RIDER_PASSWORD = "password123";
+    private static final String RIDER_ADDRESS = "address";
 
     public static Delivery delivery(Order order) {
         return Delivery.builder()
             .order(order)
-            .address(ADDRESS)
-            .deliveryFee(DELIVERY_FEE)
             .build();
+    }
+
+    public static Delivery acceptedDelivery(Order order, Rider rider) {
+        Delivery delivery = delivery(order);
+        delivery.acceptDelivery(rider);
+        return delivery;
     }
 
     public static FindDeliveryCommand findDeliveryCommand() {
@@ -44,8 +52,6 @@ public final class DeliveryFixture {
             DELIVERY_ID,
             DELIVERY_STATUS,
             ARRIVED_AT,
-            ADDRESS,
-            DELIVERY_FEE,
             ORDER_ID,
             ORDER_NAME,
             ORDER_PRICE
@@ -54,7 +60,11 @@ public final class DeliveryFixture {
 
     public static FindWaitingDeliveriesResponse findDeliveriesResponse() {
         FindWaitingDeliveryResponse findWaitingDeliveryResponse
-            = new FindWaitingDeliveryResponse(DELIVERY_ID, ADDRESS, DELIVERY_FEE);
+            = new FindWaitingDeliveryResponse(DELIVERY_ID);
         return new FindWaitingDeliveriesResponse(List.of(findWaitingDeliveryResponse), PAGE, 1);
+    }
+
+    public static Rider rider() {
+        return new Rider(RIDER_USERNAME, RIDER_PASSWORD, RIDER_ADDRESS);
     }
 }

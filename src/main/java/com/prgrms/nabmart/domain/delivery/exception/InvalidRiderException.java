@@ -2,7 +2,7 @@ package com.prgrms.nabmart.domain.delivery.exception;
 
 public class InvalidRiderException extends RiderException {
 
-    public InvalidRiderException(String message) {
+    public InvalidRiderException(final String message) {
         super(message);
     }
 }

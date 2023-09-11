@@ -1,8 +1,11 @@
 package com.prgrms.nabmart.domain.delivery.service;
 
 import com.prgrms.nabmart.domain.delivery.Delivery;
+import com.prgrms.nabmart.domain.delivery.Rider;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
+import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
+import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
@@ -24,6 +27,7 @@ public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
+    private final RiderRepository riderRepository;
 
     @Transactional(readOnly = true)
     public FindDeliveryDetailResponse findDelivery(FindDeliveryCommand findDeliveryCommand) {
@@ -41,14 +45,23 @@ public class DeliveryService {
 
     @Transactional
     public void startDelivery(StartDeliveryCommand startDeliveryCommand) {
+        Rider rider = findRiderByRiderId(startDeliveryCommand.riderId());
         Delivery delivery = findDeliveryByDeliveryId(startDeliveryCommand.deliveryId());
+        delivery.checkAuthority(rider);
         delivery.startDelivery(startDeliveryCommand.deliveryEstimateMinutes());
     }
 
     @Transactional
     public void completeDelivery(CompleteDeliveryCommand completeDeliveryCommand) {
+        Rider rider = findRiderByRiderId(completeDeliveryCommand.riderId());
         Delivery delivery = findDeliveryByDeliveryId(completeDeliveryCommand.deliveryId());
+        delivery.checkAuthority(rider);
         delivery.completeDelivery();
+    }
+
+    private Rider findRiderByRiderId(final Long riderId) {
+        return riderRepository.findById(riderId)
+            .orElseThrow(() -> new NotFoundRiderException("존재하지 않는 라이더입니다."));
     }
 
     @Transactional(readOnly = true)
