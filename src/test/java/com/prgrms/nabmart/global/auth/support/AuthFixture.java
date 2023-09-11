@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.JavaJwtTokenProvider;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
+import com.prgrms.nabmart.global.auth.jwt.dto.CreateTokenCommand;
 import com.prgrms.nabmart.global.auth.jwt.dto.JwtAuthentication;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -32,9 +33,12 @@ public final class AuthFixture {
         return new RegisterUserResponse(1L, "nickname", "abc", UserRole.ROLE_USER);
     }
 
+    public static CreateTokenCommand createTokenCommand() {
+        return new CreateTokenCommand(USER_ID, UserRole.ROLE_USER);
+    }
+
     public static String accessToken() {
-        RegisterUserResponse userResponse = registerUserResponse();
         TokenProvider tokenProvider = tokenProvider();
-        return tokenProvider.createToken(userResponse);
+        return tokenProvider.createToken(createTokenCommand());
     }
 }

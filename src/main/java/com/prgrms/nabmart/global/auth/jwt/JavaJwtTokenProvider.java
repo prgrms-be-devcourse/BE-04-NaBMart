@@ -7,9 +7,9 @@ import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.prgrms.nabmart.domain.user.UserRole;
-import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
 import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
+import com.prgrms.nabmart.global.auth.jwt.dto.CreateTokenCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,15 +44,15 @@ public class JavaJwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createToken(final RegisterUserResponse userResponse) {
+    public String createToken(final CreateTokenCommand createTokenCommand) {
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + expirySeconds * 1000L);
         return JWT.create()
             .withIssuer(issuer)
             .withIssuedAt(now)
             .withExpiresAt(expiresAt)
-            .withClaim(USER_ID, userResponse.userId())
-            .withClaim(ROLE, userResponse.userRole().getValue())
+            .withClaim(USER_ID, createTokenCommand.userId())
+            .withClaim(ROLE, createTokenCommand.userRole().getValue())
             .sign(algorithm);
     }
 
