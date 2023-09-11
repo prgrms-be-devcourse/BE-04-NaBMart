@@ -16,8 +16,7 @@ import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
-import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
-import com.prgrms.nabmart.domain.item.service.request.FindItemsBySubCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -67,7 +66,7 @@ class ItemServiceTest {
         public void orderByLatest() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.NEW);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
@@ -75,8 +74,8 @@ class ItemServiceTest {
                 any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(
-                findItemsByMainCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -90,16 +89,16 @@ class ItemServiceTest {
             List<Item> expectedItems = items.stream()
                 .sorted(Comparator.comparing(Item::getDiscount).reversed())
                 .toList();
-            FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.DISCOUNT);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
-            when(itemRepository.findByDiscountLessThanAndMainCategoryOrderByDiscountDescItemIdDesc(
-                anyInt(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findByMainCategoryAndDiscountDesc(
+                anyLong(), anyInt(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(
-                findItemsByMainCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -110,16 +109,16 @@ class ItemServiceTest {
         public void orderByPriceDesc() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.HIGHEST_AMOUNT);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
-            when(itemRepository.findByPriceLessThanAndMainCategoryOrderByPriceDescItemIdDesc(
-                anyInt(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findByMainCategoryAndPriceDesc(
+                anyLong(), anyInt(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(
-                findItemsByMainCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -130,16 +129,16 @@ class ItemServiceTest {
         public void orderByPriceAsc() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.LOWEST_AMOUNT);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
-            when(itemRepository.findByPriceGreaterThanAndMainCategoryOrderByPriceAscItemIdDesc(
-                anyInt(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findByByMainCategoryAndPriceAsc(
+                anyLong(), anyInt(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(
-                findItemsByMainCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -150,26 +149,27 @@ class ItemServiceTest {
         public void orderByOrderedQuantity() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = getFindItemsByMainCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.POPULAR);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(orderItemRepository.countByOrderItemId(anyLong())).thenReturn(Long.MAX_VALUE);
             when(itemRepository.findByOrderedQuantityAndMainCategory(
-                anyLong(), any(), any())).thenReturn(expectedItems);
+                anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsByMainCategory(
-                findItemsByMainCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
         }
 
-        private FindItemsByMainCategoryCommand getFindItemsByMainCategoryCommand(
+        private FindItemsByCategoryCommand getFindItemsByCategoryCommand(
             ItemSortType itemSortType) {
-            return new FindItemsByMainCategoryCommand(
-                -1L, mainCategory.getName(), PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
+            return new FindItemsByCategoryCommand(
+                -1L, -1L, mainCategory.getName(), null,
+                PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
                 itemSortType);
         }
 
@@ -223,7 +223,7 @@ class ItemServiceTest {
         public void orderByLatest() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.NEW);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
@@ -232,8 +232,8 @@ class ItemServiceTest {
                 anyLong(), any(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
-                findItemsBySubCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -247,18 +247,18 @@ class ItemServiceTest {
             List<Item> expectedItems = items.stream()
                 .sorted(Comparator.comparing(Item::getDiscount).reversed())
                 .toList();
-            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.DISCOUNT);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
             when(
-                itemRepository.findByDiscountLessThanAndMainCategoryAndSubCategoryOrderByDiscountDescItemIdDesc(
-                    anyInt(), any(), any(), any())).thenReturn(expectedItems);
+                itemRepository.findBySubCategoryAndDiscountDesc(
+                    anyLong(), anyInt(), any(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
-                findItemsBySubCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -269,18 +269,18 @@ class ItemServiceTest {
         public void orderByPriceDesc() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.HIGHEST_AMOUNT);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
             when(
-                itemRepository.findByPriceLessThanAndMainCategoryAndSubCategoryOrderByPriceDescItemIdDesc(
-                    anyInt(), any(), any(), any())).thenReturn(expectedItems);
+                itemRepository.findBySubCategoryAndPriceDesc(
+                    anyLong(), anyInt(), any(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
-                findItemsBySubCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -291,18 +291,18 @@ class ItemServiceTest {
         public void orderByPriceAsc() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.LOWEST_AMOUNT);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
             when(
-                itemRepository.findByPriceGreaterThanAndMainCategoryAndSubCategoryOrderByPriceAscItemIdDesc(
-                    anyInt(), any(), any(), any())).thenReturn(expectedItems);
+                itemRepository.findBySubCategoryAndPriceAsc(
+                    anyLong(), anyInt(), any(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
-                findItemsBySubCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
@@ -313,27 +313,27 @@ class ItemServiceTest {
         public void orderByOrderedQuantity() {
             // Given
             List<Item> expectedItems = getItems();
-            FindItemsBySubCategoryCommand findItemsBySubCategoryCommand = getFindItemsBySubCategoryCommand(
+            FindItemsByCategoryCommand findItemsByCategoryCommand = getFindItemsByCategoryCommand(
                 ItemSortType.POPULAR);
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
             when(orderItemRepository.countByOrderItemId(anyLong())).thenReturn(Long.MAX_VALUE);
-            when(itemRepository.findByOrderedQuantityAndMainCategory(
-                anyLong(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findByOrderedQuantityAndMainCategoryAndSubCategory(
+                anyLong(), anyLong(), any(), any(), any())).thenReturn(expectedItems);
 
             // When
-            FindItemsResponse itemsResponse = itemService.findItemsBySubCategory(
-                findItemsBySubCategoryCommand);
+            FindItemsResponse itemsResponse = itemService.findItemsByCategory(
+                findItemsByCategoryCommand);
 
             // Then
             assertThat(itemsResponse.items().size()).isEqualTo(DEFAULT_PAGE_SIZE);
         }
 
-        private FindItemsBySubCategoryCommand getFindItemsBySubCategoryCommand(
+        private FindItemsByCategoryCommand getFindItemsByCategoryCommand(
             ItemSortType itemSortType) {
-            return new FindItemsBySubCategoryCommand(
-                -1L, mainCategory.getName(), subCategory.getName(),
+            return new FindItemsByCategoryCommand(
+                -1L, -1L, mainCategory.getName(), subCategory.getName(),
                 PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
                 itemSortType);
         }

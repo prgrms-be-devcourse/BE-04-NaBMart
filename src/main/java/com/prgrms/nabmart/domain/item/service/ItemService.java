@@ -11,8 +11,7 @@ import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
-import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
-import com.prgrms.nabmart.domain.item.service.request.FindItemsBySubCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -39,20 +38,33 @@ public class ItemService {
 
 
     @Transactional(readOnly = true)
-    public FindItemsResponse findItemsByMainCategory(
-        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand) {
-
-        List<Item> items = findItemsByMainCategoryFrom(findItemsByMainCategoryCommand);
+    public FindItemsResponse findItemsByCategory(
+        FindItemsByCategoryCommand findItemsByCategoryCommand) {
+        String subCategoryName = findItemsByCategoryCommand.subCategoryName();
+        if (subCategoryName == null || subCategoryName.isBlank()) {
+            return FindItemsResponse.from(
+                findItemsByMainCategoryFrom(findItemsByCategoryCommand)
+            );
+        }
+        List<Item> items = findItemsBySubCategoryFrom(findItemsByCategoryCommand);
         return FindItemsResponse.from(items);
     }
 
-    @Transactional(readOnly = true)
-    public FindItemsResponse findItemsBySubCategory(
-        FindItemsBySubCategoryCommand findItemsBySubCategoryCommand) {
-
-        List<Item> items = findItemsBySubCategoryFrom(findItemsBySubCategoryCommand);
-        return FindItemsResponse.from(items);
-    }
+//    @Transactional(readOnly = true)
+//    public FindItemsResponse findItemsByMainCategory(
+//        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand) {
+//
+//        List<Item> items = findItemsByMainCategoryFrom(findItemsByMainCategoryCommand);
+//        return FindItemsResponse.from(items);
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public FindItemsResponse findItemsBySubCategory(
+//        FindItemsBySubCategoryCommand findItemsBySubCategoryCommand) {
+//
+//        List<Item> items = findItemsBySubCategoryFrom(findItemsBySubCategoryCommand);
+//        return FindItemsResponse.from(items);
+//    }
 
     @Transactional(readOnly = true)
     public FindItemDetailResponse findItemDetail(FindItemDetailCommand findItemDetailCommand) {
@@ -80,12 +92,13 @@ public class ItemService {
     }
 
     private List<Item> findItemsByMainCategoryFrom(
-        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand) {
+        FindItemsByCategoryCommand findItemsByCategoryCommand) {
 
-        Long lastIdx = findItemsByMainCategoryCommand.lastIdx();
-        ItemSortType itemSortType = findItemsByMainCategoryCommand.itemSortType();
-        PageRequest pageRequest = findItemsByMainCategoryCommand.pageRequest();
-        String mainCategoryName = findItemsByMainCategoryCommand.mainCategoryName().toLowerCase();
+        Long lastIdx = findItemsByCategoryCommand.lastIdx();
+        Long option = findItemsByCategoryCommand.option();
+        ItemSortType itemSortType = findItemsByCategoryCommand.itemSortType();
+        PageRequest pageRequest = findItemsByCategoryCommand.pageRequest();
+        String mainCategoryName = findItemsByCategoryCommand.mainCategoryName().toLowerCase();
         MainCategory mainCategory = mainCategoryRepository.findByName(mainCategoryName)
             .orElseThrow(() -> new NotFoundCategoryException("없는 대카테고리입니다."));
 
@@ -95,19 +108,19 @@ public class ItemService {
                     lastIdx, mainCategory, pageRequest);
             }
             case HIGHEST_AMOUNT -> {
-                int price = lastIdx.intValue();
-                return itemRepository.findByPriceLessThanAndMainCategoryOrderByPriceDescItemIdDesc(
-                    price, mainCategory, pageRequest);
+                int price = option.intValue();
+                return itemRepository.findByMainCategoryAndPriceDesc(
+                    lastIdx, price, mainCategory, pageRequest);
             }
             case LOWEST_AMOUNT -> {
-                int price = lastIdx.intValue();
-                return itemRepository.findByPriceGreaterThanAndMainCategoryOrderByPriceAscItemIdDesc(
-                    price, mainCategory, pageRequest);
+                int price = option.intValue();
+                return itemRepository.findByByMainCategoryAndPriceAsc(
+                    lastIdx, price, mainCategory, pageRequest);
             }
             case DISCOUNT -> {
-                int discountRate = lastIdx.intValue();
-                return itemRepository.findByDiscountLessThanAndMainCategoryOrderByDiscountDescItemIdDesc(
-                    discountRate, mainCategory, pageRequest);
+                int discountRate = option.intValue();
+                return itemRepository.findByMainCategoryAndDiscountDesc(
+                    lastIdx, discountRate, mainCategory, pageRequest);
             }
             default -> {
                 Long totalOrderedQuantity = ItemSortType.POPULAR.getDefaultValue();
@@ -115,19 +128,20 @@ public class ItemService {
                     totalOrderedQuantity = orderItemRepository.countByOrderItemId(lastIdx);
                 }
                 return itemRepository.findByOrderedQuantityAndMainCategory(
-                    totalOrderedQuantity, mainCategory, pageRequest);
+                    lastIdx, totalOrderedQuantity, mainCategory, pageRequest);
             }
         }
     }
 
     private List<Item> findItemsBySubCategoryFrom(
-        FindItemsBySubCategoryCommand findItemsBySubCategoryCommand) {
+        FindItemsByCategoryCommand findItemsByCategoryCommand) {
 
-        Long lastIdx = findItemsBySubCategoryCommand.lastIdx();
-        ItemSortType itemSortType = findItemsBySubCategoryCommand.itemSortType();
-        PageRequest pageRequest = findItemsBySubCategoryCommand.pageRequest();
-        String mainCategoryName = findItemsBySubCategoryCommand.mainCategoryName().toLowerCase();
-        String subCategoryName = findItemsBySubCategoryCommand.subCategoryName().toLowerCase();
+        Long lastIdx = findItemsByCategoryCommand.lastIdx();
+        Long option = findItemsByCategoryCommand.option();
+        ItemSortType itemSortType = findItemsByCategoryCommand.itemSortType();
+        PageRequest pageRequest = findItemsByCategoryCommand.pageRequest();
+        String mainCategoryName = findItemsByCategoryCommand.mainCategoryName().toLowerCase();
+        String subCategoryName = findItemsByCategoryCommand.subCategoryName().toLowerCase();
         MainCategory mainCategory = mainCategoryRepository.findByName(mainCategoryName)
             .orElseThrow(() -> new NotFoundCategoryException("없는 대카테고리입니다."));
         SubCategory subCategory = subCategoryRepository.findByName(subCategoryName)
@@ -138,29 +152,28 @@ public class ItemService {
                 return itemRepository.findByItemIdLessThanAndMainCategoryAndSubCategoryOrderByItemIdDesc(
                     lastIdx, mainCategory, subCategory, pageRequest);
             }
-
             case HIGHEST_AMOUNT -> {
-                int price = lastIdx.intValue();
-                return itemRepository.findByPriceLessThanAndMainCategoryAndSubCategoryOrderByPriceDescItemIdDesc(
-                    price, mainCategory, subCategory, pageRequest);
+                int price = option.intValue();
+                return itemRepository.findBySubCategoryAndPriceDesc(
+                    lastIdx, price, mainCategory, subCategory, pageRequest);
             }
             case LOWEST_AMOUNT -> {
-                int price = lastIdx.intValue();
-                return itemRepository.findByPriceGreaterThanAndMainCategoryAndSubCategoryOrderByPriceAscItemIdDesc(
-                    price, mainCategory, subCategory, pageRequest);
+                int price = option.intValue();
+                return itemRepository.findBySubCategoryAndPriceAsc(
+                    lastIdx, price, mainCategory, subCategory, pageRequest);
             }
             case DISCOUNT -> {
-                int discountRate = lastIdx.intValue();
-                return itemRepository.findByDiscountLessThanAndMainCategoryAndSubCategoryOrderByDiscountDescItemIdDesc(
-                    discountRate, mainCategory, subCategory, pageRequest);
+                int discountRate = option.intValue();
+                return itemRepository.findBySubCategoryAndDiscountDesc(
+                    lastIdx, discountRate, mainCategory, subCategory, pageRequest);
             }
             default -> {
                 Long totalOrderedQuantity = ItemSortType.POPULAR.getDefaultValue();
                 if (lastIdx != ItemSortType.POPULAR.getDefaultValue()) {
                     totalOrderedQuantity = orderItemRepository.countByOrderItemId(lastIdx);
                 }
-                return itemRepository.findByOrderedQuantityAndMainCategory(
-                    totalOrderedQuantity, mainCategory, pageRequest);
+                return itemRepository.findByOrderedQuantityAndMainCategoryAndSubCategory(
+                    lastIdx, totalOrderedQuantity, mainCategory, subCategory, pageRequest);
             }
         }
     }
