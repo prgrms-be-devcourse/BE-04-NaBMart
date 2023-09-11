@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.global.auth.support;
 
 import com.prgrms.nabmart.domain.delivery.Rider;
+import com.prgrms.nabmart.global.auth.controller.request.RiderLoginRequest;
 import com.prgrms.nabmart.global.auth.service.request.RiderLoginCommand;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
@@ -50,6 +51,10 @@ public final class AuthFixture {
 
     public static RiderLoginCommand riderLoginCommand() {
         return new RiderLoginCommand(RIDER_USERNAME, RIDER_PASSWORD);
+    }
+
+    public static RiderLoginRequest riderLoginRequest() {
+        return new RiderLoginRequest(RIDER_USERNAME, RIDER_PASSWORD);
     }
 
     public static Rider rider() {
