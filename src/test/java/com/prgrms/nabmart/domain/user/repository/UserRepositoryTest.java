@@ -63,7 +63,7 @@ class UserRepositoryTest {
     private Order createOrder(User user) {
         return Order.builder()
             .name("name")
-            .coupon(null)
+            .userCoupon(null)
             .price(1000)
             .user(user)
             .status(OrderStatus.COMPLETED)

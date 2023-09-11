@@ -48,10 +48,7 @@ public class OrderFixture {
     }
 
     private static OrderItem orderItem() {
-        return OrderItem.builder()
-            .quantity(1)
-            .item(item())
-            .build();
+        return new OrderItem(item(), 1);
     }
 
     public static FindOrderDetailResponse orderDetailResponse(Order order) {
