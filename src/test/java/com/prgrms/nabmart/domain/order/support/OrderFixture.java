@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.order.support;
 
 import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
+import static com.prgrms.nabmart.domain.user.support.UserFixture.user;
 
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.order.Order;
@@ -12,7 +13,6 @@ import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.List;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -61,6 +61,10 @@ public class OrderFixture {
     }
 
     public static CreateOrdersCommand createOrdersCommand() {
-        return new CreateOrdersCommand(UserFixture.user().getUserId(), createOrderRequest());
+        return new CreateOrdersCommand(user().getUserId(), createOrderRequest());
+    }
+
+    public static CreateOrdersCommand createOrdersCommand(CreateOrderRequest createOrderRequest) {
+        return new CreateOrdersCommand(user().getUserId(), createOrderRequest);
     }
 }
