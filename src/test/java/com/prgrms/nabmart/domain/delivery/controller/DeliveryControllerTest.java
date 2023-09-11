@@ -113,11 +113,11 @@ class DeliveryControllerTest extends BaseControllerTest {
                 = new StartDeliveryRequest(deliveryEstimateMinutes);
 
             //when
-            ResultActions resultActions
-                = mockMvc.perform(patch("/api/v1/deliveries/pickup/{deliveryId}", deliveryId)
-                .header(AUTHORIZATION, accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(startDeliveryRequest)));
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/v1/deliveries/{deliveryId}/pickup", deliveryId)
+                    .header(AUTHORIZATION, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(startDeliveryRequest)));
 
             //then
             resultActions.andExpect(status().isNoContent())
@@ -148,7 +148,7 @@ class DeliveryControllerTest extends BaseControllerTest {
 
             //when
             ResultActions resultActions = mockMvc
-                .perform(patch("/api/v1/deliveries/complete/{deliveryId}", deliveryId)
+                .perform(patch("/api/v1/deliveries/{deliveryId}/complete", deliveryId)
                     .header(AUTHORIZATION, accessToken));
 
             //then

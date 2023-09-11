@@ -47,6 +47,7 @@ public class DeliveryController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{deliveryId}/pickup")
     public ResponseEntity<Void> startDelivery(
         @PathVariable final Long deliveryId,
         @RequestBody @Valid StartDeliveryRequest startDeliveryRequest,
@@ -59,7 +60,7 @@ public class DeliveryController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/complete/{deliveryId}")
+    @PatchMapping("/{deliveryId}/complete")
     public ResponseEntity<Void> completeDelivery(
         @PathVariable final Long deliveryId,
         @LoginUser final Long riderId) {
