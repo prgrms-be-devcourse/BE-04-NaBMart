@@ -55,7 +55,7 @@ class DeliveryRepositoryTest {
 
     private List<Delivery> createAndSaveDeliveries(List<Order> orders) {
         List<Delivery> deliveries = orders.stream()
-            .map(DeliveryFixture::delivery)
+            .map(DeliveryFixture::waitingDelivery)
             .toList();
         deliveryRepository.saveAll(deliveries);
         return deliveries;

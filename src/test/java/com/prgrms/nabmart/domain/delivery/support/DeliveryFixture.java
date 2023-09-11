@@ -31,15 +31,15 @@ public final class DeliveryFixture {
     private static final String RIDER_PASSWORD = "password123";
     private static final String RIDER_ADDRESS = "address";
 
-    public static Delivery delivery(Order order) {
+    public static Delivery waitingDelivery(Order order) {
         return Delivery.builder()
             .order(order)
             .build();
     }
 
     public static Delivery acceptedDelivery(Order order, Rider rider) {
-        Delivery delivery = delivery(order);
-        delivery.acceptDelivery(rider);
+        Delivery delivery = waitingDelivery(order);
+        delivery.assignRider(rider);
         return delivery;
     }
 
