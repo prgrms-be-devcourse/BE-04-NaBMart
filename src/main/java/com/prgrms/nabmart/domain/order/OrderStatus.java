@@ -5,9 +5,11 @@ import lombok.Getter;
 @Getter
 public enum OrderStatus {
     PENDING("pending"),
+    PAYING("paying"),
+    PAYED("payed"),
     DELIVERING("delivering"),
     COMPLETED("completed"),
-    CANCELLED("cancelled");
+    CANCELED("canceled");
 
     private final String value;
 

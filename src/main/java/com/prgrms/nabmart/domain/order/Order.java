@@ -97,4 +97,22 @@ public class Order extends BaseTimeEntity {
     public boolean isOwnByUser(final User user) {
         return this.user.equals(user);
     }
+
+    public boolean isMisMatchStatus(final OrderStatus orderStatus) {
+        return this.status != orderStatus;
+    }
+
+    public boolean isMisMatchPrice(int amount) {
+        return !this.price.equals(amount);
+    }
+
+    public void changeStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
+    }
+
+    public void redeemCoupon() {
+        if (userCoupon != null) {
+            userCoupon.use();
+        }
+    }
 }

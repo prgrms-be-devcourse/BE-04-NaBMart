@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.order.support;
 
 import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 
+import com.prgrms.nabmart.domain.coupon.support.CouponFixture;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.OrderStatus;
@@ -31,6 +32,15 @@ public class OrderFixture {
         Order order = new Order(user, List.of(orderItem()));
         ReflectionTestUtils.setField(order, "orderId", orderId);
         ReflectionTestUtils.setField(order, "status", OrderStatus.COMPLETED);
+
+        return order;
+    }
+
+    public static Order pendingOrderWithCoupon(long orderId, User user) {
+        Order order = new Order(user, List.of(orderItem()));
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+        ReflectionTestUtils.setField(order, "status", OrderStatus.PENDING);
+        ReflectionTestUtils.setField(order, "userCoupon", CouponFixture.userCoupon(user));
 
         return order;
     }

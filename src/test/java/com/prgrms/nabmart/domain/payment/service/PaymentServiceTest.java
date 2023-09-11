@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.payment.service;
 
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.deliveringOrder;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
+import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrderWithCoupon;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,14 +12,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.prgrms.nabmart.domain.coupon.exception.AlreadyUsedCouponException;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.payment.PaymentType;
-import com.prgrms.nabmart.domain.payment.controller.response.PaymentResponse;
 import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
+import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.Optional;
@@ -61,12 +63,15 @@ class PaymentServiceTest {
             Order order = pendingOrder(1L, user);
 
             PaymentCommand paymentCommand = paymentCommandWithCard();
-            PaymentResponse expected = paymentResponse(order, successCallBackUrl, failCallBackUrl);
+            PaymentRequestResponse expected = paymentResponse(order, successCallBackUrl,
+                failCallBackUrl);
 
-            when(orderRepository.findById(order.getOrderId())).thenReturn(Optional.of(order));
+            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+                .thenReturn(Optional.of(order));
 
             // when
-            PaymentResponse result = paymentService.pay(order.getOrderId(), paymentCommand);
+            PaymentRequestResponse result = paymentService.pay(order.getOrderId(), user.getUserId(),
+                paymentCommand);
 
             // then
             assertThat(result).usingRecursiveComparison().isEqualTo(expected);
@@ -78,15 +83,17 @@ class PaymentServiceTest {
         @DisplayName("예외: order 가 존재하지 않을 경우, NotFoundOrderException 발생")
         void throwExceptionWhenInvalidOrder() {
             // given
+            User user = UserFixture.user();
             long noExistOrderId = 1L;
 
             PaymentCommand paymentCommand = new PaymentCommand(PaymentType.CARD.toString());
 
-            when(orderRepository.findById(noExistOrderId)).thenReturn(Optional.empty());
+            when(orderRepository.findByOrderIdAndUser_UserId(noExistOrderId, user.getUserId()))
+                .thenReturn(Optional.empty());
 
             // when
             Exception exception = catchException(
-                () -> paymentService.pay(noExistOrderId, paymentCommand));
+                () -> paymentService.pay(noExistOrderId, user.getUserId(), paymentCommand));
 
             // then
             assertThat(exception).isInstanceOf(NotFoundOrderException.class);
@@ -101,14 +108,37 @@ class PaymentServiceTest {
 
             PaymentCommand paymentCommand = new PaymentCommand(PaymentType.CARD.toString());
 
-            when(orderRepository.findById(order.getOrderId())).thenReturn(Optional.of(order));
+            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+                .thenReturn(Optional.of(order));
 
             // when
             Exception exception = catchException(
-                () -> paymentService.pay(order.getOrderId(), paymentCommand));
+                () -> paymentService.pay(order.getOrderId(), user.getUserId(), paymentCommand));
 
             // then
             assertThat(exception).isInstanceOf(DuplicatePayException.class);
+        }
+
+        @Test
+        @DisplayName("예외: coupon 이 이미 사용되었을 경우, AlreadyUsedCouponException 발생")
+        void throwExceptionWhenAlreadyUsedCoupon() {
+            // given
+            User user = UserFixture.user();
+
+            Order order = pendingOrderWithCoupon(1L, user);
+            order.redeemCoupon();
+
+            PaymentCommand paymentCommand = new PaymentCommand(PaymentType.CARD.toString());
+
+            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+                .thenReturn(Optional.of(order));
+
+            // when
+            Exception exception = catchException(
+                () -> paymentService.pay(order.getOrderId(), user.getUserId(), paymentCommand));
+
+            // then
+            assertThat(exception).isInstanceOf(AlreadyUsedCouponException.class);
         }
     }
 }

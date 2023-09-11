@@ -1,9 +1,10 @@
 package com.prgrms.nabmart.domain.payment.controller;
 
 import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
-import com.prgrms.nabmart.domain.payment.controller.response.PaymentResponse;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
+import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
+import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,12 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/{orderId}")
-    public ResponseEntity<PaymentResponse> pay(
+    public ResponseEntity<PaymentRequestResponse> pay(
         @RequestBody @Valid PaymentRequest paymentRequest,
-        @PathVariable Long orderId
+        @PathVariable Long orderId,
+        @LoginUser Long userId
     ) {
         PaymentCommand paymentCommand = PaymentCommand.from(paymentRequest.paymentType());
-        return ResponseEntity.ok(paymentService.pay(orderId, paymentCommand));
+        return ResponseEntity.ok(paymentService.pay(orderId, userId, paymentCommand));
     }
 }

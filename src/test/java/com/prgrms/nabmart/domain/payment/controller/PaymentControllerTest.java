@@ -4,6 +4,9 @@ import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -18,14 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
-import com.prgrms.nabmart.domain.payment.controller.response.PaymentResponse;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
+import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,11 +38,14 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(PaymentController.class)
 public class PaymentControllerTest extends BaseControllerTest {
 
-    @Value("${payment.toss.success_url}")
+    @Value("${payment.toss.success-url}")
     private String successCallBackUrl;
 
-    @Value("${payment.toss.fail_url}")
+    @Value("${payment.toss.fail-url}")
     private String failCallBackUrl;
+
+    @Value("${payment.toss.secret-key}")
+    private String secretKey;
 
     @Nested
     @DisplayName("pay 메서드 실행 시")
@@ -54,9 +59,10 @@ public class PaymentControllerTest extends BaseControllerTest {
             Order order = pendingOrder(1, user);
             PaymentRequest paymentRequest = paymentRequestWithCard();
             PaymentCommand paymentCommand = paymentCommandWithCard();
-            PaymentResponse paymentResponse = paymentResponse(order, successCallBackUrl,
+            PaymentRequestResponse paymentResponse = paymentResponse(order, successCallBackUrl,
                 failCallBackUrl);
-            Mockito.when(paymentService.pay(order.getOrderId(), paymentCommand))
+
+            when(paymentService.pay(eq(order.getOrderId()), any(), eq(paymentCommand)))
                 .thenReturn(paymentResponse);
 
             // when
