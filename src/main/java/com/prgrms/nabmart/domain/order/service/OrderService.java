@@ -50,8 +50,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public FindOrdersResponse findOrders(Long userId, Integer page) {
-        Page<Order> pagination = orderRepository.findByUser_UserId(userId,
+    public FindOrdersResponse findOrders(final Long userId, final Integer page) {
+        final Page<Order> pagination = orderRepository.findByUser_UserId(userId,
             PageRequest.of(page, PAGE_SIZE));
 
         return FindOrdersResponse.of(pagination.getContent(), pagination.getTotalPages());

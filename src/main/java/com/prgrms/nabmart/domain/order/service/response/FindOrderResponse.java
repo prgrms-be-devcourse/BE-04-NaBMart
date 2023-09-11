@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public record FindOrderResponse(
     Long orderId,
+    String name,
     String status,
     Integer totalPrice,
     LocalDateTime createdAt,
@@ -20,6 +21,7 @@ public record FindOrderResponse(
 
         return new FindOrderResponse(
             order.getOrderId(),
+            order.getName(),
             order.getStatus().toString(),
             order.getPrice(),
             order.getCreatedAt(),
