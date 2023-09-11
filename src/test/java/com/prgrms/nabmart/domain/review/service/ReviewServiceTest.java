@@ -15,6 +15,7 @@ import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.service.request.RegisterReviewCommand;
 import com.prgrms.nabmart.domain.review.service.request.UpdateReviewCommand;
+import com.prgrms.nabmart.domain.review.service.response.FindReviewsByItemResponse;
 import com.prgrms.nabmart.domain.review.service.response.FindReviewsByUserResponse;
 import com.prgrms.nabmart.domain.review.support.RegisterReviewCommandFixture;
 import com.prgrms.nabmart.domain.review.support.ReviewFixture;
@@ -25,6 +26,7 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -131,7 +133,7 @@ class ReviewServiceTest {
 
     @Nested
     @DisplayName("로그인 한 사용자의 리뷰 목록 조회 Service 실행 시")
-    class findReviewsByUser {
+    class findReviewsByUserTest {
 
         @Test
         @DisplayName("성공")
@@ -167,6 +169,47 @@ class ReviewServiceTest {
 
             // then
             assertThat(findReviewsByUserResponse.reviews()).hasSize(2);
+        }
+    }
+
+    @Nested
+    @DisplayName("상품에 따른 리뷰 목록 조회 Service 실행 시")
+    class findReviewsByItemTest {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // given
+            Item newItem = new Item("김치우동", 8000, "투다리 김치우동", 10, 0, 5, givenMainCategory,
+                givenSubCategory);
+            ReflectionTestUtils.setField(givenItem, "itemId", 1L);
+            ReflectionTestUtils.setField(newItem, "itemId", 2L);
+
+            List<Review> givenReviews = List.of(
+                givenReview,
+                new Review(givenUser, givenItem, 3.65, "내공냠냠2"),
+                new Review(
+                    givenUser,
+                    newItem, 4, "야미야미"
+                )
+            );
+
+            List<Review> givenItemReviews = givenReviews.stream()
+                .filter(review -> Objects.equals(review.getItem().getItemId(),
+                    givenItem.getItemId()))
+                .toList();
+
+            given(itemRepository.findById(any())).willReturn(Optional.ofNullable(givenItem));
+            given(reviewRepository.findAllByItemOrderByCreatedAt(givenItem)).willReturn(
+                givenItemReviews
+            );
+
+            // when
+            FindReviewsByItemResponse findReviewsByItemResponse = reviewService.findReviewsByItem(
+                givenItem.getItemId());
+
+            // then
+            assertThat(findReviewsByItemResponse.reviews()).hasSize(2);
         }
     }
 }

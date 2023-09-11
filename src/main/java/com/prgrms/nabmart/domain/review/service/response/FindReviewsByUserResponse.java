@@ -17,10 +17,10 @@ public record FindReviewsByUserResponse(
     ) {
 
         public static FindReviewByUserResponse of(
-            Long reviewId,
-            String userNickname,
-            String reviewContent,
-            LocalDateTime createdAt
+            final Long reviewId,
+            final String userNickname,
+            final String reviewContent,
+            final LocalDateTime createdAt
         ) {
             return new FindReviewByUserResponse(reviewId, userNickname, reviewContent, createdAt);
         }
