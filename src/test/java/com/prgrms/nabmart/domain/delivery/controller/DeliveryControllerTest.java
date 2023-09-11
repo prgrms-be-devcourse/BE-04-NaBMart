@@ -72,6 +72,34 @@ class DeliveryControllerTest extends BaseControllerTest {
     }
 
     @Nested
+    @DisplayName("배달상태 갱신 - 배차 요청 API 호출 시")
+    class AcceptDeliveryTest {
+
+        @Test
+        @DisplayName("성공")
+        void acceptDelivery() throws Exception {
+            //given
+            Long deliveryId = 1L;
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/v1/deliveries/{deliveryId}/accept", deliveryId)
+                    .header(AUTHORIZATION, accessToken));
+
+            //then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("deliveryId").description("배달 ID")
+                    )
+                ));
+        }
+    }
+
+    @Nested
     @DisplayName("배달상태 갱신 - 배달시작 API 호출 시")
     class StartDeliveryTest {
 

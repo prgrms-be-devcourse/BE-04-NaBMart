@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.delivery.controller;
 
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
+import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
@@ -37,7 +38,15 @@ public class DeliveryController {
         return ResponseEntity.ok(findDeliveryDetailResponse);
     }
 
-    @PatchMapping("/pickup/{deliveryId}")
+    @PatchMapping("/{deliveryId}/accept")
+    public ResponseEntity<Void> acceptDelivery(
+        @PathVariable final Long deliveryId,
+        @LoginUser final Long riderId) {
+        AcceptDeliveryCommand acceptDeliveryCommand = AcceptDeliveryCommand.of(deliveryId, riderId);
+        deliveryService.acceptDelivery(acceptDeliveryCommand);
+        return ResponseEntity.noContent().build();
+    }
+
     public ResponseEntity<Void> startDelivery(
         @PathVariable final Long deliveryId,
         @RequestBody @Valid StartDeliveryRequest startDeliveryRequest,
