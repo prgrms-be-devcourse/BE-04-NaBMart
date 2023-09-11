@@ -2,9 +2,7 @@ package com.prgrms.nabmart.domain.delivery;
 
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.deliveringOrder;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
@@ -30,28 +28,10 @@ class DeliveryTest {
             //when
             Delivery delivery = Delivery.builder()
                 .order(order)
-                .address(address)
                 .build();
 
             //then
-            assertThat(delivery.getAddress()).isEqualTo(address);
             assertThat(delivery.getOrder()).isEqualTo(order);
-        }
-
-        @Test
-        @DisplayName("예외: 주소 길이가 500자를 초과")
-        void throwExceptionWhenInvalidAddressLength() {
-            //given
-            String invalidAddress = "a".repeat(501);
-
-            //when
-            //then
-            assertThatThrownBy(() ->
-                Delivery.builder()
-                    .order(order)
-                    .address(invalidAddress)
-                    .build())
-                .isInstanceOf(InvalidDeliveryException.class);
         }
     }
 }

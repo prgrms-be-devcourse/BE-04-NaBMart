@@ -10,6 +10,7 @@ import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.Cre
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
+import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
 import com.prgrms.nabmart.domain.user.User;
@@ -34,13 +35,14 @@ public class OrderService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public long createOrder(final CreateOrdersCommand createOrdersCommand) {
+    public CreateOrderResponse createOrder(final CreateOrdersCommand createOrdersCommand) {
         User findUser = findUserByUserId(createOrdersCommand.userId());
         List<OrderItem> orderItem = createOrderItem(createOrdersCommand.createOrderRequest()
             .createOrderItemRequests());
         Order order = new Order(findUser, orderItem);
+        orderRepository.save(order).getOrderId();
 
-        return orderRepository.save(order).getOrderId();
+        return CreateOrderResponse.from(order);
     }
 
     @Transactional(readOnly = true)
