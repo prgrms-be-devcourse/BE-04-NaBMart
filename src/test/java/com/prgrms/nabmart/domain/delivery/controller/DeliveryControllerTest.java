@@ -63,8 +63,6 @@ class DeliveryControllerTest extends BaseControllerTest {
                         fieldWithPath("deliveryId").type(NUMBER).description("배달 ID"),
                         fieldWithPath("deliveryStatus").type(STRING).description("배달 ID"),
                         fieldWithPath("arrivedAt").type(STRING).description("도착 시간"),
-                        fieldWithPath("address").type(STRING).description("주소"),
-                        fieldWithPath("deliveryFee").type(NUMBER).description("배달비"),
                         fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
                         fieldWithPath("name").type(STRING).description("주문 이름"),
                         fieldWithPath("price").type(NUMBER).description("주문 가격")
@@ -168,8 +166,6 @@ class DeliveryControllerTest extends BaseControllerTest {
                     responseFields(
                         fieldWithPath("deliveries").type(ARRAY).description("배달 목록"),
                         fieldWithPath("deliveries[].deliveryId").type(NUMBER).description("배달 ID"),
-                        fieldWithPath("deliveries[].address").type(STRING).description("배달 주소"),
-                        fieldWithPath("deliveries[].deliveryFee").type(NUMBER).description("배달 비"),
                         fieldWithPath("page").type(NUMBER).description("페이지"),
                         fieldWithPath("totalElements").type(NUMBER).description("사이즈")
                     )

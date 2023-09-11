@@ -90,8 +90,6 @@ class DeliveryServiceTest {
             //then
             assertThat(findDeliveryDetailResponse.deliveryStatus())
                 .isEqualTo(delivery.getDeliveryStatus());
-            assertThat(findDeliveryDetailResponse.address())
-                .isEqualTo(delivery.getAddress());
             assertThat(findDeliveryDetailResponse.arrivedAt())
                 .isEqualTo(delivery.getArrivedAt());
             assertThat(findDeliveryDetailResponse.name())

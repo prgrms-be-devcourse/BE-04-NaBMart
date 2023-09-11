@@ -34,8 +34,6 @@ public final class DeliveryFixture {
     public static Delivery delivery(Order order) {
         return Delivery.builder()
             .order(order)
-            .address(ADDRESS)
-            .deliveryFee(DELIVERY_FEE)
             .build();
     }
 
@@ -54,8 +52,6 @@ public final class DeliveryFixture {
             DELIVERY_ID,
             DELIVERY_STATUS,
             ARRIVED_AT,
-            ADDRESS,
-            DELIVERY_FEE,
             ORDER_ID,
             ORDER_NAME,
             ORDER_PRICE
@@ -64,7 +60,7 @@ public final class DeliveryFixture {
 
     public static FindWaitingDeliveriesResponse findDeliveriesResponse() {
         FindWaitingDeliveryResponse findWaitingDeliveryResponse
-            = new FindWaitingDeliveryResponse(DELIVERY_ID, ADDRESS, DELIVERY_FEE);
+            = new FindWaitingDeliveryResponse(DELIVERY_ID);
         return new FindWaitingDeliveriesResponse(List.of(findWaitingDeliveryResponse), PAGE, 1);
     }
 
