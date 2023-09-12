@@ -8,4 +8,10 @@ public record FindRiderDeliveriesCommand(
     DeliveryStatus deliveryStatus,
     Pageable pageable) {
 
+    public static FindRiderDeliveriesCommand of(
+        Long riderId,
+        DeliveryStatus deliveryStatus,
+        Pageable pageable) {
+        return new FindRiderDeliveriesCommand(riderId, deliveryStatus, pageable);
+    }
 }

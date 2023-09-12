@@ -23,8 +23,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     @Query("select d from Delivery d"
         + " join fetch d.order"
-        + " where d.rider = :rider and d.deliveryStatus = :deliveryStatus"
-        + " order by d.createdAt asc")
+        + " where d.rider = :rider and d.deliveryStatus = :deliveryStatus")
     Page<Delivery> findAllByRiderAndDeliveryStatusWithOrder(
         @Param("rider") Rider rider,
         @Param("deliveryStatus") DeliveryStatus deliveryStatus,
