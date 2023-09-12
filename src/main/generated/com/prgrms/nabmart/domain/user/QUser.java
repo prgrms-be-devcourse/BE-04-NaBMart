@@ -21,6 +21,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final com.prgrms.nabmart.global.QBaseTimeEntity _super = new com.prgrms.nabmart.global.QBaseTimeEntity(this);
 
+    public final StringPath address = createString("address");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 

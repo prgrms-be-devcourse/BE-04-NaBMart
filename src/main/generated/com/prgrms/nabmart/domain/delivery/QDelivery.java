@@ -22,17 +22,23 @@ public class QDelivery extends EntityPathBase<Delivery> {
 
     public static final QDelivery delivery = new QDelivery("delivery");
 
-    public final StringPath address = createString("address");
+    public final com.prgrms.nabmart.global.QBaseTimeEntity _super = new com.prgrms.nabmart.global.QBaseTimeEntity(this);
 
     public final DateTimePath<java.time.LocalDateTime> arrivedAt = createDateTime("arrivedAt", java.time.LocalDateTime.class);
 
-    public final NumberPath<Integer> deliveryFee = createNumber("deliveryFee", Integer.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
     public final NumberPath<Long> deliveryId = createNumber("deliveryId", Long.class);
 
     public final EnumPath<DeliveryStatus> deliveryStatus = createEnum("deliveryStatus", DeliveryStatus.class);
 
     public final com.prgrms.nabmart.domain.order.QOrder order;
+
+    public final QRider rider;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public QDelivery(String variable) {
         this(Delivery.class, forVariable(variable), INITS);
@@ -53,6 +59,7 @@ public class QDelivery extends EntityPathBase<Delivery> {
     public QDelivery(Class<? extends Delivery> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.order = inits.isInitialized("order") ? new com.prgrms.nabmart.domain.order.QOrder(forProperty("order"), inits.get("order")) : null;
+        this.rider = inits.isInitialized("rider") ? new QRider(forProperty("rider")) : null;
     }
 
 }
