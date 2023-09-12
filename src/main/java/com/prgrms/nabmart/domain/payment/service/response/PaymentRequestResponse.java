@@ -1,6 +1,6 @@
-package com.prgrms.nabmart.domain.payment.controller.response;
+package com.prgrms.nabmart.domain.payment.service.response;
 
-public record PaymentResponse(
+public record PaymentRequestResponse(
     String paymentType,
     Integer amount,
     Long orderId,
