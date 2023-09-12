@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.category.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,68 +21,47 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.category.controller.request.RegisterMainCategoryRequest;
+import com.prgrms.nabmart.domain.category.controller.request.RegisterSubCategoryRequest;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
-import com.prgrms.nabmart.domain.category.service.CategoryService;
-import com.prgrms.nabmart.domain.category.service.request.RegisterMainCategoryCommand;
-import com.prgrms.nabmart.domain.category.service.request.RegisterSubCategoryCommand;
 import com.prgrms.nabmart.domain.category.service.response.FindMainCategoriesResponse;
 import com.prgrms.nabmart.domain.category.service.response.FindSubCategoriesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(CategoryController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@AutoConfigureRestDocs
-public class CategoryControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private CategoryService categoryService;
+public class CategoryControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("대카테고리 저장하는 api 호출 시")
     class SaveMainCategoryApi {
 
+        RegisterMainCategoryRequest registerMainCategoryRequest = CategoryFixture.registerMainCategoryRequest();
+
         @Test
         @DisplayName("성공")
         public void saveMainCategory() throws Exception {
             // Given
-            RegisterMainCategoryCommand command = new RegisterMainCategoryCommand("TestCategory");
-            when(categoryService.saveMainCategory(command)).thenReturn(1L);
+            when(categoryService.saveMainCategory(any())).thenReturn(1L);
 
             // When & Then
             mockMvc.perform(post("/api/v1/main-categories")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(command)))
+                    .content(objectMapper.writeValueAsString(registerMainCategoryRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/main-categories/1"))
                 .andDo(print())
                 .andDo(document(
                     "Save MainCategory",
-                    preprocessRequest(
-                        prettyPrint()
-                    ),
                     requestFields(
                         fieldWithPath("name").type(STRING)
                             .description("대카테고리명")
                     )
                 ));
 
-            verify(categoryService, times(1)).saveMainCategory(command);
+            verify(categoryService, times(1)).saveMainCategory(any());
         }
     }
 
@@ -89,26 +69,24 @@ public class CategoryControllerTest {
     @DisplayName("소카테고리 저장하는 api 호출 시")
     class SaveSubCategoryApi {
 
+        RegisterSubCategoryRequest registerSubCategoryRequest = CategoryFixture.registerSubCategoryRequest();
+
         @Test
         @DisplayName("성공")
         public void saveSubCategory() throws Exception {
             // Given
-            RegisterSubCategoryCommand command = new RegisterSubCategoryCommand(1L, "sub-category");
-            when(categoryService.saveSubCategory(command)).thenReturn(1L);
+            when(categoryService.saveSubCategory(any())).thenReturn(1L);
 
             // When & Then
 
             mockMvc.perform(post("/api/v1/sub-categories")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(command)))
+                    .content(objectMapper.writeValueAsString(registerSubCategoryRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/sub-categories/1"))
                 .andDo(print())
                 .andDo(document(
                     "Save SubCategory",
-                    preprocessRequest(
-                        prettyPrint()
-                    ),
                     requestFields(
                         fieldWithPath("mainCategoryId").type(NUMBER)
                             .description("대카테고리 Id"),
@@ -117,7 +95,7 @@ public class CategoryControllerTest {
                     )
                 ));
 
-            verify(categoryService, times(1)).saveSubCategory(command);
+            verify(categoryService, times(1)).saveSubCategory(any());
         }
     }
 
@@ -139,9 +117,6 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andDo(document(
                     "Find All MainCategories",
-                    preprocessRequest(
-                        prettyPrint()
-                    ),
                     responseFields(
                         fieldWithPath("mainCategoryNames").type(ARRAY)
                             .description("대카테고리 리스트")
@@ -167,7 +142,6 @@ public class CategoryControllerTest {
             mockMvc.perform(get("/api/v1/categories/{mainCategoryId}", mainCategoryId)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andDo(document(
                     "Find SubCategories By MainCategory",
                     preprocessRequest(
