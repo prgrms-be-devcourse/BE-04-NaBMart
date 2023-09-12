@@ -34,8 +34,8 @@ public class PaymentDtoFixture {
         return new PaymentResponse("FAIL");
     }
 
-    public static PaymentCommand paymentCommandWithCard() {
-        return PaymentCommand.from(PAYMENT_TYPE_CARD);
+    public static PaymentCommand paymentCommandWithCard(Long orderId, Long userId) {
+        return PaymentCommand.of(orderId, userId, PAYMENT_TYPE_CARD);
     }
 
     public static PaymentRequest paymentRequestWithCard() {

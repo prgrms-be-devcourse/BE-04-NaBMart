@@ -51,11 +51,12 @@ public class PaymentService {
     private String confirmUrl;
 
     @Transactional
-    public PaymentRequestResponse pay(final Long orderId,
-        final Long userId,
-        final PaymentCommand paymentCommand
-    ) {
-        final Order order = getOrderByOrderIdAndUserId(orderId, userId);
+    public PaymentRequestResponse pay(final PaymentCommand paymentCommand) {
+        final Order order = getOrderByOrderIdAndUserId(
+            paymentCommand.orderId(),
+            paymentCommand.userId()
+        );
+
         validateOrderStatusWithPending(order);
         order.changeStatus(OrderStatus.PAYING);
         order.redeemCoupon();

@@ -4,8 +4,7 @@ import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestResponse;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestWithCard;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static com.prgrms.nabmart.domain.user.support.UserFixture.userWithUserId;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -24,7 +23,6 @@ import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.support.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -55,16 +53,16 @@ public class PaymentControllerTest extends BaseControllerTest {
         @DisplayName("성공")
         void postPay() throws Exception {
             // given
-            User user = UserFixture.user();
+            User user = userWithUserId();
             Order order = pendingOrder(1, user);
             PaymentRequest paymentRequest = paymentRequestWithCard();
-            PaymentCommand paymentCommand = paymentCommandWithCard();
+            PaymentCommand paymentCommand = paymentCommandWithCard(order.getOrderId(),
+                user.getUserId());
             PaymentRequestResponse paymentResponse = paymentRequestResponse(order,
                 successCallBackUrl,
                 failCallBackUrl);
 
-            when(paymentService.pay(eq(order.getOrderId()), any(), eq(paymentCommand)))
-                .thenReturn(paymentResponse);
+            when(paymentService.pay(paymentCommand)).thenReturn(paymentResponse);
 
             // when
             ResultActions result = mockMvc.perform(

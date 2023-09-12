@@ -27,7 +27,8 @@ public class PaymentController {
         @PathVariable Long orderId,
         @LoginUser Long userId
     ) {
-        PaymentCommand paymentCommand = PaymentCommand.from(paymentRequest.paymentType());
-        return ResponseEntity.ok(paymentService.pay(orderId, userId, paymentCommand));
+        PaymentCommand paymentCommand = PaymentCommand.of(orderId, userId,
+            paymentRequest.paymentType());
+        return ResponseEntity.ok(paymentService.pay(paymentCommand));
     }
 }
