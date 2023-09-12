@@ -8,9 +8,11 @@ import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
@@ -78,6 +80,20 @@ public class DeliveryService {
         Page<Delivery> deliveriesPage
             = deliveryRepository.findWaitingDeliveries(findWaitingDeliveriesCommand.pageable());
         return FindWaitingDeliveriesResponse.from(deliveriesPage);
+    }
+
+    @Transactional(readOnly = true)
+    public FindRiderDeliveriesResponse findRiderDeliveries(
+        FindRiderDeliveriesCommand findRiderDeliveriesCommand) {
+        Rider rider = findRiderByRiderId(findRiderDeliveriesCommand.riderId());
+        Page<Delivery> deliveriesPage = deliveryRepository.findAllByRiderAndDeliveryStatusWithOrder(
+            rider,
+            findRiderDeliveriesCommand.deliveryStatus(),
+            findRiderDeliveriesCommand.pageable());
+        return FindRiderDeliveriesResponse.of(
+            deliveriesPage.getContent(),
+            deliveriesPage.getNumber(),
+            deliveriesPage.getTotalElements());
     }
 
     private User findUserByUserId(final Long userId) {

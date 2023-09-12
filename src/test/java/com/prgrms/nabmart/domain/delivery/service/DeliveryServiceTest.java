@@ -19,9 +19,12 @@ import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
@@ -392,6 +395,71 @@ class DeliveryServiceTest {
             //then
             assertThatThrownBy(() -> deliveryService.acceptDelivery(acceptDeliveryCommand))
                 .isInstanceOf(NotFoundDeliveryException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("findRiderDeliveries 메서드 실행 시")
+    class FindRiderDeliveriesTest {
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        FindRiderDeliveriesCommand findRiderDeliveriesCommand = new FindRiderDeliveriesCommand(
+            1L, DeliveryStatus.START_DELIVERY, pageRequest);
+
+        public List<Delivery> createStartedDeliveries(
+            int estimateMinutes,
+            int end) {
+            return IntStream.range(0, end)
+                .mapToObj(i -> {
+                    Order order = deliveringOrder(i, user);
+                    Delivery delivery = DeliveryFixture.acceptedDelivery(order, rider);
+                    delivery.startDelivery(estimateMinutes);
+                    return delivery;
+                }).toList();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            int estimateMinutes = 20;
+            List<Delivery> deliveries
+                = createStartedDeliveries(estimateMinutes, 3);
+            PageImpl<Delivery> deliveriesPage = new PageImpl<>(deliveries);
+
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
+            given(deliveryRepository.findAllByRiderAndDeliveryStatusWithOrder(any(), any(), any()))
+                .willReturn(deliveriesPage);
+
+            //when
+            FindRiderDeliveriesResponse findDeliveries
+                = deliveryService.findRiderDeliveries(findRiderDeliveriesCommand);
+
+            //then
+            assertThat(findDeliveries.deliveries()).hasSize(3);
+            assertThat(findDeliveries.page()).isEqualTo(0);
+            assertThat(findDeliveries.totalElements()).isEqualTo(3);
+            assertThat(findDeliveries.deliveries()).map(FindRiderDeliveryResponse::deliveryStatus)
+                .containsOnly(DeliveryStatus.START_DELIVERY);
+            assertThat(findDeliveries.deliveries()).map(FindRiderDeliveryResponse::arrivedAt)
+                .allSatisfy(arrivedAt -> {
+                    LocalDateTime estimatedArrivedAt = LocalDateTime.now()
+                        .plusMinutes(estimateMinutes);
+                    assertThat(arrivedAt).isCloseTo(estimatedArrivedAt, withInOneSeconds);
+                });
+        }
+
+        @Test
+        @DisplayName("예외: 존재하지 않는 라이더")
+        void throwExceptionWhenNotFoundRider() {
+            //given
+            given(riderRepository.findById(any())).willReturn(Optional.empty());
+
+            //when
+            //then
+            assertThatThrownBy(
+                () -> deliveryService.findRiderDeliveries(findRiderDeliveriesCommand))
+                .isInstanceOf(NotFoundRiderException.class);
         }
     }
 }
