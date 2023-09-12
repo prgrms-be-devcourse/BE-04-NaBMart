@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,15 +19,16 @@ class FindRiderDeliveriesRequestTest {
     private final Validator validator = factory.getValidator();
 
     @Nested
-    @DisplayName("deliveryStatus 검증 시")
-    class DeliveryStatusTest {
+    @DisplayName("deliveryStatuses 검증 시")
+    class DeliveryStatusesTest {
 
         @Test
         @DisplayName("성공")
         void success() {
             //given
+            List<DeliveryStatus> deliveryStatuses = List.of(DeliveryStatus.ACCEPTING_ORDER);
             FindRiderDeliveriesRequest findRiderDeliveriesRequest
-                = new FindRiderDeliveriesRequest(DeliveryStatus.ACCEPTING_ORDER);
+                = new FindRiderDeliveriesRequest(deliveryStatuses);
 
             //when
             Set<ConstraintViolation<FindRiderDeliveriesRequest>> result
@@ -37,8 +39,8 @@ class FindRiderDeliveriesRequestTest {
         }
 
         @Test
-        @DisplayName("예외: 배달 상태가 null")
-        void throwExceptionWhenDeliveryStatusIsNull() {
+        @DisplayName("예외: deliveryStatuses가 null")
+        void throwExceptionWhenDeliveryStatusesIsNull() {
             //given
             FindRiderDeliveriesRequest findRiderDeliveriesRequest
                 = new FindRiderDeliveriesRequest(null);
@@ -50,6 +52,22 @@ class FindRiderDeliveriesRequestTest {
             //then
             assertThat(result).hasSize(1);
             assertThat(result).map(ConstraintViolation::getInvalidValue).containsOnlyNulls();
+        }
+
+        @Test
+        @DisplayName("예외: deliveryStatuses가 비어 있음")
+        void throwExceptionWhenDeliveryStatusesIsEmpty() {
+            //given
+            FindRiderDeliveriesRequest findRiderDeliveriesRequest
+                = new FindRiderDeliveriesRequest(List.of());
+
+            //when
+            Set<ConstraintViolation<FindRiderDeliveriesRequest>> result
+                = validator.validate(findRiderDeliveriesRequest);
+
+            //then
+            assertThat(result).hasSize(1);
+            assertThat(result).map(ConstraintViolation::getInvalidValue).containsOnly(List.of());
         }
     }
 }

@@ -400,11 +400,13 @@ class DeliveryServiceTest {
 
     @Nested
     @DisplayName("findRiderDeliveries 메서드 실행 시")
-    class FindRiderDeliveriesTest {
+    class FindRiderDeliveriesResponseTest {
 
         PageRequest pageRequest = PageRequest.of(0, 10);
         FindRiderDeliveriesCommand findRiderDeliveriesCommand = new FindRiderDeliveriesCommand(
-            1L, DeliveryStatus.START_DELIVERY, pageRequest);
+            1L,
+            List.of(DeliveryStatus.ACCEPTING_ORDER),
+            pageRequest);
 
         public List<Delivery> createStartedDeliveries(
             int estimateMinutes,
@@ -428,7 +430,7 @@ class DeliveryServiceTest {
             PageImpl<Delivery> deliveriesPage = new PageImpl<>(deliveries);
 
             given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
-            given(deliveryRepository.findAllByRiderAndDeliveryStatusWithOrder(any(), any(), any()))
+            given(deliveryRepository.findRiderDeliveries(any(), any(), any()))
                 .willReturn(deliveriesPage);
 
             //when
@@ -439,9 +441,11 @@ class DeliveryServiceTest {
             assertThat(findDeliveries.deliveries()).hasSize(3);
             assertThat(findDeliveries.page()).isEqualTo(0);
             assertThat(findDeliveries.totalElements()).isEqualTo(3);
-            assertThat(findDeliveries.deliveries()).map(FindRiderDeliveryResponse::deliveryStatus)
+            assertThat(findDeliveries.deliveries())
+                .map(FindRiderDeliveryResponse::deliveryStatus)
                 .containsOnly(DeliveryStatus.START_DELIVERY);
-            assertThat(findDeliveries.deliveries()).map(FindRiderDeliveryResponse::arrivedAt)
+            assertThat(findDeliveries.deliveries())
+                .map(FindRiderDeliveryResponse::arrivedAt)
                 .allSatisfy(arrivedAt -> {
                     LocalDateTime estimatedArrivedAt = LocalDateTime.now()
                         .plusMinutes(estimateMinutes);

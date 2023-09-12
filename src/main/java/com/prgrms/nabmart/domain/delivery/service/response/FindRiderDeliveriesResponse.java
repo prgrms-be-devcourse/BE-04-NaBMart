@@ -11,13 +11,16 @@ public record FindRiderDeliveriesResponse(
     long totalElements) {
 
     public static FindRiderDeliveriesResponse of(
-        List<Delivery> content,
-        int number,
-        long totalElements) {
+        final List<Delivery> content,
+        final int page,
+        final long totalElements) {
         List<FindRiderDeliveryResponse> deliveries = content.stream()
             .map(FindRiderDeliveryResponse::from)
             .toList();
-        return new FindRiderDeliveriesResponse(deliveries, number, totalElements);
+        return new FindRiderDeliveriesResponse(
+            deliveries,
+            page,
+            totalElements);
     }
 
     public record FindRiderDeliveryResponse(
@@ -27,14 +30,13 @@ public record FindRiderDeliveriesResponse(
         String address,
         int deliveryFee) {
 
-        public static FindRiderDeliveryResponse from(Delivery delivery) {
+        public static FindRiderDeliveryResponse from(final Delivery delivery) {
             return new FindRiderDeliveryResponse(
                 delivery.getDeliveryId(),
                 delivery.getDeliveryStatus(),
                 delivery.getArrivedAt(),
                 delivery.getOrder().getAddress(),
-                delivery.getOrder().getDeliveryFee()
-            );
+                delivery.getOrder().getDeliveryFee());
         }
     }
 }

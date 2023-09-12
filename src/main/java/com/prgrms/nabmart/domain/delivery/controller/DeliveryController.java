@@ -5,13 +5,13 @@ import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryReques
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -85,12 +85,12 @@ public class DeliveryController {
 
     @GetMapping
     public ResponseEntity<FindRiderDeliveriesResponse> findRiderDeliveries(
-        @Valid FindRiderDeliveriesRequest findRiderDeliveriesRequest,
-        Pageable pageable,
-        @LoginUser Long riderId) {
+        FindRiderDeliveriesRequest findRiderDeliveriesRequest,
+        final Pageable pageable,
+        @LoginUser final Long riderId) {
         FindRiderDeliveriesCommand findRiderDeliveriesCommand = FindRiderDeliveriesCommand.of(
             riderId,
-            findRiderDeliveriesRequest.deliveryStatus(),
+            findRiderDeliveriesRequest.deliveryStatuses(),
             pageable);
         FindRiderDeliveriesResponse findRiderDeliveriesResponse
             = deliveryService.findRiderDeliveries(findRiderDeliveriesCommand);

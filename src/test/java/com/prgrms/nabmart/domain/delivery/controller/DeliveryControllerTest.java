@@ -212,7 +212,7 @@ class DeliveryControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        void findRidersDeliveries() throws Exception {
+        void findRiderDeliveries() throws Exception {
             //given
             DeliveryStatus deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
             FindRiderDeliveryResponse findRiderDeliveryResponse = new FindRiderDeliveryResponse(
@@ -224,7 +224,7 @@ class DeliveryControllerTest extends BaseControllerTest {
             );
             FindRiderDeliveriesResponse findRiderDeliveriesResponse
                 = new FindRiderDeliveriesResponse(
-                    List.of(findRiderDeliveryResponse),
+                List.of(findRiderDeliveryResponse),
                 0,
                 1);
 
@@ -233,7 +233,7 @@ class DeliveryControllerTest extends BaseControllerTest {
 
             //when
             ResultActions resultActions = mockMvc.perform(get("/api/v1/deliveries")
-                .queryParam("deliveryStatus", deliveryStatus.name())
+                .queryParam("deliveryStatuses", deliveryStatus.name())
                 .queryParam("page", "0")
                 .queryParam("size", "10")
                 .header(AUTHORIZATION, accessToken));
@@ -245,7 +245,7 @@ class DeliveryControllerTest extends BaseControllerTest {
                         headerWithName(AUTHORIZATION).description("액세스 토큰")
                     ),
                     queryParameters(
-                        parameterWithName("deliveryStatus").description("배달 상태"),
+                        parameterWithName("deliveryStatuses").description("배달 상태 목록"),
                         parameterWithName("page").description("페이지"),
                         parameterWithName("size").description("페이지 사이즈")
                     )

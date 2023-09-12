@@ -13,7 +13,6 @@ import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -98,14 +97,14 @@ class DeliveryRepositoryTest {
     }
 
     @Nested
-    @DisplayName("findAllByRiderAndDeliveryStatusWithOrder 메서드 실행 시")
-    class FindAllByRiderAndDeliveryStatusWithOrderTest {
+    @DisplayName("findRiderDeliveries 메서드 실행 시")
+    class FindRiderDeliveriesResponseTest {
 
         int estimateMinutes = 20;
 
         @BeforeEach
         void setUp() {
-            List<Order> orders = createAndSaveOrders(6);
+            List<Order> orders = createAndSaveOrders(9);
             List<Delivery> deliveries = createAndSaveDeliveries(orders);
             IntStream.range(0, 3)
                 .forEach(i -> {
@@ -120,30 +119,31 @@ class DeliveryRepositoryTest {
                     delivery.startDelivery(estimateMinutes);
                     delivery.completeDelivery();
                 });
+            IntStream.range(6, 9)
+                .forEach(i -> {
+                    Delivery delivery = deliveries.get(i);
+                    delivery.assignRider(rider);
+                });
         }
 
         @Test
         @DisplayName("성공")
         void success() {
             //given
+            List<DeliveryStatus> deliveryStatuses
+                = List.of(DeliveryStatus.ACCEPTING_ORDER, DeliveryStatus.START_DELIVERY);
             PageRequest pageRequest = PageRequest.of(0, 10);
 
             //when
             Page<Delivery> deliveriesPage
-                = deliveryRepository.findAllByRiderAndDeliveryStatusWithOrder(
-                rider, DeliveryStatus.START_DELIVERY, pageRequest);
+                = deliveryRepository.findRiderDeliveries(rider, deliveryStatuses,  pageRequest);
 
             //then
             List<Delivery> findDeliveries = deliveriesPage.getContent();
-            assertThat(findDeliveries).hasSize(3);
+            assertThat(findDeliveries).hasSize(6);
             assertThat(findDeliveries).map(Delivery::getDeliveryStatus)
-                .containsOnly(DeliveryStatus.START_DELIVERY);
-            assertThat(findDeliveries).map(Delivery::getArrivedAt)
-                .allSatisfy(arrivedAt -> {
-                    LocalDateTime estimateArrivedAt
-                        = LocalDateTime.now().plusMinutes(estimateMinutes);
-                    assertThat(arrivedAt).isCloseTo(estimateArrivedAt, withInOneSeconds);
-                });
+                .contains(DeliveryStatus.ACCEPTING_ORDER, DeliveryStatus.START_DELIVERY)
+                .doesNotContain(DeliveryStatus.DELIVERED);
         }
     }
 }
