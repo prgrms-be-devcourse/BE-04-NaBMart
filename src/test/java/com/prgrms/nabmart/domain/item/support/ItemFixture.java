@@ -108,11 +108,11 @@ public final class ItemFixture {
     }
 
     public static UpdateItemRequest updateItemRequest() {
-        return new UpdateItemRequest(ITEM_ID, NAME, PRICE, QUANTITY, DESCRIPTION,
-            1L, 1L, DISCOUNT);
+        return new UpdateItemRequest(NAME, PRICE, QUANTITY, DISCOUNT, DESCRIPTION,
+            1L, 1L);
     }
 
     public static UpdateItemCommand updateItemCommand() {
-        return UpdateItemCommand.from(updateItemRequest());
+        return UpdateItemCommand.of(ITEM_ID, updateItemRequest());
     }
 }
