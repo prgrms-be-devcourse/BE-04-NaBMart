@@ -1,5 +1,10 @@
 package com.prgrms.nabmart.domain.order.service;
 
+import com.prgrms.nabmart.domain.coupon.Coupon;
+import com.prgrms.nabmart.domain.coupon.UserCoupon;
+import com.prgrms.nabmart.domain.coupon.exception.InvalidCouponException;
+import com.prgrms.nabmart.domain.coupon.exception.NotFoundUserCouponException;
+import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.InvalidItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
@@ -10,9 +15,11 @@ import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.Cre
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
+import com.prgrms.nabmart.domain.order.service.request.UpdateOrderByCouponCommand;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
@@ -31,10 +38,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private static final Integer PAGE_SIZE = 10;
-
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final UserCouponRepository userCouponRepository;
 
     @Transactional
     public CreateOrderResponse createOrder(final CreateOrdersCommand createOrdersCommand) {
@@ -45,6 +52,20 @@ public class OrderService {
         orderRepository.save(order).getOrderId();
 
         return CreateOrderResponse.from(order);
+    }
+
+    @Transactional
+    public UpdateOrderByCouponResponse updateOrderByCoupon(
+        final UpdateOrderByCouponCommand updateOrderByCouponCommand) {
+        Order findOrder = getOrderByOrderIdAndUserId(updateOrderByCouponCommand.orderId(),
+            updateOrderByCouponCommand.userId());
+        UserCoupon findUserCoupon = findUserCouponByIdWithCoupon(
+            updateOrderByCouponCommand.couponId());
+
+        validationCoupon(findOrder, findUserCoupon.getCoupon());
+        findOrder.setUserCoupon(findUserCoupon, findUserCoupon.getCoupon().getDiscount());
+
+        return UpdateOrderByCouponResponse.of(findOrder, findUserCoupon.getCoupon());
     }
 
     @Transactional(readOnly = true)
@@ -79,6 +100,17 @@ public class OrderService {
     private static void validateItemQuantity(final Item findItem, final Integer quantity) {
         if (findItem.getQuantity() - quantity < 0) {
             throw new InvalidItemException("상품의 재고 수량이 부족합니다");
+        }
+    }
+
+    private UserCoupon findUserCouponByIdWithCoupon(Long UserCouponId) {
+        return userCouponRepository.findByIdWithCoupon(UserCouponId)
+            .orElseThrow(() -> new NotFoundUserCouponException("존재하지 않는 쿠폰입니다"));
+    }
+
+    private void validationCoupon(Order order, Coupon coupon) {
+        if (order.getPrice() < coupon.getMinOrderPrice()) {
+            throw new InvalidCouponException("총 주문 금액이 쿠폰 최소 사용 금액보다 작습니다");
         }
     }
 
