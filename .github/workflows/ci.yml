@@ -45,7 +45,7 @@ jobs:
 
       # Generate QueryDSL classes
       - name: Generate QueryDSL classes
-        run: ./gradlew clean generateQueryDSL
+        run: ./gradlew generateQueryDSL
 
       # 빌드
       - name: Build with Gradle
