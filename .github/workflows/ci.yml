@@ -43,10 +43,6 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-      # Generate QueryDSL classes
-      - name: Generate QueryDSL classes
-        run: ./gradlew generateQueryDSL
-
       # 빌드
       - name: Build with Gradle
         run: ./gradlew build
