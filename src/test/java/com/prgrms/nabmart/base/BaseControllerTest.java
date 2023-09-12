@@ -7,7 +7,6 @@ import com.prgrms.nabmart.domain.cart.service.CartItemService;
 import com.prgrms.nabmart.domain.category.service.CategoryService;
 import com.prgrms.nabmart.domain.coupon.service.CouponService;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
-import com.prgrms.nabmart.domain.delivery.service.RiderService;
 import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.item.service.ItemService;
@@ -17,6 +16,7 @@ import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.user.service.UserService;
 import com.prgrms.nabmart.global.auth.oauth.client.OAuthRestClient;
+import com.prgrms.nabmart.global.auth.service.RiderAuthenticationService;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,7 +90,7 @@ public abstract class BaseControllerTest {
     protected OrderService orderService;
 
     @MockBean
-    protected RiderService riderService;
+    protected RiderAuthenticationService riderAuthenticationService;
 
     protected static final String AUTHORIZATION = "Authorization";
 

@@ -19,13 +19,11 @@ public record FindWaitingDeliveriesResponse(
             deliveryResponses.getTotalElements());
     }
 
-    public record FindWaitingDeliveryResponse(Long deliveryId, String address, int deliveryFee) {
+    public record FindWaitingDeliveryResponse(Long deliveryId) {
 
         public static FindWaitingDeliveryResponse from(final Delivery delivery) {
             return new FindWaitingDeliveryResponse(
-                delivery.getDeliveryId(),
-                delivery.getAddress(),
-                delivery.getDeliveryFee());
+                delivery.getDeliveryId());
         }
     }
 }

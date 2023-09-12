@@ -3,7 +3,7 @@ package com.prgrms.nabmart.domain.item.controller;
 import com.prgrms.nabmart.domain.item.service.ItemService;
 import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
-import com.prgrms.nabmart.domain.item.service.request.FindItemsByMainCategoryCommand;
+import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -26,16 +26,18 @@ public class ItemController {
     private final String DEFAULT_PREVIOUS_ID = "-1";
 
     @GetMapping
-    public ResponseEntity<FindItemsResponse> findItemsByMainCategory(
+    public ResponseEntity<FindItemsResponse> findItemsByCategory(
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
+        @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long option,
         @RequestParam int size,
         @RequestParam String main,
+        @RequestParam(required = false) String sub,
         @RequestParam String sort) {
 
-        FindItemsByMainCategoryCommand findItemsByMainCategoryCommand = FindItemsByMainCategoryCommand.of(
-            lastIdx, main, size, sort);
-        FindItemsResponse findItemsResponse = itemService.findItemsByMainCategory(
-            findItemsByMainCategoryCommand);
+        FindItemsByCategoryCommand findItemsByCategoryCommand = FindItemsByCategoryCommand.of(
+            lastIdx, option, main, sub, size, sort);
+        FindItemsResponse findItemsResponse = itemService.findItemsByCategory(
+            findItemsByCategoryCommand);
         return ResponseEntity.ok(findItemsResponse);
     }
 
@@ -44,7 +46,7 @@ public class ItemController {
         FindItemDetailCommand findItemDetailCommand = FindItemDetailCommand.from(itemId);
         return ResponseEntity.ok(itemService.findItemDetail(findItemDetailCommand));
     }
-    
+
     @GetMapping("/new")
     public ResponseEntity<FindItemsResponse> findNewItems(
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
@@ -65,4 +67,3 @@ public class ItemController {
         return ResponseEntity.ok(itemService.findHotItems(findHotItemsCommand));
     }
 }
-    

@@ -9,6 +9,7 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
+import com.prgrms.nabmart.global.auth.jwt.dto.CreateTokenCommand;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
@@ -32,16 +33,18 @@ class JavaJwtTokenProviderTest {
         @DisplayName("성공: 토큰 반환")
         void success() {
             //given
-            RegisterUserResponse registerUserResponse = AuthFixture.registerUserResponse();
+            long userId = 1L;
+            UserRole roleUser = UserRole.ROLE_USER;
+            CreateTokenCommand createTokenCommand = new CreateTokenCommand(userId, roleUser);
 
             //when
-            String token = tokenProvider.createToken(registerUserResponse);
+            String token = tokenProvider.createToken(createTokenCommand);
 
             //then
             Claims claims = tokenProvider.validateToken(token);
-            assertThat(claims.userId()).isEqualTo(1L);
+            assertThat(claims.userId()).isEqualTo(userId);
             assertThat(claims.authorities()).containsAnyElementsOf(
-                UserRole.ROLE_USER.getAuthorities());
+                roleUser.getAuthorities());
         }
     }
 
@@ -71,7 +74,8 @@ class JavaJwtTokenProviderTest {
         @DisplayName("성공: User 정보를 담은 Claims 반환")
         void success() {
             //given
-            String token = tokenProvider.createToken(registerUserResponse);
+            CreateTokenCommand createTokenCommand = CreateTokenCommand.from(registerUserResponse);
+            String token = tokenProvider.createToken(createTokenCommand);
 
             //when
             Claims claims = tokenProvider.validateToken(token);

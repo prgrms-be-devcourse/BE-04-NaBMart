@@ -3,6 +3,7 @@ package com.prgrms.nabmart.global.auth.jwt;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
+import com.prgrms.nabmart.global.auth.jwt.dto.CreateTokenCommand;
 import com.prgrms.nabmart.global.auth.jwt.dto.JwtAuthentication;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import java.util.List;
@@ -40,7 +41,8 @@ class JwtAuthenticationProviderTest {
         @BeforeEach
         void setUp() {
             userResponse = AuthFixture.registerUserResponse();
-            accessToken = tokenProvider.createToken(userResponse);
+            CreateTokenCommand createTokenCommand = CreateTokenCommand.from(userResponse);
+            accessToken = tokenProvider.createToken(createTokenCommand);
         }
 
         @Test

@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
+import com.prgrms.nabmart.global.auth.jwt.dto.CreateTokenCommand;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,7 +56,8 @@ class LoginUserArgumentResolverTest {
         @DisplayName("성공: authentication 객체에서 userId를 추출하여 인자로 전달")
         void success() throws Exception {
             //given
-            String token = tokenProvider.createToken(userResponse);
+            CreateTokenCommand createTokenCommand = CreateTokenCommand.from(userResponse);
+            String token = tokenProvider.createToken(createTokenCommand);
 
             //when
             ResultActions resultActions = mvc.perform(get("/resolvers")

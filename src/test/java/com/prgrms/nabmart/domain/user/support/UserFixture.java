@@ -14,6 +14,8 @@ public class UserFixture {
     private static final String EMAIL = "email@example.com";
     private static final String PROVIDER = "provider";
     private static final String PROVIDER_ID = "providerId";
+
+    private static final String ADDRESS = "기본 배송지";
     private static final UserRole USER_ROLE = UserRole.ROLE_USER;
     private static final UserGrade USER_GRADE = UserGrade.NORMAL;
 
@@ -25,6 +27,7 @@ public class UserFixture {
             .providerId(PROVIDER_ID)
             .userRole(USER_ROLE)
             .userGrade(USER_GRADE)
+            .address(ADDRESS)
             .build();
     }
 

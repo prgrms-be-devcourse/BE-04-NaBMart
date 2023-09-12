@@ -10,13 +10,17 @@ import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.Cre
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
+import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
+import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,24 +28,35 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrderService {
 
+    private static final Integer PAGE_SIZE = 10;
+
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
     @Transactional
-    public long createOrder(final CreateOrdersCommand createOrdersCommand) {
+    public CreateOrderResponse createOrder(final CreateOrdersCommand createOrdersCommand) {
         User findUser = findUserByUserId(createOrdersCommand.userId());
         List<OrderItem> orderItem = createOrderItem(createOrdersCommand.createOrderRequest()
             .createOrderItemRequests());
         Order order = new Order(findUser, orderItem);
+        orderRepository.save(order).getOrderId();
 
-        return orderRepository.save(order).getOrderId();
+        return CreateOrderResponse.from(order);
     }
 
     @Transactional(readOnly = true)
     public FindOrderDetailResponse findOrderByIdAndUserId(final Long userId, final Long orderId) {
         final Order order = getOrderByOrderIdAndUserId(orderId, userId);
         return FindOrderDetailResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public FindOrdersResponse findOrders(final Long userId, final Integer page) {
+        final Page<Order> pagination = orderRepository.findByUser_UserId(userId,
+            PageRequest.of(page, PAGE_SIZE));
+
+        return FindOrdersResponse.of(pagination.getContent(), pagination.getTotalPages());
     }
 
     private List<OrderItem> createOrderItem(final List<CreateOrderItemRequest> orderItemRequests) {

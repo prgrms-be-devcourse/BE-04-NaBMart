@@ -63,11 +63,37 @@ class DeliveryControllerTest extends BaseControllerTest {
                         fieldWithPath("deliveryId").type(NUMBER).description("배달 ID"),
                         fieldWithPath("deliveryStatus").type(STRING).description("배달 ID"),
                         fieldWithPath("arrivedAt").type(STRING).description("도착 시간"),
-                        fieldWithPath("address").type(STRING).description("주소"),
-                        fieldWithPath("deliveryFee").type(NUMBER).description("배달비"),
                         fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
                         fieldWithPath("name").type(STRING).description("주문 이름"),
                         fieldWithPath("price").type(NUMBER).description("주문 가격")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("배달상태 갱신 - 배차 요청 API 호출 시")
+    class AcceptDeliveryTest {
+
+        @Test
+        @DisplayName("성공")
+        void acceptDelivery() throws Exception {
+            //given
+            Long deliveryId = 1L;
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/v1/deliveries/{deliveryId}/accept", deliveryId)
+                    .header(AUTHORIZATION, accessToken));
+
+            //then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("deliveryId").description("배달 ID")
                     )
                 ));
         }
@@ -87,14 +113,18 @@ class DeliveryControllerTest extends BaseControllerTest {
                 = new StartDeliveryRequest(deliveryEstimateMinutes);
 
             //when
-            ResultActions resultActions
-                = mockMvc.perform(patch("/api/v1/deliveries/pickup/{deliveryId}", deliveryId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(startDeliveryRequest)));
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/v1/deliveries/{deliveryId}/pickup", deliveryId)
+                    .header(AUTHORIZATION, accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(startDeliveryRequest)));
 
             //then
             resultActions.andExpect(status().isNoContent())
                 .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
                     pathParameters(
                         parameterWithName("deliveryId").description("배달 ID")
                     ),
@@ -118,11 +148,15 @@ class DeliveryControllerTest extends BaseControllerTest {
 
             //when
             ResultActions resultActions = mockMvc
-                .perform(patch("/api/v1/deliveries/complete/{deliveryId}", deliveryId));
+                .perform(patch("/api/v1/deliveries/{deliveryId}/complete", deliveryId)
+                    .header(AUTHORIZATION, accessToken));
 
             //then
             resultActions.andExpect(status().isNoContent())
                 .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
                     pathParameters(
                         parameterWithName("deliveryId").description("배달 ID")
                     )
@@ -160,8 +194,6 @@ class DeliveryControllerTest extends BaseControllerTest {
                     responseFields(
                         fieldWithPath("deliveries").type(ARRAY).description("배달 목록"),
                         fieldWithPath("deliveries[].deliveryId").type(NUMBER).description("배달 ID"),
-                        fieldWithPath("deliveries[].address").type(STRING).description("배달 주소"),
-                        fieldWithPath("deliveries[].deliveryFee").type(NUMBER).description("배달 비"),
                         fieldWithPath("page").type(NUMBER).description("페이지"),
                         fieldWithPath("totalElements").type(NUMBER).description("사이즈")
                     )
