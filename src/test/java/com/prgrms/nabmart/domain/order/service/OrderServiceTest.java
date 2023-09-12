@@ -139,7 +139,7 @@ public class OrderServiceTest {
             CreateOrderResponse expected = createOrderResponse(order);
 
             when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
-            when(itemRepository.findById(any())).thenReturn(Optional.ofNullable(item));
+            when(itemRepository.findByItemId(any())).thenReturn(Optional.ofNullable(item));
             when(orderRepository.save(any())).thenReturn(order);
 
             // when
@@ -155,8 +155,9 @@ public class OrderServiceTest {
             // Given
             User user = user();
             Item item = item();
-            int maxBuyQuantity = item.getMaxBuyQuantity();
-            int quantityToOrder = maxBuyQuantity + 1; // 상품의 재고를 초과하는 수량
+            ReflectionTestUtils.setField(item, "itemId", 1L);
+            int getQuantity = item.getQuantity();
+            int quantityToOrder = getQuantity + 1; // 상품의 재고를 초과하는 수량
             CreateOrderItemRequest orderItemRequest = new CreateOrderItemRequest(1L,
                 quantityToOrder);
             CreateOrderRequest createOrderRequest = new CreateOrderRequest(
@@ -164,7 +165,7 @@ public class OrderServiceTest {
             CreateOrdersCommand createOrdersCommand = createOrdersCommand(createOrderRequest);
 
             when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
-            when(itemRepository.findById(any())).thenReturn(Optional.ofNullable(item));
+            when(itemRepository.findByItemId(any())).thenReturn(Optional.ofNullable(item));
 
             // When
             Exception exception = catchException(
