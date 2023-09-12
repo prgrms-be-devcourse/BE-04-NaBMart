@@ -68,7 +68,6 @@ public class OrderService {
             Item findItem = findItemByItemId(createOrderRequest.itemId());
             Integer quantity = createOrderRequest.quantity();
             validateItemQuantity(findItem, quantity);
-            log.info("___________________________");
             findItem.decreaseQuantity(quantity);
             // OrderItem 생성 및 초기화
             OrderItem orderItem = new OrderItem(findItem, quantity);
@@ -94,7 +93,7 @@ public class OrderService {
     }
 
     private Item findItemByItemId(final Long itemId) {
-        return itemRepository.findById(itemId)
+        return itemRepository.findByItemId(itemId)
             .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
     }
 }
