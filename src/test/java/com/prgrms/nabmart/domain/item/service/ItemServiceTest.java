@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.prgrms.nabmart.domain.category.MainCategory;
@@ -18,6 +20,7 @@ import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
@@ -51,6 +54,33 @@ class ItemServiceTest {
 
     @InjectMocks
     private ItemService itemService;
+
+    @Nested
+    @DisplayName("updateItem 메서드 실행 시")
+    class UpdateItemTests {
+
+        UpdateItemCommand updateItemCommand = ItemFixture.updateItemCommand();
+        Item item = ItemFixture.item();
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = CategoryFixture.subCategory(mainCategory);
+
+        @Test
+        @DisplayName("성공")
+        public void update() {
+            // Given
+            when(mainCategoryRepository.findById(anyLong())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findById(anyLong())).thenReturn(Optional.of(subCategory));
+            when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+
+            // When
+            itemService.updateItem(updateItemCommand);
+
+            // Then
+            verify(mainCategoryRepository, times(1)).findById(anyLong());
+            verify(subCategoryRepository, times(1)).findById(anyLong());
+            verify(itemRepository, times(1)).findById(anyLong());
+        }
+    }
 
     @Nested
     @DisplayName("findItemsByMainCategory 메서드 실행 시")

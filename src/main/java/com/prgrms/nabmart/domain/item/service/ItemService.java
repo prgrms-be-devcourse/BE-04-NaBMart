@@ -13,6 +13,7 @@ import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
@@ -70,6 +71,39 @@ public class ItemService {
     public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
         return FindItemsResponse.from(itemRepository.findNewItemsOrderBy(findNewItemsCommand.lastIdx(),
             findNewItemsCommand.lastItemId(), findNewItemsCommand.sortType(), findNewItemsCommand.pageRequest()));
+    }
+
+    @Transactional
+    public void updateItem(UpdateItemCommand updateItemCommand) {
+        Long itemId = updateItemCommand.itemId();
+        Long mainCategoryId = updateItemCommand.mainCategoryId();
+        Long subCategoryId = updateItemCommand.subCategoryId();
+        
+        Item item = itemRepository.findById(itemId)
+            .orElseThrow(() -> new NotFoundItemException("해당 Id의 아이템은 존재하지 않습니다."));
+        MainCategory mainCategory = getMainCategoryById(mainCategoryId);
+        SubCategory subCategory = getSubCategoryById(subCategoryId);
+        item.updateItem(updateItemCommand.name(), updateItemCommand.price(),
+            updateItemCommand.quantity(), updateItemCommand.description(),
+            mainCategory, subCategory, updateItemCommand.discount());
+    }
+
+    private SubCategory getSubCategoryById(Long subCategoryId) {
+        SubCategory subCategory = null;
+        if (subCategoryId != null) {
+            subCategory = subCategoryRepository.findById(subCategoryId)
+                .orElseThrow(() -> new NotFoundCategoryException("없는 소카테고리입니다."));
+        }
+        return subCategory;
+    }
+
+    private MainCategory getMainCategoryById(Long mainCategoryId) {
+        MainCategory mainCategory = null;
+        if (mainCategoryId != null) {
+            mainCategory = mainCategoryRepository.findById(mainCategoryId)
+                .orElseThrow(() -> new NotFoundCategoryException("없는 대카테고리입니다."));
+        }
+        return mainCategory;
     }
 
     private List<Item> findItemsByMainCategoryFrom(

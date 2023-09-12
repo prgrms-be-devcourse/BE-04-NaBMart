@@ -95,6 +95,29 @@ public class Item extends BaseTimeEntity {
         this.quantity -= quantity;
     }
 
+    public void updateItem(
+        final String name,
+        final int price,
+        final int quantity,
+        final String description,
+        final MainCategory mainCategory,
+        final SubCategory subCategory,
+        final int discount
+    ) {
+        validateName(name);
+        validatePrice(price);
+        validateQuantity(quantity);
+        validateDiscount(discount);
+        validateMaxBuyQuantity(maxBuyQuantity);
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.description = description;
+        this.discount = discount;
+        this.mainCategory = mainCategory;
+        this.subCategory = subCategory;
+    }
+
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new InvalidItemException("상품명은 필수 항목입니다.");
