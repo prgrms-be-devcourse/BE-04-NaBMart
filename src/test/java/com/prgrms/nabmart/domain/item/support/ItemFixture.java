@@ -47,6 +47,11 @@ public final class ItemFixture {
             SUB_CATEGORY);
     }
 
+    public static Item item(int quantity) {
+        return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, quantity, MAIN_CATEGORY,
+            SUB_CATEGORY);
+    }
+
     public static Item item(MainCategory mainCategory, SubCategory subCategory) {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, mainCategory,
             subCategory);

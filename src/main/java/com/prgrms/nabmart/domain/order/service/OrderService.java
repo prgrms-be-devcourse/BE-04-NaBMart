@@ -80,7 +80,7 @@ public class OrderService {
         }
     }
 
-    private Order getOrderByOrderIdAndUserId(final Long orderId, final Long userId) {
+    public Order getOrderByOrderIdAndUserId(final Long orderId, final Long userId) {
         return orderRepository.findByOrderIdAndUser_UserId(orderId, userId)
             .orElseThrow(() -> new NotFoundOrderException("order 가 존재하지 않습니다"));
     }

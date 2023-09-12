@@ -1,9 +1,9 @@
 package com.prgrms.nabmart.domain.order.support;
 
+import static com.prgrms.nabmart.domain.coupon.support.CouponFixture.userCoupon;
 import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static com.prgrms.nabmart.domain.user.support.UserFixture.user;
 
-import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.OrderStatus;
@@ -25,6 +25,22 @@ public class OrderFixture {
         return order;
     }
 
+    public static Order pendingOrderWithCoupon(long orderId, User user) {
+        Order order = new Order(user, List.of(orderItem()));
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+        ReflectionTestUtils.setField(order, "userCoupon", userCoupon(user));
+
+        return order;
+    }
+
+    public static Order payingOrder(long orderId, User user) {
+        Order order = new Order(user, List.of(orderItem()));
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+        ReflectionTestUtils.setField(order, "status", OrderStatus.PAYING);
+
+        return order;
+    }
+
     public static Order deliveringOrder(long orderId, User user) {
         Order order = new Order(user, List.of(orderItem()));
         ReflectionTestUtils.setField(order, "orderId", orderId);
@@ -42,8 +58,6 @@ public class OrderFixture {
     }
 
     private static OrderItem orderItem() {
-        Item item = item();
-        ReflectionTestUtils.setField(item, "itemId", 1L);
         return new OrderItem(item(), 1);
     }
 
