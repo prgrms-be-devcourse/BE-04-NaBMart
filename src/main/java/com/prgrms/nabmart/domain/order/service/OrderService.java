@@ -19,6 +19,7 @@ import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private static final Integer PAGE_SIZE = 10;
@@ -66,6 +68,7 @@ public class OrderService {
             Item findItem = findItemByItemId(createOrderRequest.itemId());
             Integer quantity = createOrderRequest.quantity();
             validateItemQuantity(findItem, quantity);
+            log.info("___________________________");
             findItem.decreaseQuantity(quantity);
             // OrderItem 생성 및 초기화
             OrderItem orderItem = new OrderItem(findItem, quantity);
@@ -74,8 +77,8 @@ public class OrderService {
         return orderItems;
     }
 
-    private static void validateItemQuantity(Item findItem, Integer quantity) {
-        if (findItem.getMaxBuyQuantity() - quantity < 0) {
+    private static void validateItemQuantity(final Item findItem, final Integer quantity) {
+        if (findItem.getQuantity() - quantity < 0) {
             throw new InvalidItemException("상품의 재고 수량이 부족합니다");
         }
     }
