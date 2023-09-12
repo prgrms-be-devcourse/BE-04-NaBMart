@@ -100,9 +100,8 @@ public class Order extends BaseTimeEntity {
         calculateDeliveryFee(totalPrice);
     }
 
-    public void setUserCoupon(final UserCoupon userCoupon, final int discountPrice) {
+    public void setUserCoupon(final UserCoupon userCoupon) {
         this.userCoupon = userCoupon;
-        this.price -= discountPrice;
     }
 
     private void calculateDeliveryFee(final int totalPrice) {

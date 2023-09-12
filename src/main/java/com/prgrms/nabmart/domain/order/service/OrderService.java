@@ -63,7 +63,7 @@ public class OrderService {
             updateOrderByCouponCommand.couponId());
 
         validationCoupon(findOrder, findUserCoupon.getCoupon());
-        findOrder.setUserCoupon(findUserCoupon, findUserCoupon.getCoupon().getDiscount());
+        findOrder.setUserCoupon(findUserCoupon);
 
         return UpdateOrderByCouponResponse.of(findOrder, findUserCoupon.getCoupon());
     }
