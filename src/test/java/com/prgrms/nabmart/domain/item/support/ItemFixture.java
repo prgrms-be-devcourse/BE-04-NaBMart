@@ -9,10 +9,12 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
+import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindLikeItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindLikeItemsResponse;
@@ -103,5 +105,14 @@ public final class ItemFixture {
     public static FindNewItemsCommand findNewItemsCommand() {
         PageRequest pageRequest = PageRequest.of(0, 5);
         return new FindNewItemsCommand(null, pageRequest, ItemSortType.NEW);
+    }
+
+    public static UpdateItemRequest updateItemRequest() {
+        return new UpdateItemRequest(ITEM_ID, NAME, PRICE, QUANTITY, DESCRIPTION,
+            1L, 1L, DISCOUNT);
+    }
+
+    public static UpdateItemCommand updateItemCommand() {
+        return UpdateItemCommand.from(updateItemRequest());
     }
 }
