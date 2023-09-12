@@ -17,7 +17,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.prgrms.nabmart.domain.coupon.exception.AlreadyUsedCouponException;
+import com.prgrms.nabmart.domain.coupon.exception.InvalidUsedCouponException;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.exception.NotPayingOrderException;
@@ -160,7 +160,7 @@ class PaymentServiceTest {
                 () -> paymentService.pay(paymentCommand));
 
             // then
-            assertThat(exception).isInstanceOf(AlreadyUsedCouponException.class);
+            assertThat(exception).isInstanceOf(InvalidUsedCouponException.class);
         }
     }
 

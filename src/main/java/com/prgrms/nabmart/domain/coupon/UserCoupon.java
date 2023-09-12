@@ -1,6 +1,6 @@
 package com.prgrms.nabmart.domain.coupon;
 
-import com.prgrms.nabmart.domain.coupon.exception.AlreadyUsedCouponException;
+import com.prgrms.nabmart.domain.coupon.exception.InvalidUsedCouponException;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -43,7 +43,7 @@ public class UserCoupon extends BaseTimeEntity {
 
     public void use() {
         if (isUsed == true) {
-            throw new AlreadyUsedCouponException("이미 사용한 쿠폰입니다.");
+            throw new InvalidUsedCouponException("이미 사용한 쿠폰입니다.");
         }
         isUsed = true;
     }
