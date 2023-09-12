@@ -22,9 +22,10 @@ public record UpdateItemCommand(Long itemId, String name, int quantity, int pric
             subCategoryId, discount);
     }
 
-    public static UpdateItemCommand from(UpdateItemRequest updateItemRequest) {
+    public static UpdateItemCommand of(final Long itemId,
+        final UpdateItemRequest updateItemRequest) {
         return UpdateItemCommand.builder()
-            .itemId(updateItemRequest.itemId())
+            .itemId(itemId)
             .name(updateItemRequest.name())
             .quantity(updateItemRequest.quantity())
             .price(updateItemRequest.price())
