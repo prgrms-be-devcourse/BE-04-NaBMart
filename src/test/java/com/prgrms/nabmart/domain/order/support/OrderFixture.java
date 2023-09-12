@@ -4,12 +4,14 @@ import static com.prgrms.nabmart.domain.coupon.support.CouponFixture.userCoupon;
 import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static com.prgrms.nabmart.domain.user.support.UserFixture.user;
 
+import com.prgrms.nabmart.domain.coupon.UserCoupon;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.CreateOrderItemRequest;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
+import com.prgrms.nabmart.domain.order.service.request.UpdateOrderByCouponCommand;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.user.User;
@@ -80,5 +82,11 @@ public class OrderFixture {
 
     public static CreateOrdersCommand createOrdersCommand(CreateOrderRequest createOrderRequest) {
         return new CreateOrdersCommand(user().getUserId(), createOrderRequest);
+    }
+
+    public static UpdateOrderByCouponCommand updateOrderByCouponCommand(
+        Order order, User user, UserCoupon userCoupon) {
+        return new UpdateOrderByCouponCommand(order.getOrderId(), user.getUserId(),
+            userCoupon.getUserCouponId());
     }
 }
