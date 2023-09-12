@@ -1,17 +1,22 @@
 package com.prgrms.nabmart.domain.item.controller;
 
+import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.ItemService;
 import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,5 +70,15 @@ public class ItemController {
     ) {
         FindHotItemsCommand findHotItemsCommand = FindHotItemsCommand.of(lastIdx, size, sort);
         return ResponseEntity.ok(itemService.findHotItems(findHotItemsCommand));
+    }
+
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<Void> updateItem(
+        @PathVariable Long itemId,
+        @RequestBody @Valid UpdateItemRequest updateItemRequest
+    ) {
+        UpdateItemCommand updateItemCommand = UpdateItemCommand.of(itemId, updateItemRequest);
+        itemService.updateItem(updateItemCommand);
+        return ResponseEntity.noContent().build();
     }
 }

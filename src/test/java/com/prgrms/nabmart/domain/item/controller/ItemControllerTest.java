@@ -5,7 +5,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -13,6 +18,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -21,7 +27,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 class ItemControllerTest extends BaseControllerTest {
@@ -116,25 +121,25 @@ class ItemControllerTest extends BaseControllerTest {
                         parameterWithName("itemId").description("상품 ID")
                     ),
                     responseFields(
-                        fieldWithPath("itemId").type(JsonFieldType.NUMBER)
+                        fieldWithPath("itemId").type(NUMBER)
                             .description("아이템 ID"),
-                        fieldWithPath("name").type(JsonFieldType.STRING)
+                        fieldWithPath("name").type(STRING)
                             .description("상품 이름"),
-                        fieldWithPath("price").type(JsonFieldType.NUMBER)
+                        fieldWithPath("price").type(NUMBER)
                             .description("상품 가격"),
-                        fieldWithPath("description").type(JsonFieldType.STRING)
+                        fieldWithPath("description").type(STRING)
                             .description("상품 설명."),
-                        fieldWithPath("quantity").type(JsonFieldType.NUMBER)
+                        fieldWithPath("quantity").type(NUMBER)
                             .description("상품 수량"),
-                        fieldWithPath("rate").type(JsonFieldType.NUMBER)
+                        fieldWithPath("rate").type(NUMBER)
                             .description("상품 평점"),
-                        fieldWithPath("reviewCount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("reviewCount").type(NUMBER)
                             .description("리뷰 수"),
-                        fieldWithPath("discount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("discount").type(NUMBER)
                             .description("할인"),
-                        fieldWithPath("like").type(JsonFieldType.NUMBER)
+                        fieldWithPath("like").type(NUMBER)
                             .description("좋아요 수."),
-                        fieldWithPath("maxBuyQuantity").type(JsonFieldType.NUMBER)
+                        fieldWithPath("maxBuyQuantity").type(NUMBER)
                             .description("최대 구매 수량")
                     )
                 ));
@@ -170,21 +175,21 @@ class ItemControllerTest extends BaseControllerTest {
                         parameterWithName("sort").description("정렬 기준명")
                     ),
                     responseFields(
-                        fieldWithPath("items").type(JsonFieldType.ARRAY)
+                        fieldWithPath("items").type(ARRAY)
                             .description("List of items"),
-                        fieldWithPath("items[].itemId").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].itemId").type(NUMBER)
                             .description("상품 ID"),
-                        fieldWithPath("items[].name").type(JsonFieldType.STRING)
+                        fieldWithPath("items[].name").type(STRING)
                             .description("상품 이름"),
-                        fieldWithPath("items[].price").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].price").type(NUMBER)
                             .description("상품 가격"),
-                        fieldWithPath("items[].discount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].discount").type(NUMBER)
                             .description("상품 할인"),
-                        fieldWithPath("items[].reviewCount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].reviewCount").type(NUMBER)
                             .description("리뷰 수"),
-                        fieldWithPath("items[].like").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].like").type(NUMBER)
                             .description("좋아요 수"),
-                        fieldWithPath("items[].rate").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].rate").type(NUMBER)
                             .description("평점")
                     )
                 ));
@@ -220,24 +225,66 @@ class ItemControllerTest extends BaseControllerTest {
                         parameterWithName("sort").description("정렬 기준명")
                     ),
                     responseFields(
-                        fieldWithPath("items").type(JsonFieldType.ARRAY)
+                        fieldWithPath("items").type(ARRAY)
                             .description("List of items"),
-                        fieldWithPath("items[].itemId").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].itemId").type(NUMBER)
                             .description("상품 ID"),
-                        fieldWithPath("items[].name").type(JsonFieldType.STRING)
+                        fieldWithPath("items[].name").type(STRING)
                             .description("상품 이름"),
-                        fieldWithPath("items[].price").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].price").type(NUMBER)
                             .description("상품 가격"),
-                        fieldWithPath("items[].discount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].discount").type(NUMBER)
                             .description("상품 할인"),
-                        fieldWithPath("items[].reviewCount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].reviewCount").type(NUMBER)
                             .description("리뷰 수"),
-                        fieldWithPath("items[].like").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].like").type(NUMBER)
                             .description("좋아요 수"),
-                        fieldWithPath("items[].rate").type(JsonFieldType.NUMBER)
+                        fieldWithPath("items[].rate").type(NUMBER)
                             .description("평점")
                     )
                 ));
+        }
+    }
+
+    @Nested
+    @DisplayName("상품 수정 api 호출 시")
+    class UpdateItem {
+
+        UpdateItemRequest updateItemRequest = ItemFixture.updateItemRequest();
+        Long ITEM_ID = 1L;
+
+        @Test
+        @DisplayName("성공")
+        public void updateItem() throws Exception {
+
+            // When
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/v1/items/{itemId}", ITEM_ID)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updateItemRequest)));
+
+            // Then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(document(
+                    "Update Item",
+                    requestFields(
+                        fieldWithPath("name").type(STRING)
+                            .description("상품명"),
+                        fieldWithPath("price").type(NUMBER)
+                            .description("상품 단가"),
+                        fieldWithPath("quantity").type(NUMBER)
+                            .description("상품 재고수량"),
+                        fieldWithPath("discount").type(NUMBER)
+                            .description("상품 할인율"),
+                        fieldWithPath("description").type(STRING)
+                            .description("상품 설명"),
+                        fieldWithPath("mainCategoryId").type(NUMBER)
+                            .description("상품 대카테고리 ID"),
+                        fieldWithPath("subCategoryId").type(NUMBER)
+                            .description("상품 소카테고리 ID")
+                    )
+                ));
+
         }
     }
 }
