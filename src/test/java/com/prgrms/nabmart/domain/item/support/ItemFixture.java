@@ -102,6 +102,6 @@ public final class ItemFixture {
 
     public static FindNewItemsCommand findNewItemsCommand() {
         PageRequest pageRequest = PageRequest.of(0, 5);
-        return new FindNewItemsCommand(null, pageRequest, ItemSortType.NEW);
+        return new FindNewItemsCommand(null, null, pageRequest, ItemSortType.NEW);
     }
 }
