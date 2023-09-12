@@ -1,11 +1,13 @@
 package com.prgrms.nabmart.domain.coupon.support;
 
 import com.prgrms.nabmart.domain.coupon.Coupon;
+import com.prgrms.nabmart.domain.coupon.UserCoupon;
 import com.prgrms.nabmart.domain.coupon.service.request.RegisterCouponCommand;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse;
 import com.prgrms.nabmart.domain.coupon.service.response.FindCouponsResponse.FindCouponResponse;
 import com.prgrms.nabmart.domain.coupon.service.response.FindIssuedCouponsResponse;
 import com.prgrms.nabmart.domain.coupon.service.response.FindIssuedCouponsResponse.FindIssuedCouponResponse;
+import com.prgrms.nabmart.domain.user.User;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AccessLevel;
@@ -47,6 +49,10 @@ public class CouponFixture {
             1L, NAME, DESCRIPTION, DISCOUNT, MIN_ORDER_PRICE, END_AT);
         List<FindIssuedCouponResponse> issuedCouponList = List.of(findIssuedCouponResponse);
         return new FindIssuedCouponsResponse(issuedCouponList);
+    }
+
+    public static UserCoupon userCoupon(User user) {
+        return new UserCoupon(user, coupon());
     }
 }
 

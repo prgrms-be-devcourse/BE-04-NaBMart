@@ -140,7 +140,7 @@ class ReviewServiceTest {
         void success() {
             // given
             User newUser = new User("김춘배", "chunbae@gmail.com", "kakao", "kakaoId",
-                UserRole.ROLE_USER, UserGrade.VIP);
+                UserRole.ROLE_USER, UserGrade.VIP, "주소");
 
             ReflectionTestUtils.setField(givenUser, "userId", 1L);
             ReflectionTestUtils.setField(newUser, "userId", 2L);

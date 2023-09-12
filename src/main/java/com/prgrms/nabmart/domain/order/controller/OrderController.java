@@ -3,12 +3,13 @@ package com.prgrms.nabmart.domain.order.controller;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
 import com.prgrms.nabmart.domain.order.service.OrderService;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
+import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,16 +26,16 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping()
-    public ResponseEntity<Void> createOrder(
+    @PostMapping
+    public ResponseEntity<CreateOrderResponse> createOrder(
         @Valid @RequestBody final CreateOrderRequest createOrderRequest,
         @LoginUser final Long userId
     ) {
         CreateOrdersCommand createOrdersCommand = CreateOrdersCommand.of(userId,
             createOrderRequest);
-        long orderId = orderService.createOrder(createOrdersCommand);
-        URI location = URI.create("/api/v1/orders" + orderId);
-        return ResponseEntity.created(location).build();
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(orderService.createOrder(createOrdersCommand));
     }
 
     @GetMapping("/{orderId}")

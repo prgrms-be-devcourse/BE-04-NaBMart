@@ -19,11 +19,19 @@ public class QRider extends EntityPathBase<Rider> {
 
     public static final QRider rider = new QRider("rider");
 
+    public final com.prgrms.nabmart.global.QBaseTimeEntity _super = new com.prgrms.nabmart.global.QBaseTimeEntity(this);
+
     public final StringPath address = createString("address");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
     public final StringPath password = createString("password");
 
     public final NumberPath<Long> riderId = createNumber("riderId", Long.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final StringPath username = createString("username");
 

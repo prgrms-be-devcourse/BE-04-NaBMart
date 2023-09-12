@@ -24,8 +24,12 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final com.prgrms.nabmart.global.QBaseTimeEntity _super = new com.prgrms.nabmart.global.QBaseTimeEntity(this);
 
+    public final StringPath address = createString("address");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
+    public final NumberPath<Integer> deliveryFee = createNumber("deliveryFee", Integer.class);
 
     public final StringPath name = createString("name");
 
@@ -34,6 +38,8 @@ public class QOrder extends EntityPathBase<Order> {
     public final ListPath<OrderItem, QOrderItem> orderItems = this.<OrderItem, QOrderItem>createList("orderItems", OrderItem.class, QOrderItem.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
+
+    public final StringPath riderRequest = createString("riderRequest");
 
     public final EnumPath<OrderStatus> status = createEnum("status", OrderStatus.class);
 

@@ -28,7 +28,7 @@ public final class ItemFixture {
 
     private static final Long ITEM_ID = 1L;
     private static final String NAME = "아이템이름";
-    private static final int PRICE = 1000;
+    private static final int PRICE = 20000;
     private static final String DESCRIPTION = "아이템설명";
     private static final int QUANTITY = 10;
     private static final int DISCOUNT = 0;
@@ -44,6 +44,11 @@ public final class ItemFixture {
 
     public static Item item() {
         return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, MAX_QUANTITY, MAIN_CATEGORY,
+            SUB_CATEGORY);
+    }
+
+    public static Item item(int quantity) {
+        return new Item(NAME, PRICE, DESCRIPTION, QUANTITY, DISCOUNT, quantity, MAIN_CATEGORY,
             SUB_CATEGORY);
     }
 
