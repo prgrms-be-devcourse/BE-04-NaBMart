@@ -16,8 +16,6 @@ import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,8 +68,8 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
-        List<Item> items = findNewItemsFrom(findNewItemsCommand);
-        return FindItemsResponse.from(items);
+        return FindItemsResponse.from(itemRepository.findNewItemsOrderBy(findNewItemsCommand.lastIdx(),
+            findNewItemsCommand.lastItemId(), findNewItemsCommand.sortType(), findNewItemsCommand.pageRequest()));
     }
 
     private List<Item> findItemsByMainCategoryFrom(
@@ -159,38 +157,6 @@ public class ItemService {
                     lastIdx, totalOrderedQuantity, mainCategory, subCategory, pageRequest);
             }
         }
-    }
-
-    private List<Item> findNewItemsFrom(FindNewItemsCommand findNewItemsCommand) {
-        LocalDateTime createdAt = LocalDateTime.now()
-            .minus(NEW_PRODUCT_REFERENCE_WEEK, ChronoUnit.WEEKS);
-        return switch (findNewItemsCommand.sortType()) {
-            case NEW ->
-                itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(createdAt,
-                    findNewItemsCommand.lastIdx(), findNewItemsCommand.pageRequest());
-            case HIGHEST_AMOUNT ->
-                itemRepository.findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(
-                    createdAt, findNewItemsCommand.lastIdx().intValue(),
-                    findNewItemsCommand.pageRequest());
-            case LOWEST_AMOUNT ->
-                itemRepository.findByCreatedAtAfterAndPriceGreaterThanOrderByPriceAscItemIdDesc(
-                    createdAt, findNewItemsCommand.lastIdx().intValue(),
-                    findNewItemsCommand.pageRequest());
-            case DISCOUNT ->
-                itemRepository.findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(
-                    createdAt, findNewItemsCommand.lastIdx().intValue(),
-                    findNewItemsCommand.pageRequest());
-            default -> {
-                int lastIdx = findNewItemsCommand.lastIdx().intValue();
-                if (findNewItemsCommand.lastIdx() != Long.parseLong(
-                    String.valueOf(Integer.MAX_VALUE))) {
-                    lastIdx = orderItemRepository.countByOrderItemId(findNewItemsCommand.lastIdx())
-                        .intValue();
-                }
-                yield itemRepository.findNewItemOrderByOrders(createdAt, lastIdx,
-                    findNewItemsCommand.pageRequest());
-            }
-        };
     }
 
     @Transactional(readOnly = true)

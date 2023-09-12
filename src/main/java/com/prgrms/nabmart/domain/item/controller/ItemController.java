@@ -50,10 +50,11 @@ public class ItemController {
     @GetMapping("/new")
     public ResponseEntity<FindItemsResponse> findNewItems(
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
+        @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastItemId,
         @RequestParam int size,
         @RequestParam(defaultValue = "POPULAR") String sort
     ) {
-        FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(lastIdx, size, sort);
+        FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(lastIdx, lastItemId, size, sort);
         return ResponseEntity.ok(itemService.findNewItems(findNewItemsCommand));
     }
 
