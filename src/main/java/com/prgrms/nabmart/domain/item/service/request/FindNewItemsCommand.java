@@ -16,7 +16,7 @@ public record FindNewItemsCommand(
         String sortType) {
         if (isFirstIdx(lastIdx)) {
             lastIdx = Long.parseLong(String.valueOf(Integer.MAX_VALUE));
-            if (Objects.equals(sortType, "LOWEST_AMOUNT")) {
+            if (Objects.equals(sortType, "LOWEST_AMOUNT") || Objects.equals(sortType, "NEW")) {
                 lastIdx = Long.MIN_VALUE;
             }
         }

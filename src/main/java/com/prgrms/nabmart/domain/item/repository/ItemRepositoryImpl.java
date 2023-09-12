@@ -10,6 +10,7 @@ import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,8 +31,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
         Pageable pageable) {
         OrderSpecifier orderSpecifier = createOrderSpecifier(sortType);
         Predicate predicate = item.createdAt.after(
-                LocalDateTime.now().minus(NEW_PRODUCT_REFERENCE_TIME, ChronoUnit.WEEKS))
-            .and(getPredicate(lastIdx, lastItemId, sortType));
+                LocalDateTime.now().minus(NEW_PRODUCT_REFERENCE_TIME, ChronoUnit.WEEKS));
 
         return queryFactory
             .selectFrom(item)
@@ -40,31 +40,35 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
             .leftJoin(item.orderItems, orderItem)
             .where(predicate)
             .groupBy(item)
-            .orderBy(orderSpecifier, item.itemId.desc())
+            .having(
+                getHavingCondition(lastIdx, lastItemId, sortType)
+            )
+            .orderBy(orderSpecifier, item.itemId.asc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
     }
 
-    private Predicate getPredicate(Long lastIdx, Long lastItemId, ItemSortType sortType) {
+    private Predicate getHavingCondition(Long lastIdx, Long lastItemId, ItemSortType sortType) {
         return switch (sortType) {
-            case NEW -> item.itemId.lt(lastIdx);
+            case NEW -> item.itemId.gt(lastIdx);
             case HIGHEST_AMOUNT -> item.price.lt(lastIdx)
-                .or(item.price.eq(lastIdx.intValue()).and(item.itemId.lt(lastItemId)));
+                .or(item.price.eq(lastIdx.intValue()).and(item.itemId.gt(lastItemId)));
             case LOWEST_AMOUNT -> item.price.gt(lastIdx)
-                .or(item.price.eq(lastIdx.intValue()).and(item.itemId.lt(lastItemId)));
+                .or(item.price.eq(lastIdx.intValue()).and(item.itemId.gt(lastItemId)));
             case DISCOUNT -> item.discount.lt(lastIdx)
-                .or(item.discount.eq(lastIdx.intValue()).and(item.itemId.lt(lastItemId)));
-            default -> item.orderItems.any().quantity.sum().lt(lastIdx)
-                .or(item.orderItems.any().quantity.sum()
-                    .eq(lastIdx.intValue()).and(item.itemId.lt(lastItemId)));
+                .or(item.discount.eq(lastIdx.intValue()).and(item.itemId.gt(lastItemId)));
+            default -> JPAExpressions.select(orderItem.quantity.sum().coalesce(0))
+                .from(orderItem)
+                .where(orderItem.item.eq(item))
+                .lt(lastIdx.intValue());
         };
     }
 
     private OrderSpecifier createOrderSpecifier(ItemSortType sortType) {
 
         return switch (sortType) {
-            case NEW -> new OrderSpecifier<>(Order.DESC, item.createdAt);
+            case NEW -> new OrderSpecifier<>(Order.ASC, item.itemId);
             case HIGHEST_AMOUNT -> new OrderSpecifier<>(Order.DESC, item.price);
             case LOWEST_AMOUNT -> new OrderSpecifier<>(Order.ASC, item.price);
             case DISCOUNT -> new OrderSpecifier<>(Order.DESC, item.discount);
