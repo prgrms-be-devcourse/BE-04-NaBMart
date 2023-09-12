@@ -6,6 +6,7 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class UserFixture {
 
@@ -29,6 +30,21 @@ public class UserFixture {
             .userGrade(USER_GRADE)
             .address(ADDRESS)
             .build();
+    }
+
+    public static User userWithUserId() {
+        User user = User.builder()
+            .nickname(NICKNAME)
+            .email(EMAIL)
+            .provider(PROVIDER)
+            .providerId(PROVIDER_ID)
+            .userRole(USER_ROLE)
+            .userGrade(USER_GRADE)
+            .address(ADDRESS)
+            .build();
+
+        ReflectionTestUtils.setField(user, "userId", USER_ID);
+        return user;
     }
 
     public static RegisterUserCommand registerUserCommand() {
