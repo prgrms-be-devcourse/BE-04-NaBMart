@@ -28,10 +28,14 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         NativeWebRequest webRequest,
         WebDataBinderFactory binderFactory) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        checkAuthenticated(authentication);
+        JwtAuthentication jwtAuthentication = (JwtAuthentication) authentication.getPrincipal();
+        return jwtAuthentication.userId();
+    }
+
+    private void checkAuthenticated(Authentication authentication) {
         if(Objects.isNull(authentication)) {
             throw new UnAuthenticationException("인증되지 않은 요청입니다.");
         }
-        JwtAuthentication jwtAuthentication = (JwtAuthentication) authentication.getPrincipal();
-        return jwtAuthentication.userId();
     }
 }
