@@ -164,6 +164,7 @@ class ItemControllerTest extends BaseControllerTest {
             ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/items/new")
                     .queryParam("lastIdx", "1")
+                    .queryParam("lastItemId", "1")
                     .queryParam("size", "5")
                     .queryParam("sort", "NEW")
                     .accept(MediaType.APPLICATION_JSON));
@@ -173,6 +174,7 @@ class ItemControllerTest extends BaseControllerTest {
                 .andDo(document("Find New Items",
                     queryParameters(
                         parameterWithName("lastIdx").description("마지막에 조회한 아이템의 특성값"),
+                        parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("sort").description("정렬 기준명")
                     ),
@@ -214,6 +216,7 @@ class ItemControllerTest extends BaseControllerTest {
             ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/items/hot")
                     .queryParam("lastIdx", "-1")
+                    .queryParam("lastItemId", "-1")
                     .queryParam("size", "3")
                     .queryParam("sort", "NEW")
                     .accept(MediaType.APPLICATION_JSON));
@@ -223,6 +226,7 @@ class ItemControllerTest extends BaseControllerTest {
                 .andDo(document("Find Hot Items",
                     queryParameters(
                         parameterWithName("lastIdx").description("마지막에 조회한 아이템의 특성값"),
+                        parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("sort").description("정렬 기준명")
                     ),
