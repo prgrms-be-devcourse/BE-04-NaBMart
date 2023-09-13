@@ -49,8 +49,14 @@ public class DeliveryService {
     @Transactional
     public void acceptDelivery(AcceptDeliveryCommand acceptDeliveryCommand) {
         Rider rider = findRiderByRiderId(acceptDeliveryCommand.riderId());
-        Delivery delivery = findDeliveryByDeliveryId(acceptDeliveryCommand.deliveryId());
+        Delivery delivery = findDeliveryByDeliveryIdOptimistic(acceptDeliveryCommand);
         delivery.assignRider(rider);
+    }
+
+    private Delivery findDeliveryByDeliveryIdOptimistic(
+        AcceptDeliveryCommand acceptDeliveryCommand) {
+        return deliveryRepository.findByIdOptimistic(acceptDeliveryCommand.deliveryId())
+            .orElseThrow(() -> new NotFoundDeliveryException("존재하지 않는 배달입니다."));
     }
 
     @Transactional
