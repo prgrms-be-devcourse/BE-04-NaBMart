@@ -59,6 +59,8 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation "org.testcontainers:testcontainers:1.19.0"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
 
     //querydsl 설정 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
