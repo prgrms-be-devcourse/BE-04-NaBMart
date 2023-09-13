@@ -26,6 +26,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final RedisCacheService redisCacheService;
 
     @Transactional
     public Long registerReview(
@@ -34,8 +35,7 @@ public class ReviewService {
         User foundUser = userRepository.findById(registerReviewCommand.userId())
             .orElseThrow(() -> new NotFoundUserException("존재하지 않은 사용자입니다."));
 
-        Item foundItem = itemRepository.findById(registerReviewCommand.itemId())
-            .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
+        Item foundItem = findItemByItemId(registerReviewCommand.itemId());
 
         Review review = Review.builder()
             .user(foundUser)
@@ -87,12 +87,26 @@ public class ReviewService {
     public FindReviewsByItemResponse findReviewsByItem(
         final Long itemId
     ) {
-        Item foundItem = itemRepository.findById(itemId)
-            .orElseThrow(() -> new NotFoundItemException("해당 상품을 찾을 수 없습니다."));
+        Item foundItem = findItemByItemId(itemId);
 
         List<Review> foundReviews = reviewRepository.findAllByItemOrderByCreatedAt(
             foundItem);
 
         return FindReviewsByItemResponse.of(foundItem.getItemId(), foundReviews);
+    }
+
+    @Transactional(readOnly = true)
+    public Long FindTotalReviewsByItem(
+        final Long itemId
+    ) {
+        Item foundItem = findItemByItemId(itemId);
+
+        String cacheKey = "item:" + foundItem.getItemId();
+        return redisCacheService.getTotalReviewsByItemId(foundItem.getItemId(), cacheKey);
+    }
+
+    private Item findItemByItemId(Long itemId) {
+        return itemRepository.findById(itemId)
+            .orElseThrow(() -> new NotFoundItemException("해당 상품을 찾을 수 없습니다."));
     }
 }
