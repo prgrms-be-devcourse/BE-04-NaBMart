@@ -4,7 +4,6 @@ import static com.prgrms.nabmart.domain.order.support.OrderFixture.deliveringOrd
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.payingOrder;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrderWithCoupon;
-import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestResponse;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentResponseWithSuccess;
 import static com.prgrms.nabmart.domain.payment.support.PaymentFixture.canceledPayment;
@@ -23,14 +22,11 @@ import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.exception.NotPayingOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.payment.Payment;
-import com.prgrms.nabmart.domain.payment.PaymentType;
 import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.exception.NotFoundPaymentException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentAmountMismatchException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentFailException;
-import com.prgrms.nabmart.domain.payment.exception.PaymentTypeMismatchException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
-import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
 import com.prgrms.nabmart.domain.payment.service.response.TossPaymentApiResponse;
@@ -81,8 +77,6 @@ class PaymentServiceTest {
             User user = userWithUserId();
             Order order = pendingOrder(1L, user);
 
-            PaymentCommand paymentCommand = paymentCommandWithCard(order.getOrderId(),
-                user.getUserId());
             PaymentRequestResponse expected = paymentRequestResponse(order, successCallBackUrl,
                 failCallBackUrl);
 
@@ -90,7 +84,8 @@ class PaymentServiceTest {
                 .thenReturn(Optional.of(order));
 
             // when
-            PaymentRequestResponse result = paymentService.pay(paymentCommand);
+            PaymentRequestResponse result = paymentService.pay(order.getOrderId(),
+                user.getUserId());
 
             // then
             assertThat(result).usingRecursiveComparison().isEqualTo(expected);
@@ -105,15 +100,12 @@ class PaymentServiceTest {
             User user = userWithUserId();
             long noExistOrderId = 1L;
 
-            PaymentCommand paymentCommand = new PaymentCommand(noExistOrderId, user.getUserId(),
-                PaymentType.CARD.toString());
-
             when(orderRepository.findByOrderIdAndUser_UserId(noExistOrderId, user.getUserId()))
                 .thenReturn(Optional.empty());
 
             // when
             Exception exception = catchException(
-                () -> paymentService.pay(paymentCommand));
+                () -> paymentService.pay(noExistOrderId, user.getUserId()));
 
             // then
             assertThat(exception).isInstanceOf(NotFoundOrderException.class);
@@ -126,15 +118,12 @@ class PaymentServiceTest {
             User user = userWithUserId();
             Order order = deliveringOrder(1L, user);
 
-            PaymentCommand paymentCommand = new PaymentCommand(order.getOrderId(), user.getUserId(),
-                PaymentType.CARD.toString());
-
             when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
                 .thenReturn(Optional.of(order));
 
             // when
             Exception exception = catchException(
-                () -> paymentService.pay(paymentCommand));
+                () -> paymentService.pay(order.getOrderId(), user.getUserId()));
 
             // then
             assertThat(exception).isInstanceOf(DuplicatePayException.class);
@@ -149,15 +138,12 @@ class PaymentServiceTest {
             Order order = pendingOrderWithCoupon(1L, user);
             order.redeemCoupon();
 
-            PaymentCommand paymentCommand = new PaymentCommand(order.getOrderId(), user.getUserId(),
-                PaymentType.CARD.toString());
-
             when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
                 .thenReturn(Optional.of(order));
 
             // when
             Exception exception = catchException(
-                () -> paymentService.pay(paymentCommand));
+                () -> paymentService.pay(order.getOrderId(), user.getUserId()));
 
             // then
             assertThat(exception).isInstanceOf(AlreadyUsedCouponException.class);
@@ -297,37 +283,6 @@ class PaymentServiceTest {
 
             // then
             assertThat(exception).isInstanceOf(NotPayingOrderException.class);
-        }
-
-        @Test
-        @DisplayName("예외: 결제 타입이 일치하지 않는 경우, PaymentTypeMismatchException 발생")
-        void throwExceptionWhenMismatchPaymentType() {
-            // given
-            User user = userWithUserId();
-            Order order = payingOrder(1L, user);
-            Payment payment = pendingPayment(user, order);
-            String mockPaymentKey = "mockPaymentKey";
-            int amount = order.getPrice();
-
-            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
-                user.getUserId()))
-                .thenReturn(Optional.of(payment));
-
-            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
-                .thenReturn(Optional.of(order));
-
-            when(apiService.getResult(any(), any(), any())).thenReturn(
-                    new TossPaymentApiResponse("계좌이체", "DONE"))
-                .thenReturn(true);
-
-            // when
-            Exception exception = catchException(
-                () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getUuid(), mockPaymentKey,
-                    amount));
-
-            // then
-            assertThat(exception).isInstanceOf(PaymentTypeMismatchException.class);
         }
 
         @Test

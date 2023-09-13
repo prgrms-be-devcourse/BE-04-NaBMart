@@ -7,14 +7,11 @@ import com.prgrms.nabmart.domain.order.exception.NotPayingOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.payment.Payment;
 import com.prgrms.nabmart.domain.payment.PaymentStatus;
-import com.prgrms.nabmart.domain.payment.PaymentType;
 import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.exception.NotFoundPaymentException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentAmountMismatchException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentFailException;
-import com.prgrms.nabmart.domain.payment.exception.PaymentTypeMismatchException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
-import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
 import com.prgrms.nabmart.domain.payment.service.response.TossPaymentApiResponse;
@@ -51,21 +48,20 @@ public class PaymentService {
     private String confirmUrl;
 
     @Transactional
-    public PaymentRequestResponse pay(final PaymentCommand paymentCommand) {
+    public PaymentRequestResponse pay(final Long orderId, final Long userId) {
         final Order order = getOrderByOrderIdAndUserId(
-            paymentCommand.orderId(),
-            paymentCommand.userId()
+            orderId,
+            userId
         );
 
         validateOrderStatusWithPending(order);
         order.changeStatus(OrderStatus.PAYING);
         order.redeemCoupon();
 
-        final Payment payment = buildPayment(paymentCommand, order);
+        final Payment payment = buildPayment(order);
         paymentRepository.save(payment);
 
         return new PaymentRequestResponse(
-            paymentCommand.paymentType(),
             order.getPrice(),
             order.getUuid(),
             order.getName(),
@@ -92,11 +88,10 @@ public class PaymentService {
         }
     }
 
-    private Payment buildPayment(PaymentCommand paymentCommand, Order order) {
+    private Payment buildPayment(Order order) {
         return Payment.builder()
             .order(order)
             .user(order.getUser())
-            .paymentType(PaymentType.valueOf(paymentCommand.paymentType()))
             .build();
     }
 
@@ -117,7 +112,8 @@ public class PaymentService {
         JSONObject params = getParams(uuid, paymentKey, amount);
 
         TossPaymentApiResponse paymentApiResponse = requestPaymentApi(httpHeaders, params);
-        validatePaymentResult(payment, paymentApiResponse);
+
+        validatePaymentResult(paymentApiResponse);
 
         payment.changeStatus(PaymentStatus.SUCCESS);
         payment.setPaymentKey(paymentKey);
@@ -152,11 +148,7 @@ public class PaymentService {
         }
     }
 
-    private void validatePaymentResult(Payment payment, TossPaymentApiResponse paymentApiResponse) {
-        if (payment.isMisMachType(paymentApiResponse.method())) {
-            throw new PaymentTypeMismatchException("결제 타입이 일치하지 않습니다.");
-        }
-
+    private void validatePaymentResult(TossPaymentApiResponse paymentApiResponse) {
         if (!paymentApiResponse.status().equals("DONE")) {
             throw new PaymentFailException("결제가 실패되었습니다.");
         }

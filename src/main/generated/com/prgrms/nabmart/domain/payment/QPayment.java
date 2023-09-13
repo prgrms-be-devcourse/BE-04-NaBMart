@@ -35,8 +35,6 @@ public class QPayment extends EntityPathBase<Payment> {
 
     public final EnumPath<PaymentStatus> paymentStatus = createEnum("paymentStatus", PaymentStatus.class);
 
-    public final EnumPath<PaymentType> paymentType = createEnum("paymentType", PaymentType.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 

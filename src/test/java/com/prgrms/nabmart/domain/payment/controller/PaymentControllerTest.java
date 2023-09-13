@@ -1,9 +1,7 @@
 package com.prgrms.nabmart.domain.payment.controller;
 
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
-import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentCommandWithCard;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestResponse;
-import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestWithCard;
 import static com.prgrms.nabmart.domain.user.support.UserFixture.userWithUserId;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -12,7 +10,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -21,8 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.order.Order;
-import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
-import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
 import com.prgrms.nabmart.domain.user.User;
@@ -55,22 +50,19 @@ public class PaymentControllerTest extends BaseControllerTest {
             // given
             User user = userWithUserId();
             Order order = pendingOrder(1, user);
-            PaymentRequest paymentRequest = paymentRequestWithCard();
-            PaymentCommand paymentCommand = paymentCommandWithCard(order.getOrderId(),
-                user.getUserId());
             PaymentRequestResponse paymentResponse = paymentRequestResponse(
                 order,
                 successCallBackUrl,
                 failCallBackUrl
             );
 
-            when(paymentService.pay(paymentCommand)).thenReturn(paymentResponse);
+            when(paymentService.pay(order.getOrderId(), user.getUserId())).thenReturn(
+                paymentResponse);
 
             // when
             ResultActions result = mockMvc.perform(
                 post("/api/v1/pays/{orderId}", order.getOrderId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(paymentRequest)));
+                    .contentType(MediaType.APPLICATION_JSON));
 
             // then
             result
@@ -79,12 +71,8 @@ public class PaymentControllerTest extends BaseControllerTest {
                     pathParameters(
                         parameterWithName("orderId").description("주문 ID")
                     ),
-                    requestFields(
-                        fieldWithPath("paymentType").type(STRING).description("결제 타입")
-                    ),
                     responseFields(
                         fieldWithPath("amount").type(NUMBER).description("금액"),
-                        fieldWithPath("paymentType").type(STRING).description("결제 타입"),
                         fieldWithPath("orderId").type(STRING).description("주문 UUID"),
                         fieldWithPath("orderName").type(STRING).description("주문 대표명"),
                         fieldWithPath("customerEmail").type(STRING).description("고객 이메일"),
