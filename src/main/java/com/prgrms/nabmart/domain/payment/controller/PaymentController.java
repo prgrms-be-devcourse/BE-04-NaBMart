@@ -4,14 +4,17 @@ import com.prgrms.nabmart.domain.payment.controller.request.PaymentRequest;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
+import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,5 +33,16 @@ public class PaymentController {
         PaymentCommand paymentCommand = PaymentCommand.of(orderId, userId,
             paymentRequest.paymentType());
         return ResponseEntity.ok(paymentService.pay(paymentCommand));
+    }
+
+    @GetMapping("/toss/success")
+    public ResponseEntity<PaymentResponse> paySuccess(
+        @RequestParam Long orderId,
+        @RequestParam String paymentKey,
+        @RequestParam Integer amount,
+        @LoginUser Long userId
+    ) {
+        return ResponseEntity.ok(
+            paymentService.confirmPayment(userId, orderId, paymentKey, amount));
     }
 }
