@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -44,6 +45,9 @@ public class Delivery extends BaseTimeEntity {
 
     @Column
     private LocalDateTime arrivedAt;
+
+    @Version
+    private Long version;
 
     @Builder
     public Delivery(final Order order) {
