@@ -25,13 +25,15 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     private static final int NEW_PRODUCT_REFERENCE_TIME = 2;
+    private static final double HOT_PRODUCT_REFERENCE_RATE = 3.7;
+    private static final int HOT_PRODUCT_REFERENCE_ORDERS = 10;
 
     @Override
     public List<Item> findNewItemsOrderBy(Long lastIdx, Long lastItemId, ItemSortType sortType,
         Pageable pageable) {
         OrderSpecifier orderSpecifier = createOrderSpecifier(sortType);
         Predicate predicate = item.createdAt.after(
-                LocalDateTime.now().minus(NEW_PRODUCT_REFERENCE_TIME, ChronoUnit.WEEKS));
+            LocalDateTime.now().minus(NEW_PRODUCT_REFERENCE_TIME, ChronoUnit.WEEKS));
 
         return queryFactory
             .selectFrom(item)
@@ -42,6 +44,33 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
             .groupBy(item)
             .having(
                 getHavingCondition(lastIdx, lastItemId, sortType)
+            )
+            .orderBy(orderSpecifier, item.itemId.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+    }
+
+    @Override
+    public List<Item> findHotItemsOrderBy(Long lastIdx, Long lastItemId, ItemSortType sortType,
+        Pageable pageable) {
+        OrderSpecifier orderSpecifier = createOrderSpecifier(sortType);
+        Predicate predicate = item.rate.gt(HOT_PRODUCT_REFERENCE_RATE);
+        Predicate orderCondition = JPAExpressions.select(orderItem.quantity.sum().coalesce(0))
+            .from(orderItem)
+            .where(orderItem.item.eq(item))
+            .gt(HOT_PRODUCT_REFERENCE_ORDERS);
+
+        return queryFactory
+            .selectFrom(item)
+            .leftJoin(item.reviews, review)
+            .leftJoin(item.likeItems, likeItem)
+            .leftJoin(item.orderItems, orderItem)
+            .where(predicate)
+            .groupBy(item)
+            .having(
+                getHavingCondition(lastIdx, lastItemId, sortType),
+                orderCondition
             )
             .orderBy(orderSpecifier, item.itemId.asc())
             .offset(pageable.getOffset())
