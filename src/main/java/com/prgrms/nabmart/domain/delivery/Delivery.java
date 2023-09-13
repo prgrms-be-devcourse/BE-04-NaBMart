@@ -7,12 +7,14 @@ import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,11 +33,11 @@ public class Delivery extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long deliveryId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId", nullable = false)
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "riderId")
     private Rider rider;
 
@@ -44,6 +46,9 @@ public class Delivery extends BaseTimeEntity {
 
     @Column
     private LocalDateTime arrivedAt;
+
+    @Version
+    private Long version;
 
     @Builder
     public Delivery(final Order order) {

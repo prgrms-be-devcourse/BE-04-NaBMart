@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.delivery.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -20,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
+import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
@@ -101,6 +103,22 @@ class DeliveryControllerTest extends BaseControllerTest {
                         parameterWithName("deliveryId").description("배달 ID")
                     )
                 ));
+        }
+
+        @Test
+        @DisplayName("예외: 이미 배정된 배달")
+        void exceptionWhenAlreadyAssignedDelivery() throws Exception {
+            //given
+            doThrow(AlreadyAssignedDeliveryException.class).when(deliveryService)
+                .acceptDelivery(any());
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/v1/deliveries/{deliveryId}/accept", 1L)
+                    .header(AUTHORIZATION, accessToken));
+
+            //then
+            resultActions.andExpect(status().isConflict());
         }
     }
 

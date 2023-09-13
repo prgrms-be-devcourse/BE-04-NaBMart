@@ -3,11 +3,13 @@ package com.prgrms.nabmart.domain.delivery.repository;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.Rider;
+import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -34,4 +36,8 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
         @Param("rider") Rider rider,
         @Param("statuses") List<DeliveryStatus> deliveryStatuses,
         Pageable pageable);
+
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query("select d from Delivery d where d.deliveryId = :deliveryId")
+    Optional<Delivery> findByIdOptimistic(@Param("deliveryId") Long deliveryId);
 }

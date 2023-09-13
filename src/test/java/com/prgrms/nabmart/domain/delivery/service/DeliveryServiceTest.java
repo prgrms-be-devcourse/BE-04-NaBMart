@@ -363,7 +363,8 @@ class DeliveryServiceTest {
         void success() {
             //given
             given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
-            given(deliveryRepository.findById(any())).willReturn(Optional.ofNullable(delivery));
+            given(deliveryRepository.findByIdOptimistic(any()))
+                .willReturn(Optional.ofNullable(delivery));
 
             //when
             deliveryService.acceptDelivery(acceptDeliveryCommand);
@@ -389,7 +390,7 @@ class DeliveryServiceTest {
         void throwExceptionWhenNotFoundDelivery() {
             //given
             given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
-            given(deliveryRepository.findById(any())).willReturn(Optional.empty());
+            given(deliveryRepository.findByIdOptimistic(any())).willReturn(Optional.empty());
 
             //when
             //then
