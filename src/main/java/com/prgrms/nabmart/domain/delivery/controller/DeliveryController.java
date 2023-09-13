@@ -2,6 +2,8 @@ package com.prgrms.nabmart.domain.delivery.controller;
 
 import com.prgrms.nabmart.domain.delivery.controller.request.FindRiderDeliveriesRequest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
+import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
+import com.prgrms.nabmart.domain.delivery.exception.DeliveryException;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
@@ -13,10 +15,14 @@ import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailRes
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
+import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,8 +52,16 @@ public class DeliveryController {
         @PathVariable final Long deliveryId,
         @LoginUser final Long riderId) {
         AcceptDeliveryCommand acceptDeliveryCommand = AcceptDeliveryCommand.of(deliveryId, riderId);
-        deliveryService.acceptDelivery(acceptDeliveryCommand);
+        acceptDeliveryIfNotAssigned(acceptDeliveryCommand);
         return ResponseEntity.noContent().build();
+    }
+
+    private void acceptDeliveryIfNotAssigned(AcceptDeliveryCommand acceptDeliveryCommand) {
+        try {
+            deliveryService.acceptDelivery(acceptDeliveryCommand);
+        } catch (ObjectOptimisticLockingFailureException ex) {
+            throw new AlreadyAssignedDeliveryException("이미 배차 완료된 주문입니다.");
+        }
     }
 
     @PatchMapping("/{deliveryId}/pickup")
@@ -95,5 +109,18 @@ public class DeliveryController {
         FindRiderDeliveriesResponse findRiderDeliveriesResponse
             = deliveryService.findRiderDeliveries(findRiderDeliveriesCommand);
         return ResponseEntity.ok(findRiderDeliveriesResponse);
+    }
+
+    @ExceptionHandler(DeliveryException.class)
+    public ResponseEntity<ErrorTemplate> deliveryExHandle(DeliveryException ex) {
+        ErrorTemplate errorTemplate = ErrorTemplate.of(ex.getMessage());
+        return ResponseEntity.badRequest().body(errorTemplate);
+    }
+
+    @ExceptionHandler(AlreadyAssignedDeliveryException.class)
+    public ResponseEntity<ErrorTemplate> alreadyAssignedDeliveryExHandel(
+        AlreadyAssignedDeliveryException ex) {
+        ErrorTemplate errorTemplate = ErrorTemplate.of(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorTemplate);
     }
 }
