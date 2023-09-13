@@ -16,7 +16,6 @@ import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.global.config.RedisConfig;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,12 +24,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Transactional
-@Import(RedisConfig.class)
 @SpringBootTest
 public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
@@ -67,8 +64,6 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
         properties.setProperty("TOSS_SUCCESS_URL", "tossSuccessUrl");
         properties.setProperty("TOSS_FAIL_URL", "tossFailUrl");
         properties.setProperty("TOSS_SECRET_KEY", "tossSecretKey");
-        properties.setProperty("REDIS_HOST", "redisHost");
-        properties.setProperty("REDIS_PORT", "6379");
     }
 
     @Nested
