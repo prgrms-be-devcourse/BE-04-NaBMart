@@ -45,7 +45,7 @@ jobs:
 
       # 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew build
 
       ## 테스트 결과 PR 코멘트에 등록
       - name: Register the test results as PR comments
