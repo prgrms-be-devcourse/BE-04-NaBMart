@@ -15,7 +15,7 @@ import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.global.config.RedisContainerTest;
+import com.prgrms.nabmart.global.config.RedisTestContainerConfig;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,10 +24,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
+@Transactional
 @SpringBootTest
-public class RedisCacheServiceTest extends RedisContainerTest {
+public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
     @Autowired
     private RedisCacheService redisCacheService;
@@ -89,15 +91,29 @@ public class RedisCacheServiceTest extends RedisContainerTest {
             String cacheKey = "item:" + item.getItemId();
 
             // when
+            long startTime = System.currentTimeMillis();
+
             Long dbCount = redisCacheService.getTotalReviewsByItemId(item.getItemId(), cacheKey);
+
+            long stopTime = System.currentTimeMillis();
+
+            long elapsedTime = stopTime - startTime;
+            log.info("실행 시간 : " + elapsedTime);
 
             // then
             assertEquals(dbCount, result);
 
             log.info("DB 저장 이후 캐시 조회");
 
+            long startTime2 = System.currentTimeMillis();
+
             Long cachedCount = redisCacheService.getTotalReviewsByItemId(item.getItemId(),
                 cacheKey);
+
+            long stopTime2 = System.currentTimeMillis();
+
+            long elapsedTime2 = stopTime2 - startTime2;
+            log.info("실행 시간 : " + elapsedTime2);
 
             assertEquals(dbCount, cachedCount);
 

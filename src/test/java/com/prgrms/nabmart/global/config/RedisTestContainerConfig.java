@@ -6,7 +6,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public abstract class RedisContainerTest {
+public abstract class RedisTestContainerConfig {
 
     static final String REDIS_IMAGE = "redis:6-alpine";
     static final GenericContainer<?> REDIS_CONTAINER;

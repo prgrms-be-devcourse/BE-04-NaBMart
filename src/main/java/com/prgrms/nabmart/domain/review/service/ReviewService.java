@@ -96,7 +96,7 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public Long FindTotalReviewsByItem(
+    public Long findTotalReviewsByItem(
         final Long itemId
     ) {
         Item foundItem = findItemByItemId(itemId);
