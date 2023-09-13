@@ -38,10 +38,6 @@ public class Payment extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private PaymentType paymentType;
-
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,8 +49,7 @@ public class Payment extends BaseTimeEntity {
     private Order order;
 
     @Builder
-    public Payment(PaymentType paymentType, User user, Order order) {
-        this.paymentType = paymentType;
+    public Payment(User user, Order order) {
         this.user = user;
         this.order = order;
     }
@@ -69,9 +64,5 @@ public class Payment extends BaseTimeEntity {
 
     public boolean isMisMatchStatus(final PaymentStatus paymentStatus) {
         return this.paymentStatus != paymentStatus;
-    }
-
-    public boolean isMisMachType(String method) {
-        return !this.paymentType.getValue().equals(method);
     }
 }

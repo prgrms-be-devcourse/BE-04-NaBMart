@@ -16,6 +16,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByUser_UserId(Long userId, Pageable pageable);
 
+    Optional<Order> findByUuidAndUser_UserId(String uuid, Long userId);
+
     @Query("SELECT o FROM Order o WHERE o.createdAt <= :expiredTime AND o.status IN :statusList")
     List<Order> findByStatusInBeforeExpiredTime(LocalDateTime expiredTime,
         List<OrderStatus> statusList);
