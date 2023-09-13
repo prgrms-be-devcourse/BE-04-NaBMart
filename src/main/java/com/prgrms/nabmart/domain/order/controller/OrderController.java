@@ -3,9 +3,11 @@ package com.prgrms.nabmart.domain.order.controller;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
 import com.prgrms.nabmart.domain.order.service.OrderService;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
+import com.prgrms.nabmart.domain.order.service.request.UpdateOrderByCouponCommand;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,18 @@ public class OrderController {
             .body(orderService.createOrder(createOrdersCommand));
     }
 
+    @PostMapping("/{orderId}/apply-coupon")
+    public ResponseEntity<UpdateOrderByCouponResponse> updateOrderByCoupon(
+        @PathVariable final Long orderId,
+        @LoginUser final Long userId,
+        @RequestParam final Long couponId
+    ) {
+        UpdateOrderByCouponCommand updateOrderByCouponCommand = UpdateOrderByCouponCommand.of(
+            orderId, userId, couponId);
+
+        return ResponseEntity.ok(orderService.updateOrderByCoupon(updateOrderByCouponCommand));
+    }
+
     @GetMapping("/{orderId}")
     public ResponseEntity<FindOrderDetailResponse> findOrderByIdAndUserId(
         @PathVariable Long orderId,
@@ -53,5 +67,4 @@ public class OrderController {
     ) {
         return ResponseEntity.ok(orderService.findOrders(userId, page));
     }
-
 }

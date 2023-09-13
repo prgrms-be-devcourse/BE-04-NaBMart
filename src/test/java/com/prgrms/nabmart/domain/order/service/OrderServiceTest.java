@@ -1,11 +1,14 @@
 package com.prgrms.nabmart.domain.order.service;
 
+
+import static com.prgrms.nabmart.domain.coupon.support.CouponFixture.userCoupon;
 import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.completedOrder;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.createOrderResponse;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.createOrdersCommand;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.orderDetailResponse;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
+import static com.prgrms.nabmart.domain.order.support.OrderFixture.updateOrderByCouponCommand;
 import static com.prgrms.nabmart.domain.user.support.UserFixture.user;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
@@ -13,6 +16,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.prgrms.nabmart.domain.coupon.Coupon;
+import com.prgrms.nabmart.domain.coupon.UserCoupon;
+import com.prgrms.nabmart.domain.coupon.exception.InvalidCouponException;
+import com.prgrms.nabmart.domain.coupon.exception.NotFoundUserCouponException;
+import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.InvalidItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
@@ -22,13 +30,16 @@ import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.Cre
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
+import com.prgrms.nabmart.domain.order.service.request.UpdateOrderByCouponCommand;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,6 +53,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
+@Slf4j
 public class OrderServiceTest {
 
     @InjectMocks
@@ -55,6 +67,9 @@ public class OrderServiceTest {
 
     @Mock
     ItemRepository itemRepository;
+
+    @Mock
+    UserCouponRepository userCouponRepository;
 
     @Nested
     @DisplayName("findOrderByIdAndUserId 메서드 실행 시")
@@ -139,7 +154,7 @@ public class OrderServiceTest {
             CreateOrderResponse expected = createOrderResponse(order);
 
             when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
-            when(itemRepository.findById(any())).thenReturn(Optional.ofNullable(item));
+            when(itemRepository.findByItemId(any())).thenReturn(Optional.ofNullable(item));
             when(orderRepository.save(any())).thenReturn(order);
 
             // when
@@ -155,8 +170,10 @@ public class OrderServiceTest {
             // Given
             User user = user();
             Item item = item();
-            int maxBuyQuantity = item.getMaxBuyQuantity();
-            int quantityToOrder = maxBuyQuantity + 1; // 상품의 재고를 초과하는 수량
+
+            ReflectionTestUtils.setField(item, "itemId", 1L);
+            int getQuantity = item.getQuantity();
+            int quantityToOrder = getQuantity + 1; // 상품의 재고를 초과하는 수량
             CreateOrderItemRequest orderItemRequest = new CreateOrderItemRequest(1L,
                 quantityToOrder);
             CreateOrderRequest createOrderRequest = new CreateOrderRequest(
@@ -164,7 +181,8 @@ public class OrderServiceTest {
             CreateOrdersCommand createOrdersCommand = createOrdersCommand(createOrderRequest);
 
             when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
-            when(itemRepository.findById(any())).thenReturn(Optional.ofNullable(item));
+
+            when(itemRepository.findByItemId(any())).thenReturn(Optional.ofNullable(item));
 
             // When
             Exception exception = catchException(
@@ -175,4 +193,108 @@ public class OrderServiceTest {
                 .hasMessage("상품의 재고 수량이 부족합니다");
         }
     }
+
+    @Nested
+    @DisplayName("updateOrderByCoupon 메서드 실행 시")
+    class UpdateOrderByCouponTest {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            User user = user();
+            Order order = pendingOrder(1L, user);
+            UserCoupon userCoupon = userCoupon(user);
+            ReflectionTestUtils.setField(userCoupon, "userCouponId", 1L);
+            UpdateOrderByCouponCommand updateOrderByCouponCommand = updateOrderByCouponCommand(
+                order, user, userCoupon);
+            UpdateOrderByCouponResponse expected = new UpdateOrderByCouponResponse(
+                order.getPrice() - userCoupon.getCoupon().getDiscount(),
+                userCoupon.getCoupon().getDiscount());
+
+            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(),
+                user.getUserId())).thenReturn(Optional.ofNullable(order));
+            when(userCouponRepository.findByIdWithCoupon(userCoupon.getUserCouponId())).thenReturn(
+                Optional.ofNullable(userCoupon));
+
+            // when
+            UpdateOrderByCouponResponse result = orderService.updateOrderByCoupon(
+                updateOrderByCouponCommand);
+
+            // then
+            assertThat(result).usingRecursiveComparison().isEqualTo(expected);
+        }
+    }
+
+    @Test
+    @DisplayName("예외 : order 가 존재하지 않을 경우, NotFoundOrderException 발생")
+    void throwExceptionWhenNotFoundOrder() {
+        // given
+        User user = user();
+        Order order = completedOrder(1L, user);
+        UserCoupon userCoupon = userCoupon(user);
+        UpdateOrderByCouponCommand updateOrderByCouponCommand = updateOrderByCouponCommand(
+            order, user, userCoupon);
+
+        when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+            .thenReturn(Optional.empty());
+
+        // when
+        Exception exception = catchException(
+            () -> orderService.updateOrderByCoupon(updateOrderByCouponCommand));
+
+        // then
+        assertThat(exception).isInstanceOf(NotFoundOrderException.class);
+    }
+
+    @Test
+    @DisplayName("예외 : UserCoupon 이 존재하지 않을 경우, NotFoundUserCouponException 발생")
+    void throwExceptionWhenNotFoundUserCoupon() {
+        // given
+        User user = user();
+        Order order = completedOrder(1L, user);
+        UserCoupon userCoupon = userCoupon(user);
+        UpdateOrderByCouponCommand updateOrderByCouponCommand = updateOrderByCouponCommand(
+            order, user, userCoupon);
+
+        when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+            .thenReturn(Optional.ofNullable(order));
+        when(userCouponRepository.findByIdWithCoupon(userCoupon.getUserCouponId())).thenReturn(
+            Optional.empty());
+
+        // when
+        Exception exception = catchException(
+            () -> orderService.updateOrderByCoupon(updateOrderByCouponCommand));
+
+        // then
+        assertThat(exception).isInstanceOf(NotFoundUserCouponException.class);
+    }
+
+    @Test
+    @DisplayName("예외 : 주문금액이 Coupon 최소 주문 금액보다 낮은 경우 , InvalidCouponException 발생")
+    void throwExceptionWhenInvalidCoupon() {
+        // given
+        User user = user();
+        Order order = completedOrder(1L, user);
+        UserCoupon userCoupon = userCoupon(user);
+        Coupon coupon = userCoupon.getCoupon();
+        ReflectionTestUtils.setField(coupon, "couponId", 1L);
+        ReflectionTestUtils.setField(coupon, "minOrderPrice", order.getPrice() + 1);
+
+        UpdateOrderByCouponCommand updateOrderByCouponCommand = updateOrderByCouponCommand(
+            order, user, userCoupon);
+
+        when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+            .thenReturn(Optional.ofNullable(order));
+        when(userCouponRepository.findByIdWithCoupon(userCoupon.getUserCouponId())).thenReturn(
+            Optional.ofNullable(userCoupon));
+
+        // when
+        Exception exception = catchException(
+            () -> orderService.updateOrderByCoupon(updateOrderByCouponCommand));
+
+        // then
+        assertThat(exception).isInstanceOf(InvalidCouponException.class);
+    }
 }
+

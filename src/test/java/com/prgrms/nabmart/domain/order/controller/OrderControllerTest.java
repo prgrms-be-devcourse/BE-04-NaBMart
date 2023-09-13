@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.order.controller;
 
+import static com.prgrms.nabmart.domain.coupon.support.CouponFixture.userCoupon;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.completedOrder;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.createOrderRequest;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.createOrderResponse;
@@ -23,11 +24,13 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.coupon.UserCoupon;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
 import com.prgrms.nabmart.domain.user.User;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -129,7 +132,7 @@ public class OrderControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("createOrder 메서드 실행 시")
-    class createOrderTest {
+    class CreateOrderTest {
 
         @Test
         @DisplayName("성공")
@@ -157,6 +160,38 @@ public class OrderControllerTest extends BaseControllerTest {
                         fieldWithPath("totalPrice").type(NUMBER).description("최종 가격"),
                         fieldWithPath("address").type(STRING).description("기본 배송지"),
                         fieldWithPath("deliveryFee").type(NUMBER).description("배달비")
+                    )));
+        }
+    }
+
+    @Nested
+    @DisplayName("updateOrderByCoupon 메서드 실행 시")
+    class UpdateOrderByCoupon {
+
+        @Test
+        @DisplayName("성공")
+        void createOrder() throws Exception {
+            // given
+            User user = user();
+            UserCoupon userCoupon = userCoupon(user);
+            Order order = pendingOrder(1L, user);
+            UpdateOrderByCouponResponse updateOrderByCouponResponse = UpdateOrderByCouponResponse.of(
+                order, userCoupon.getCoupon());
+            when(orderService.updateOrderByCoupon(any())).thenReturn(updateOrderByCouponResponse);
+
+            // when
+            ResultActions result = mockMvc.perform(
+                post("/api/v1/orders/{orderId}/apply-coupon", order.getOrderId())
+                    .param("couponId", String.valueOf(1L))
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            result
+                .andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    responseFields(
+                        fieldWithPath("totalPrice").type(NUMBER).description("쿠폰 적용후 총 가격"),
+                        fieldWithPath("discountPrice").type(NUMBER).description("쿠폰 할인 금액")
                     )));
         }
     }

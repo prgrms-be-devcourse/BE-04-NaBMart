@@ -100,6 +100,10 @@ public class Order extends BaseTimeEntity {
         calculateDeliveryFee(totalPrice);
     }
 
+    public void setUserCoupon(final UserCoupon userCoupon) {
+        this.userCoupon = userCoupon;
+    }
+    
     private void calculateDeliveryFee(final int totalPrice) {
         if (totalPrice >= 43000) {
             this.deliveryFee = 0;
@@ -118,5 +122,23 @@ public class Order extends BaseTimeEntity {
 
     public boolean isOwnByUser(final User user) {
         return this.user.equals(user);
+    }
+
+    public boolean isMisMatchStatus(final OrderStatus orderStatus) {
+        return this.status != orderStatus;
+    }
+
+    public boolean isMisMatchPrice(int amount) {
+        return !this.price.equals(amount);
+    }
+
+    public void changeStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
+    }
+
+    public void redeemCoupon() {
+        if (userCoupon != null) {
+            userCoupon.use();
+        }
     }
 }

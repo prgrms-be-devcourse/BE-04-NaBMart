@@ -62,6 +62,7 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:1.19.0"
     testImplementation "org.testcontainers:junit-jupiter:1.19.0"
 
+
     //querydsl 설정 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
@@ -109,9 +110,6 @@ build {
     dependsOn copyDocument
 }
 
-
-
-
 // Querydsl 설정부
 def generated = 'src/main/generated'
 
@@ -122,7 +120,7 @@ tasks.withType(JavaCompile) {
 
 // java source set 에 querydsl QClass 위치 추가
 sourceSets {
-    main.java.srcDirs += [ generated ]
+    main.java.srcDirs += [generated]
 }
 
 // gradle clean 시에 QClass 디렉토리 삭제

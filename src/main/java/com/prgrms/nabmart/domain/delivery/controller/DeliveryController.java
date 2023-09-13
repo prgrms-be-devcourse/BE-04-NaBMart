@@ -1,14 +1,17 @@
 package com.prgrms.nabmart.domain.delivery.controller;
 
+import com.prgrms.nabmart.domain.delivery.controller.request.FindRiderDeliveriesRequest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -78,5 +81,19 @@ public class DeliveryController {
         FindWaitingDeliveriesResponse findWaitingDeliveriesResponse
             = deliveryService.findWaitingDeliveries(findWaitingDeliveriesCommand);
         return ResponseEntity.ok(findWaitingDeliveriesResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<FindRiderDeliveriesResponse> findRiderDeliveries(
+        FindRiderDeliveriesRequest findRiderDeliveriesRequest,
+        final Pageable pageable,
+        @LoginUser final Long riderId) {
+        FindRiderDeliveriesCommand findRiderDeliveriesCommand = FindRiderDeliveriesCommand.of(
+            riderId,
+            findRiderDeliveriesRequest.deliveryStatuses(),
+            pageable);
+        FindRiderDeliveriesResponse findRiderDeliveriesResponse
+            = deliveryService.findRiderDeliveries(findRiderDeliveriesCommand);
+        return ResponseEntity.ok(findRiderDeliveriesResponse);
     }
 }

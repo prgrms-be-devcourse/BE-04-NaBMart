@@ -24,7 +24,6 @@ import lombok.Setter;
 
 @Getter
 @Entity
-@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "payment")
@@ -43,7 +42,7 @@ public class Payment extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -52,4 +51,27 @@ public class Payment extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
+
+    @Builder
+    public Payment(PaymentType paymentType, User user, Order order) {
+        this.paymentType = paymentType;
+        this.user = user;
+        this.order = order;
+    }
+
+    public void changeStatus(final PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public boolean isMisMatchPrice(final int amount) {
+        return this.order.isMisMatchPrice(amount);
+    }
+
+    public boolean isMisMatchStatus(final PaymentStatus paymentStatus) {
+        return this.paymentStatus != paymentStatus;
+    }
+
+    public boolean isMisMachType(String method) {
+        return !this.paymentType.getValue().equals(method);
+    }
 }

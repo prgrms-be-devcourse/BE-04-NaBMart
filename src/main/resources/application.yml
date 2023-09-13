@@ -48,5 +48,7 @@ jwt:
 
 payment:
   toss:
-    success_url: ${TOSS_SUCCESS_URL}
-    fail_url: ${TOSS_FAIL_URL}
+    success-url: ${TOSS_SUCCESS_URL}
+    fail-url: ${TOSS_FAIL_URL}
+    secret-key: ${TOSS_SECRET_KEY}
+    confirm-url: https://api.tosspayments.com/v1/payments/confirm

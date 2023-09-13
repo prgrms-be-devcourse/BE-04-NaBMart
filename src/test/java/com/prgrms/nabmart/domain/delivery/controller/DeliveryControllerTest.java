@@ -18,10 +18,15 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
-import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -196,6 +201,53 @@ class DeliveryControllerTest extends BaseControllerTest {
                         fieldWithPath("deliveries[].deliveryId").type(NUMBER).description("배달 ID"),
                         fieldWithPath("page").type(NUMBER).description("페이지"),
                         fieldWithPath("totalElements").type(NUMBER).description("사이즈")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("라이더가 배차 받은 배달 목록 조회 API 호출 시")
+    class FindRiderDeliveriesTest {
+
+        @Test
+        @DisplayName("성공")
+        void findRiderDeliveries() throws Exception {
+            //given
+            DeliveryStatus deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
+            FindRiderDeliveryResponse findRiderDeliveryResponse = new FindRiderDeliveryResponse(
+                1L,
+                deliveryStatus,
+                LocalDateTime.now().plusMinutes(20),
+                "address",
+                3000
+            );
+            FindRiderDeliveriesResponse findRiderDeliveriesResponse
+                = new FindRiderDeliveriesResponse(
+                List.of(findRiderDeliveryResponse),
+                0,
+                1);
+
+            given(deliveryService.findRiderDeliveries(any()))
+                .willReturn(findRiderDeliveriesResponse);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(get("/api/v1/deliveries")
+                .queryParam("deliveryStatuses", deliveryStatus.name())
+                .queryParam("page", "0")
+                .queryParam("size", "10")
+                .header(AUTHORIZATION, accessToken));
+
+            //then
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    queryParameters(
+                        parameterWithName("deliveryStatuses").description("배달 상태 목록"),
+                        parameterWithName("page").description("페이지"),
+                        parameterWithName("size").description("페이지 사이즈")
                     )
                 ));
         }

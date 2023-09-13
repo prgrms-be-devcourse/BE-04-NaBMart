@@ -61,6 +61,7 @@ public class RedisCacheServiceTest extends RedisContainerTest {
         properties.setProperty("EXPIRY_SECONDS", "60");
         properties.setProperty("TOSS_SUCCESS_URL", "tossSuccessUrl");
         properties.setProperty("TOSS_FAIL_URL", "tossFailUrl");
+        properties.setProperty("TOSS_SECRET_KEY", "tossSecretKey");
     }
 
     @Nested
