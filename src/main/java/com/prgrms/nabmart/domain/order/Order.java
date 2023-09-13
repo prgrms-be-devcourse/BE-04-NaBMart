@@ -21,6 +21,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,6 +59,9 @@ public class Order extends BaseTimeEntity {
     @Column(nullable = false)
     private OrderStatus status = OrderStatus.PENDING; // 주문 상태 정보, 기본값 'PENDING'
 
+    @Column(nullable = false, unique = true)
+    private String uuid;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -72,10 +76,15 @@ public class Order extends BaseTimeEntity {
     public Order(final User user, final List<OrderItem> orderItems) {
         this.user = user;
         this.address = user.getAddress();
+        this.uuid = UUID.randomUUID().toString();
         validateOrderItems(orderItems);
         createOrderName(orderItems);
         setOrderItems(orderItems);
         calculateTotalPrice();
+    }
+
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
     }
 
     private void createOrderName(final List<OrderItem> orderItems) {
@@ -98,6 +107,15 @@ public class Order extends BaseTimeEntity {
         }
         this.price = totalPrice;
         calculateDeliveryFee(totalPrice);
+    }
+
+    public void setUserCoupon(final UserCoupon userCoupon) {
+        if (this.userCoupon != null) {
+            this.price += this.userCoupon.getDiscount();
+        }
+        this.userCoupon = userCoupon;
+        this.price -= userCoupon.getDiscount();
+
     }
 
     private void calculateDeliveryFee(final int totalPrice) {

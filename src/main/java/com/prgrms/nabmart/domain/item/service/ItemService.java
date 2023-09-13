@@ -13,6 +13,7 @@ import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -34,6 +35,28 @@ public class ItemService {
     private final MainCategoryRepository mainCategoryRepository;
     private final SubCategoryRepository subCategoryRepository;
     private static final int NEW_PRODUCT_REFERENCE_WEEK = 2;
+
+    @Transactional
+    public Long saveItem(RegisterItemCommand registerItemCommand) {
+        Long mainCategoryId = registerItemCommand.mainCategoryId();
+        Long subCategoryId = registerItemCommand.subCategoryId();
+
+        MainCategory mainCategory = getMainCategoryById(mainCategoryId);
+        SubCategory subCategory = getSubCategoryById(subCategoryId);
+        Item item = Item.builder()
+            .name(registerItemCommand.name())
+            .price(registerItemCommand.price())
+            .description(registerItemCommand.description())
+            .quantity(registerItemCommand.quantity())
+            .discount(registerItemCommand.discount())
+            .maxBuyQuantity(registerItemCommand.maxBuyQuantity())
+            .mainCategory(mainCategory)
+            .subCategory(subCategory)
+            .build();
+
+        Item savedItem = itemRepository.save(item);
+        return savedItem.getItemId();
+    }
 
     @Transactional(readOnly = true)
     public FindItemsResponse findItemsByCategory(
@@ -78,7 +101,7 @@ public class ItemService {
         Long itemId = updateItemCommand.itemId();
         Long mainCategoryId = updateItemCommand.mainCategoryId();
         Long subCategoryId = updateItemCommand.subCategoryId();
-        
+
         Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundItemException("해당 Id의 아이템은 존재하지 않습니다."));
         MainCategory mainCategory = getMainCategoryById(mainCategoryId);

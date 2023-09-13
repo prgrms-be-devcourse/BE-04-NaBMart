@@ -20,6 +20,7 @@ import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -54,6 +55,33 @@ class ItemServiceTest {
 
     @InjectMocks
     private ItemService itemService;
+
+    @Nested
+    @DisplayName("saveItem 메서드 실행 시")
+    class SaveItem {
+
+        RegisterItemCommand registerItemCommand = ItemFixture.registerItemCommand();
+        Item item = ItemFixture.item();
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = CategoryFixture.subCategory(mainCategory);
+
+        @Test
+        @DisplayName("성공")
+        public void save() {
+            // Given
+            when(mainCategoryRepository.findById(anyLong())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findById(anyLong())).thenReturn(Optional.of(subCategory));
+            when(itemRepository.save(any())).thenReturn(item);
+
+            // When
+            itemService.saveItem(registerItemCommand);
+
+            // Then
+            verify(mainCategoryRepository, times(1)).findById(anyLong());
+            verify(subCategoryRepository, times(1)).findById(anyLong());
+            verify(itemRepository, times(1)).save(any());
+        }
+    }
 
     @Nested
     @DisplayName("updateItem 메서드 실행 시")

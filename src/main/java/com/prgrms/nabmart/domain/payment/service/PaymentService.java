@@ -7,14 +7,11 @@ import com.prgrms.nabmart.domain.order.exception.NotPayingOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.payment.Payment;
 import com.prgrms.nabmart.domain.payment.PaymentStatus;
-import com.prgrms.nabmart.domain.payment.PaymentType;
 import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.exception.NotFoundPaymentException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentAmountMismatchException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentFailException;
-import com.prgrms.nabmart.domain.payment.exception.PaymentTypeMismatchException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
-import com.prgrms.nabmart.domain.payment.service.request.PaymentCommand;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
 import com.prgrms.nabmart.domain.payment.service.response.TossPaymentApiResponse;
@@ -51,23 +48,22 @@ public class PaymentService {
     private String confirmUrl;
 
     @Transactional
-    public PaymentRequestResponse pay(final PaymentCommand paymentCommand) {
+    public PaymentRequestResponse pay(final Long orderId, final Long userId) {
         final Order order = getOrderByOrderIdAndUserId(
-            paymentCommand.orderId(),
-            paymentCommand.userId()
+            orderId,
+            userId
         );
 
         validateOrderStatusWithPending(order);
         order.changeStatus(OrderStatus.PAYING);
         order.redeemCoupon();
 
-        final Payment payment = buildPayment(paymentCommand, order);
+        final Payment payment = buildPayment(order);
         paymentRepository.save(payment);
 
         return new PaymentRequestResponse(
-            paymentCommand.paymentType(),
             order.getPrice(),
-            order.getOrderId(),
+            order.getUuid(),
             order.getName(),
             order.getUser().getEmail(),
             order.getUser().getNickname(),
@@ -81,38 +77,43 @@ public class PaymentService {
             .orElseThrow(() -> new NotFoundOrderException("주문 존재하지 않습니다."));
     }
 
+    private Order getOrderByUuidAndUserId(String uuid, Long userId) {
+        return orderRepository.findByUuidAndUser_UserId(uuid, userId)
+            .orElseThrow(() -> new NotFoundOrderException("주문 존재하지 않습니다."));
+    }
+
     private void validateOrderStatusWithPending(final Order order) {
         if (order.isMisMatchStatus(OrderStatus.PENDING)) {
             throw new DuplicatePayException("이미 처리된 주문입니다.");
         }
     }
 
-    private Payment buildPayment(PaymentCommand paymentCommand, Order order) {
+    private Payment buildPayment(Order order) {
         return Payment.builder()
             .order(order)
             .user(order.getUser())
-            .paymentType(PaymentType.valueOf(paymentCommand.paymentType()))
             .build();
     }
 
     @Transactional
     public PaymentResponse confirmPayment(
         Long userId,
-        Long orderId,
+        String uuid,
         String paymentKey,
         Integer amount
     ) {
-        Payment payment = getPaymentByOrderIdAndUserId(orderId, userId);
+        Payment payment = getPaymentByUuidAndUserId(uuid, userId);
         validatePayment(amount, payment);
 
-        Order order = getOrderByOrderIdAndUserId(orderId, userId);
+        Order order = getOrderByUuidAndUserId(uuid, userId);
         validateOrderStatusWithPaying(order);
 
         HttpHeaders httpHeaders = getHttpHeaders();
-        JSONObject params = getParams(orderId, paymentKey, amount);
+        JSONObject params = getParams(uuid, paymentKey, amount);
 
         TossPaymentApiResponse paymentApiResponse = requestPaymentApi(httpHeaders, params);
-        validatePaymentResult(payment, paymentApiResponse);
+
+        validatePaymentResult(paymentApiResponse);
 
         payment.changeStatus(PaymentStatus.SUCCESS);
         payment.setPaymentKey(paymentKey);
@@ -147,20 +148,16 @@ public class PaymentService {
         }
     }
 
-    private void validatePaymentResult(Payment payment, TossPaymentApiResponse paymentApiResponse) {
-        if (payment.isMisMachType(paymentApiResponse.method())) {
-            throw new PaymentTypeMismatchException("결제 타입이 일치하지 않습니다.");
-        }
-
+    private void validatePaymentResult(TossPaymentApiResponse paymentApiResponse) {
         if (!paymentApiResponse.status().equals("DONE")) {
             throw new PaymentFailException("결제가 실패되었습니다.");
         }
     }
 
-    private JSONObject getParams(Long orderId, String paymentKey, Integer amount) {
+    private JSONObject getParams(String uuid, String paymentKey, Integer amount) {
         JSONObject params = new JSONObject();
         params.put("paymentKey", paymentKey);
-        params.put("orderId", orderId);
+        params.put("orderId", uuid);
         params.put("amount", amount);
 
         return params;
@@ -187,8 +184,8 @@ public class PaymentService {
         );
     }
 
-    private Payment getPaymentByOrderIdAndUserId(Long orderId, Long userId) {
-        return paymentRepository.findByOrder_OrderIdAndUser_UserId(orderId, userId)
+    private Payment getPaymentByUuidAndUserId(String uuid, Long userId) {
+        return paymentRepository.findByOrder_UuidAndUser_UserId(uuid, userId)
             .orElseThrow(() -> new NotFoundPaymentException("결제가 존재하지 않습니다."));
     }
 }
