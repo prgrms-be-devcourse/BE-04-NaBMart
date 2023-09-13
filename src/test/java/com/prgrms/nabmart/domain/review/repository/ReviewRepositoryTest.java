@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.review.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.prgrms.nabmart.base.TestQueryDslConfig;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
@@ -24,8 +25,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
+@Import(TestQueryDslConfig.class)
 class ReviewRepositoryTest {
 
     @Autowired

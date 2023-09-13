@@ -3,15 +3,18 @@ package com.prgrms.nabmart.domain.category.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.prgrms.nabmart.base.TestQueryDslConfig;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
+@Import(TestQueryDslConfig.class)
 public class MainCategoryRepositoryTest {
 
     @Autowired

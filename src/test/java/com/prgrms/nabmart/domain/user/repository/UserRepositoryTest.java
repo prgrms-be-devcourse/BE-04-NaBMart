@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.user.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.prgrms.nabmart.base.TestQueryDslConfig;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
@@ -25,7 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
-@Import(JpaAuditingConfig.class)
+@Import({JpaAuditingConfig.class, TestQueryDslConfig.class})
 class UserRepositoryTest {
 
     @Autowired

@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.delivery.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.prgrms.nabmart.base.TestQueryDslConfig;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
@@ -18,10 +19,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
+@Import(TestQueryDslConfig.class)
 class DeliveryRepositoryTest {
 
     @Autowired
