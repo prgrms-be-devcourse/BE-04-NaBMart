@@ -83,6 +83,10 @@ public class Order extends BaseTimeEntity {
         calculateTotalPrice();
     }
 
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
+    }
+
     private void createOrderName(final List<OrderItem> orderItems) {
         this.name = (orderItems.size() == 1) ?
             orderItems.get(0).getItem().getName() :
@@ -103,6 +107,15 @@ public class Order extends BaseTimeEntity {
         }
         this.price = totalPrice;
         calculateDeliveryFee(totalPrice);
+    }
+
+    public void setUserCoupon(final UserCoupon userCoupon) {
+        if (this.userCoupon != null) {
+            this.price += this.userCoupon.getDiscount();
+        }
+        this.userCoupon = userCoupon;
+        this.price -= userCoupon.getDiscount();
+
     }
 
     private void calculateDeliveryFee(final int totalPrice) {
