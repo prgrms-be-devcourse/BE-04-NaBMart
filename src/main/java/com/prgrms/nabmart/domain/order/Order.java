@@ -78,6 +78,10 @@ public class Order extends BaseTimeEntity {
         calculateTotalPrice();
     }
 
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
+    }
+
     private void createOrderName(final List<OrderItem> orderItems) {
         this.name = (orderItems.size() == 1) ?
             orderItems.get(0).getItem().getName() :
