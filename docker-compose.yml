@@ -13,3 +13,9 @@ services:
 
     ports:
       - "3307:3306"
+  bmart-redis:
+    container_name: bmart-redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
