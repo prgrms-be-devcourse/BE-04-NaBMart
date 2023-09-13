@@ -41,6 +41,10 @@ public class UserCoupon extends BaseTimeEntity {
         isUsed = false;
     }
 
+    public int getDiscount() {
+        return this.getCoupon().getDiscount();
+    }
+
     public void use() {
         if (isUsed == true) {
             throw new InvalidUsedCouponException("이미 사용한 쿠폰입니다.");
