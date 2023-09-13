@@ -23,6 +23,8 @@ class NabmartApplicationTests {
         properties.setProperty("TOSS_SUCCESS_URL", "tossSuccessUrl");
         properties.setProperty("TOSS_FAIL_URL", "tossFailUrl");
         properties.setProperty("TOSS_SECRET_KEY", "tossSecretKey");
+        properties.setProperty("REDIS_HOST", "localhost");
+        properties.setProperty("REDIS_PORT", "6379");
     }
 
     @Test
