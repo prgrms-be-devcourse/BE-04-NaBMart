@@ -67,7 +67,7 @@ public class PaymentService {
         return new PaymentRequestResponse(
             paymentCommand.paymentType(),
             order.getPrice(),
-            order.getOrderId(),
+            order.getUuid(),
             order.getName(),
             order.getUser().getEmail(),
             order.getUser().getNickname(),
@@ -78,6 +78,11 @@ public class PaymentService {
 
     private Order getOrderByOrderIdAndUserId(Long orderId, Long userId) {
         return orderRepository.findByOrderIdAndUser_UserId(orderId, userId)
+            .orElseThrow(() -> new NotFoundOrderException("주문 존재하지 않습니다."));
+    }
+
+    private Order getOrderByUuidAndUserId(String uuid, Long userId) {
+        return orderRepository.findByUuidAndUser_UserId(uuid, userId)
             .orElseThrow(() -> new NotFoundOrderException("주문 존재하지 않습니다."));
     }
 
@@ -98,18 +103,18 @@ public class PaymentService {
     @Transactional
     public PaymentResponse confirmPayment(
         Long userId,
-        Long orderId,
+        String uuid,
         String paymentKey,
         Integer amount
     ) {
-        Payment payment = getPaymentByOrderIdAndUserId(orderId, userId);
+        Payment payment = getPaymentByUuidAndUserId(uuid, userId);
         validatePayment(amount, payment);
 
-        Order order = getOrderByOrderIdAndUserId(orderId, userId);
+        Order order = getOrderByUuidAndUserId(uuid, userId);
         validateOrderStatusWithPaying(order);
 
         HttpHeaders httpHeaders = getHttpHeaders();
-        JSONObject params = getParams(orderId, paymentKey, amount);
+        JSONObject params = getParams(uuid, paymentKey, amount);
 
         TossPaymentApiResponse paymentApiResponse = requestPaymentApi(httpHeaders, params);
         validatePaymentResult(payment, paymentApiResponse);
@@ -157,10 +162,10 @@ public class PaymentService {
         }
     }
 
-    private JSONObject getParams(Long orderId, String paymentKey, Integer amount) {
+    private JSONObject getParams(String uuid, String paymentKey, Integer amount) {
         JSONObject params = new JSONObject();
         params.put("paymentKey", paymentKey);
-        params.put("orderId", orderId);
+        params.put("orderId", uuid);
         params.put("amount", amount);
 
         return params;
@@ -187,8 +192,8 @@ public class PaymentService {
         );
     }
 
-    private Payment getPaymentByOrderIdAndUserId(Long orderId, Long userId) {
-        return paymentRepository.findByOrder_OrderIdAndUser_UserId(orderId, userId)
+    private Payment getPaymentByUuidAndUserId(String uuid, Long userId) {
+        return paymentRepository.findByOrder_UuidAndUser_UserId(uuid, userId)
             .orElseThrow(() -> new NotFoundPaymentException("결제가 존재하지 않습니다."));
     }
 }

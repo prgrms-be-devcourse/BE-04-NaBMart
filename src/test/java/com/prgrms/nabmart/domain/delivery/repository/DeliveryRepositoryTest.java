@@ -11,6 +11,7 @@ import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,6 +44,7 @@ class DeliveryRepositoryTest {
     private List<Order> createAndSaveOrders(int end) {
         List<Order> orders = IntStream.range(0, end)
             .mapToObj(i -> Order.builder()
+                .uuid(UUID.randomUUID().toString())
                 .price(1000)
                 .name("비비고 왕교자 1개 외 2개")
                 .user(user)

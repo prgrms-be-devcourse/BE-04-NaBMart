@@ -85,7 +85,7 @@ public class PaymentControllerTest extends BaseControllerTest {
                     responseFields(
                         fieldWithPath("amount").type(NUMBER).description("금액"),
                         fieldWithPath("paymentType").type(STRING).description("결제 타입"),
-                        fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
+                        fieldWithPath("orderId").type(STRING).description("주문 UUID"),
                         fieldWithPath("orderName").type(STRING).description("주문 대표명"),
                         fieldWithPath("customerEmail").type(STRING).description("고객 이메일"),
                         fieldWithPath("customerName").type(STRING).description("고객명"),
@@ -109,14 +109,14 @@ public class PaymentControllerTest extends BaseControllerTest {
 
             String paymentKey = "paymentKey";
 
-            when(paymentService.confirmPayment(user.getUserId(), order.getOrderId(), paymentKey,
+            when(paymentService.confirmPayment(user.getUserId(), order.getUuid(), paymentKey,
                 order.getPrice()))
                 .thenReturn(new PaymentResponse("SUCCESS"));
 
             // when
             ResultActions result = mockMvc.perform(
                 get("/api/v1/pays/toss/success")
-                    .queryParam("orderId", String.valueOf(order.getOrderId()))
+                    .queryParam("orderId", order.getUuid())
                     .queryParam("paymentKey", paymentKey)
                     .queryParam("amount", String.valueOf(order.getPrice()))
                     .contentType(MediaType.APPLICATION_JSON));

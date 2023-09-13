@@ -17,7 +17,7 @@ public class PaymentDtoFixture {
         return new PaymentRequestResponse(
             PAYMENT_TYPE_CARD,
             order.getPrice(),
-            order.getOrderId(),
+            order.getUuid(),
             order.getName(),
             order.getUser().getEmail(),
             order.getUser().getNickname(),

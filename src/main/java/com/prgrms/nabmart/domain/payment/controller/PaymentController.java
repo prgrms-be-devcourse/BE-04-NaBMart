@@ -37,12 +37,12 @@ public class PaymentController {
 
     @GetMapping("/toss/success")
     public ResponseEntity<PaymentResponse> paySuccess(
-        @RequestParam Long orderId,
-        @RequestParam String paymentKey,
-        @RequestParam Integer amount,
+        @RequestParam("orderId") String uuid,
+        @RequestParam("paymentKey") String paymentKey,
+        @RequestParam("amount") Integer amount,
         @LoginUser Long userId
     ) {
         return ResponseEntity.ok(
-            paymentService.confirmPayment(userId, orderId, paymentKey, amount));
+            paymentService.confirmPayment(userId, uuid, paymentKey, amount));
     }
 }

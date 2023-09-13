@@ -179,11 +179,11 @@ class PaymentServiceTest {
             int amount = order.getPrice();
             PaymentResponse expected = paymentResponseWithSuccess();
 
-            when(paymentRepository.findByOrder_OrderIdAndUser_UserId(order.getOrderId(),
+            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
                 user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
-            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
                 .thenReturn(Optional.of(order));
 
             when(apiService.getResult(any(), any(), any())).thenReturn(
@@ -192,7 +192,7 @@ class PaymentServiceTest {
 
             // when
             PaymentResponse result = paymentService.confirmPayment(user.getUserId(),
-                order.getOrderId(), mockPaymentKey,
+                order.getUuid(), mockPaymentKey,
                 amount);
 
             // then
@@ -209,14 +209,14 @@ class PaymentServiceTest {
             String mockPaymentKey = "mockPaymentKey";
             int amount = order.getPrice();
 
-            when(paymentRepository.findByOrder_OrderIdAndUser_UserId(order.getOrderId(),
+            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
                 user.getUserId()))
                 .thenReturn(Optional.empty());
 
             // when
             Exception exception = catchException(
                 () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getOrderId(), mockPaymentKey,
+                    order.getUuid(), mockPaymentKey,
                     amount));
 
             // then
@@ -234,14 +234,14 @@ class PaymentServiceTest {
             String mockPaymentKey = "mockPaymentKey";
             int amount = order.getPrice();
 
-            when(paymentRepository.findByOrder_OrderIdAndUser_UserId(order.getOrderId(),
+            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
                 user.getUserId()))
                 .thenReturn(Optional.of(canceledPayment));
 
             // when
             Exception exception = catchException(
                 () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getOrderId(), mockPaymentKey,
+                    order.getUuid(), mockPaymentKey,
                     amount));
 
             // then
@@ -258,14 +258,14 @@ class PaymentServiceTest {
             String mockPaymentKey = "mockPaymentKey";
             int amount = 123;
 
-            when(paymentRepository.findByOrder_OrderIdAndUser_UserId(order.getOrderId(),
+            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
                 user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
             // when
             Exception exception = catchException(
                 () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getOrderId(), mockPaymentKey,
+                    order.getUuid(), mockPaymentKey,
                     amount));
 
             // then
@@ -282,17 +282,17 @@ class PaymentServiceTest {
             String mockPaymentKey = "mockPaymentKey";
             int amount = order.getPrice();
 
-            when(paymentRepository.findByOrder_OrderIdAndUser_UserId(order.getOrderId(),
+            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
                 user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
-            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
                 .thenReturn(Optional.of(order));
 
             // when
             Exception exception = catchException(
                 () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getOrderId(), mockPaymentKey,
+                    order.getUuid(), mockPaymentKey,
                     amount));
 
             // then
@@ -309,11 +309,11 @@ class PaymentServiceTest {
             String mockPaymentKey = "mockPaymentKey";
             int amount = order.getPrice();
 
-            when(paymentRepository.findByOrder_OrderIdAndUser_UserId(order.getOrderId(),
+            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
                 user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
-            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
                 .thenReturn(Optional.of(order));
 
             when(apiService.getResult(any(), any(), any())).thenReturn(
@@ -323,7 +323,7 @@ class PaymentServiceTest {
             // when
             Exception exception = catchException(
                 () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getOrderId(), mockPaymentKey,
+                    order.getUuid(), mockPaymentKey,
                     amount));
 
             // then
@@ -340,11 +340,11 @@ class PaymentServiceTest {
             String mockPaymentKey = "mockPaymentKey";
             int amount = order.getPrice();
 
-            when(paymentRepository.findByOrder_OrderIdAndUser_UserId(order.getOrderId(),
+            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
                 user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
-            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
+            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
                 .thenReturn(Optional.of(order));
 
             when(apiService.getResult(any(), any(), any())).thenReturn(
@@ -354,7 +354,7 @@ class PaymentServiceTest {
             // when
             Exception exception = catchException(
                 () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getOrderId(), mockPaymentKey,
+                    order.getUuid(), mockPaymentKey,
                     amount));
 
             // then

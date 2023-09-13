@@ -50,6 +50,8 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final com.prgrms.nabmart.domain.coupon.QUserCoupon userCoupon;
 
+    public final StringPath uuid = createString("uuid");
+
     public QOrder(String variable) {
         this(Order.class, forVariable(variable), INITS);
     }

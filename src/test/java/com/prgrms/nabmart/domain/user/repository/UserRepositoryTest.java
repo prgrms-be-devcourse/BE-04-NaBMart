@@ -13,6 +13,7 @@ import com.prgrms.nabmart.global.config.JpaAuditingConfig;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -63,6 +64,7 @@ class UserRepositoryTest {
     private Order createOrder(User user) {
         return Order.builder()
             .name("name")
+            .uuid(UUID.randomUUID().toString())
             .userCoupon(null)
             .price(1000)
             .user(user)

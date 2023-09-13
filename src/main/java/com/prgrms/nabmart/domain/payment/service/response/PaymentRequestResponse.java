@@ -3,7 +3,7 @@ package com.prgrms.nabmart.domain.payment.service.response;
 public record PaymentRequestResponse(
     String paymentType,
     Integer amount,
-    Long orderId,
+    String orderId,
     String orderName,
     String customerEmail,
     String customerName,
