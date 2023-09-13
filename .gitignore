@@ -39,3 +39,6 @@ out/
 ### VS Code ###
 .vscode/
 .DS_Store
+
+### QueryDSL ###
+/src/main/generated
