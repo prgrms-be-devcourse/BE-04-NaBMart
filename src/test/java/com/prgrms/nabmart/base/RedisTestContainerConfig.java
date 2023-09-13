@@ -20,9 +20,9 @@ public class RedisTestContainerConfig {
     }
 
     @DynamicPropertySource
-    public static void overrideProps(DynamicPropertyRegistry registry) {
-        registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
-        registry.add("spring.redis.port",
-            () -> REDIS_CONTAINER.getMappedPort(REDIS_PORT).toString());
+    private static void registerRedisProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+        registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(REDIS_PORT)
+            .toString());
     }
 }
