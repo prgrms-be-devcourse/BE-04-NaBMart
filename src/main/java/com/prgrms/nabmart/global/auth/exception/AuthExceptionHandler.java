@@ -15,8 +15,8 @@ public class AuthExceptionHandler {
             .body(ErrorTemplate.of(ex.getMessage()));
     }
 
-    @ExceptionHandler(OAuthUnlinkFailureException.class)
-    public ResponseEntity<ErrorTemplate> oAuthUnlinkFailureExHandle(OAuthUnlinkFailureException ex) {
+    @ExceptionHandler({OAuthUnlinkFailureException.class, UnAuthenticationException.class})
+    public ResponseEntity<ErrorTemplate> authenticationFailExHand(AuthException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(ErrorTemplate.of(ex.getMessage()));
     }
