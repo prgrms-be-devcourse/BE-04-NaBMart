@@ -11,6 +11,7 @@ import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.CreateOrderItemRequest;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
@@ -23,6 +24,7 @@ import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponRespo
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final UserCouponRepository userCouponRepository;
+
 
     @Transactional
     public CreateOrderResponse createOrder(final CreateOrdersCommand createOrdersCommand) {
@@ -66,6 +69,28 @@ public class OrderService {
         findOrder.setUserCoupon(findUserCoupon);
 
         return UpdateOrderByCouponResponse.of(findOrder, findUserCoupon.getCoupon());
+    }
+
+    @Transactional
+    public void updateOrderStatus() {
+        //30분
+        LocalDateTime expiredTime = LocalDateTime.now().minusMinutes(30);
+        List<OrderStatus> statusList = List.of(OrderStatus.PENDING, OrderStatus.PAYING);
+
+        List<Order> expiredOrders = orderRepository.findByStatusInBeforeExpiredTime(
+            expiredTime, statusList);
+
+        for (Order expirdeOrder : expiredOrders) {
+            updateItemQuantity(expirdeOrder);
+            expirdeOrder.updateOrderStatus(OrderStatus.CANCELED);
+        }
+    }
+
+    private static void updateItemQuantity(Order order) {
+        List<OrderItem> orderItems = order.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
+            orderItem.getItem().increaseQuantity(orderItem.getQuantity());
+        }
     }
 
     @Transactional(readOnly = true)
@@ -97,7 +122,7 @@ public class OrderService {
         return orderItems;
     }
 
-    private static void validateItemQuantity(final Item findItem, final Integer quantity) {
+    private void validateItemQuantity(final Item findItem, final Integer quantity) {
         if (findItem.getQuantity() - quantity < 0) {
             throw new InvalidItemException("상품의 재고 수량이 부족합니다");
         }

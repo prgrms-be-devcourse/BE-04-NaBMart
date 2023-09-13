@@ -9,7 +9,7 @@ public record UpdateOrderByCouponResponse(
 ) {
 
     public static UpdateOrderByCouponResponse of(final Order order, final Coupon coupon) {
-        return new UpdateOrderByCouponResponse(order.getPrice() - coupon.getDiscount(),
+        return new UpdateOrderByCouponResponse(order.getPrice(),
             coupon.getDiscount());
     }
 }
