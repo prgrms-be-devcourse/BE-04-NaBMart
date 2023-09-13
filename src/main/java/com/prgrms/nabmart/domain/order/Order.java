@@ -106,10 +106,10 @@ public class Order extends BaseTimeEntity {
 
     public void setUserCoupon(final UserCoupon userCoupon) {
         if (this.userCoupon != null) {
-            this.price += this.userCoupon.getCoupon().getDiscount();
+            this.price += this.userCoupon.getDiscount();
         }
         this.userCoupon = userCoupon;
-        this.price -= userCoupon.getCoupon().getDiscount();
+        this.price -= userCoupon.getDiscount();
 
     }
 

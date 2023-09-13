@@ -122,7 +122,7 @@ public class OrderService {
         return orderItems;
     }
 
-    private static void validateItemQuantity(final Item findItem, final Integer quantity) {
+    private void validateItemQuantity(final Item findItem, final Integer quantity) {
         if (findItem.getQuantity() - quantity < 0) {
             throw new InvalidItemException("상품의 재고 수량이 부족합니다");
         }
