@@ -1,7 +1,9 @@
 package com.prgrms.nabmart.global.auth.resolver;
 
 import com.prgrms.nabmart.global.auth.LoginUser;
+import com.prgrms.nabmart.global.auth.exception.UnAuthenticationException;
 import com.prgrms.nabmart.global.auth.jwt.dto.JwtAuthentication;
+import java.util.Objects;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +28,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         NativeWebRequest webRequest,
         WebDataBinderFactory binderFactory) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(Objects.isNull(authentication)) {
+            throw new UnAuthenticationException("인증되지 않은 요청입니다.");
+        }
         JwtAuthentication jwtAuthentication = (JwtAuthentication) authentication.getPrincipal();
         return jwtAuthentication.userId();
     }
