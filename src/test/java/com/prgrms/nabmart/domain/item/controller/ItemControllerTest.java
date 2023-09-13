@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -18,6 +19,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.prgrms.nabmart.base.BaseControllerTest;
+import com.prgrms.nabmart.domain.item.controller.request.RegisterItemRequest;
 import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
@@ -276,6 +278,8 @@ class ItemControllerTest extends BaseControllerTest {
                             .description("상품 재고수량"),
                         fieldWithPath("discount").type(NUMBER)
                             .description("상품 할인율"),
+                        fieldWithPath("maxBuyQuantity").type(NUMBER)
+                            .description("상품 최대 주문수량"),
                         fieldWithPath("description").type(STRING)
                             .description("상품 설명"),
                         fieldWithPath("mainCategoryId").type(NUMBER)
@@ -284,7 +288,53 @@ class ItemControllerTest extends BaseControllerTest {
                             .description("상품 소카테고리 ID")
                     )
                 ));
+        }
 
+
+    }
+
+
+    @Nested
+    @DisplayName("상품 등록 api 호출 시")
+    class SaveItem {
+
+        RegisterItemRequest registerItemRequest = ItemFixture.registerItemRequest();
+        Long ITEM_ID = 1L;
+
+        @Test
+        @DisplayName("성공")
+        public void registerItem() throws Exception {
+
+            // When
+            ResultActions resultActions = mockMvc.perform(
+                post("/api/v1/items")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(registerItemRequest)));
+
+            // Then
+            resultActions.andExpect(status().isCreated())
+                .andDo(document(
+                        "Register Item",
+                        requestFields(
+                            fieldWithPath("name").type(STRING)
+                                .description("상품명"),
+                            fieldWithPath("price").type(NUMBER)
+                                .description("상품 단가"),
+                            fieldWithPath("quantity").type(NUMBER)
+                                .description("상품 재고수량"),
+                            fieldWithPath("discount").type(NUMBER)
+                                .description("상품 할인율"),
+                            fieldWithPath("maxBuyQuantity").type(NUMBER)
+                                .description("상품 최대 주문수량"),
+                            fieldWithPath("description").type(STRING)
+                                .description("상품 설명"),
+                            fieldWithPath("mainCategoryId").type(NUMBER)
+                                .description("상품 대카테고리 ID"),
+                            fieldWithPath("subCategoryId").type(NUMBER)
+                                .description("상품 소카테고리 ID")
+                        )
+                    )
+                );
         }
     }
 }

@@ -20,6 +20,7 @@ import com.prgrms.nabmart.domain.item.service.request.FindHotItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemDetailCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
@@ -54,6 +55,33 @@ class ItemServiceTest {
 
     @InjectMocks
     private ItemService itemService;
+
+    @Nested
+    @DisplayName("saveItem 메서드 실행 시")
+    class SaveItem {
+
+        RegisterItemCommand registerItemCommand = ItemFixture.registerItemCommand();
+        Item item = ItemFixture.item();
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = CategoryFixture.subCategory(mainCategory);
+
+        @Test
+        @DisplayName("성공")
+        public void save() {
+            // Given
+            when(mainCategoryRepository.findById(anyLong())).thenReturn(Optional.of(mainCategory));
+            when(subCategoryRepository.findById(anyLong())).thenReturn(Optional.of(subCategory));
+            when(itemRepository.save(any())).thenReturn(item);
+
+            // When
+            itemService.saveItem(registerItemCommand);
+
+            // Then
+            verify(mainCategoryRepository, times(1)).findById(anyLong());
+            verify(subCategoryRepository, times(1)).findById(anyLong());
+            verify(itemRepository, times(1)).save(any());
+        }
+    }
 
     @Nested
     @DisplayName("updateItem 메서드 실행 시")
@@ -480,9 +508,7 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item1, item2, item3);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.NEW);
 
-            when(itemRepository.findByCreatedAtAfterAndItemIdLessThanOrderByCreatedAtDesc(any(),
-                any(), any()))
-                .thenReturn(expectedItems);
+            when(itemRepository.findNewItemsOrderBy(anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findNewItems(command);
@@ -500,10 +526,7 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item3, item2, item1);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.DISCOUNT);
 
-            when(
-                itemRepository.findByCreatedAtAfterAndDiscountLessThanOrderByDiscountDescItemIdDesc(
-                    any(), anyInt(), any()))
-                .thenReturn(expectedItems);
+            when(itemRepository.findNewItemsOrderBy(anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findNewItems(command);
@@ -521,10 +544,7 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item3, item2, item1);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.HIGHEST_AMOUNT);
 
-            when(
-                itemRepository.findByCreatedAtAfterAndPriceLessThanOrderByPriceDescItemIdDesc(any(),
-                    anyInt(), any()))
-                .thenReturn(expectedItems);
+            when(itemRepository.findNewItemsOrderBy(anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findNewItems(command);
@@ -542,9 +562,7 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item1, item2, item3);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.LOWEST_AMOUNT);
 
-            when(itemRepository.findByCreatedAtAfterAndPriceGreaterThanOrderByPriceAscItemIdDesc(
-                any(), anyInt(), any()))
-                .thenReturn(expectedItems);
+            when(itemRepository.findNewItemsOrderBy(anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findNewItems(command);
@@ -562,10 +580,7 @@ class ItemServiceTest {
             List<Item> expectedItems = List.of(item2, item3);
             FindNewItemsCommand command = getFindNewItemsCommand(ItemSortType.POPULAR);
 
-            when(orderItemRepository.countByOrderItemId(anyLong()))
-                .thenReturn(Long.MAX_VALUE);
-            when(itemRepository.findNewItemOrderByOrders(any(), anyInt(), any()))
-                .thenReturn(expectedItems);
+            when(itemRepository.findNewItemsOrderBy(anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findNewItems(command);
@@ -575,7 +590,7 @@ class ItemServiceTest {
         }
 
         private FindNewItemsCommand getFindNewItemsCommand(ItemSortType itemSortType) {
-            return new FindNewItemsCommand(-1L, PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
+            return new FindNewItemsCommand(-1L, -1L, PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE),
                 itemSortType);
         }
     }

@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.delivery.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
+import com.prgrms.nabmart.base.TestQueryDslConfig;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.Rider;
@@ -15,6 +16,7 @@ import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 import org.assertj.core.data.TemporalUnitOffset;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +25,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
+@Import(TestQueryDslConfig.class)
 class DeliveryRepositoryTest {
 
     @Autowired
@@ -54,6 +58,7 @@ class DeliveryRepositoryTest {
     private List<Order> createAndSaveOrders(int end) {
         List<Order> orders = IntStream.range(0, end)
             .mapToObj(i -> Order.builder()
+                .uuid(UUID.randomUUID().toString())
                 .price(1000)
                 .name("비비고 왕교자 1개 외 2개")
                 .user(user)

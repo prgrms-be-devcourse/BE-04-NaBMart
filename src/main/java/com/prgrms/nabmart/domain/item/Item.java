@@ -95,6 +95,10 @@ public class Item extends BaseTimeEntity {
         this.quantity -= quantity;
     }
 
+    public void increaseQuantity(final int quantity) {
+        this.quantity += quantity;
+    }
+
     public void updateItem(
         final String name,
         final int price,

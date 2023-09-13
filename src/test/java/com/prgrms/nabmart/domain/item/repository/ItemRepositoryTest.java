@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.item.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.prgrms.nabmart.base.TestQueryDslConfig;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
@@ -18,9 +19,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
+@Import(TestQueryDslConfig.class)
 class ItemRepositoryTest {
 
     @Autowired
