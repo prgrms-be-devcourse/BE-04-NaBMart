@@ -104,9 +104,6 @@ build {
     dependsOn copyDocument
 }
 
-
-
-
 // Querydsl 설정부
 def generated = 'src/main/generated'
 
