@@ -8,12 +8,14 @@ import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.LikeItem;
+import com.prgrms.nabmart.domain.item.controller.request.RegisterItemRequest;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterLikeItemRequest;
 import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindLikeItemsCommand;
 import com.prgrms.nabmart.domain.item.service.request.FindNewItemsCommand;
+import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
@@ -113,11 +115,30 @@ public final class ItemFixture {
     }
 
     public static UpdateItemRequest updateItemRequest() {
-        return new UpdateItemRequest(NAME, PRICE, QUANTITY, DISCOUNT, DESCRIPTION,
+        return new UpdateItemRequest(NAME, PRICE, QUANTITY, DISCOUNT, MAX_QUANTITY, DESCRIPTION,
             1L, 1L);
     }
 
     public static UpdateItemCommand updateItemCommand() {
         return UpdateItemCommand.of(ITEM_ID, updateItemRequest());
     }
+
+    public static RegisterItemRequest registerItemRequest() {
+        return RegisterItemRequest.builder()
+            .name(NAME)
+            .price(PRICE)
+            .description(DESCRIPTION)
+            .quantity(QUANTITY)
+            .discount(DISCOUNT)
+            .maxBuyQuantity(MAX_QUANTITY)
+            .mainCategoryId(1L)
+            .subCategoryId(1L)
+            .build();
+
+    }
+
+    public static RegisterItemCommand registerItemCommand() {
+        return RegisterItemCommand.from(registerItemRequest());
+    }
+
 }
