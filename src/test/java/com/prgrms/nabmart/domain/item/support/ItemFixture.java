@@ -138,7 +138,17 @@ public final class ItemFixture {
     }
 
     public static RegisterItemCommand registerItemCommand() {
-        return RegisterItemCommand.from(registerItemRequest());
+        RegisterItemRequest registerItemRequest = registerItemRequest();
+        return RegisterItemCommand.of(
+            registerItemRequest.name(),
+            registerItemRequest.price(),
+            registerItemRequest.description(),
+            registerItemRequest.quantity(),
+            registerItemRequest.discount(),
+            registerItemRequest.maxBuyQuantity(),
+            registerItemRequest.mainCategoryId(),
+            registerItemRequest.subCategoryId()
+        );
     }
 
 }

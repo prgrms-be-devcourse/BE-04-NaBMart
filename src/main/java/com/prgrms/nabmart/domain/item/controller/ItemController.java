@@ -91,7 +91,16 @@ public class ItemController {
     public ResponseEntity<Void> saveItem(
         @RequestBody @Valid RegisterItemRequest registerItemRequest
     ) {
-        RegisterItemCommand registerItemCommand = RegisterItemCommand.from(registerItemRequest);
+        RegisterItemCommand registerItemCommand = RegisterItemCommand.of(
+            registerItemRequest.name(),
+            registerItemRequest.price(),
+            registerItemRequest.description(),
+            registerItemRequest.quantity(),
+            registerItemRequest.discount(),
+            registerItemRequest.maxBuyQuantity(),
+            registerItemRequest.mainCategoryId(),
+            registerItemRequest.subCategoryId()
+        );
         Long savedItemId = itemService.saveItem(registerItemCommand);
         URI location = URI.create(BASE_URI + savedItemId);
         return ResponseEntity.created(location).build();

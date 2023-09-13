@@ -1,6 +1,5 @@
 package com.prgrms.nabmart.domain.item.service.request;
 
-import com.prgrms.nabmart.domain.item.controller.request.RegisterItemRequest;
 import lombok.Builder;
 
 @Builder
@@ -9,16 +8,25 @@ public record RegisterItemCommand(String name, int price, String description,
                                   int discount, int maxBuyQuantity, Long mainCategoryId,
                                   Long subCategoryId) {
 
-    public static RegisterItemCommand from(RegisterItemRequest registerItemRequest) {
+    public static RegisterItemCommand of(
+        final String name,
+        final int price,
+        final String description,
+        final int quantity,
+        final int discount,
+        final int maxBuyQuantity,
+        final Long mainCategoryId,
+        final Long subCategoryId
+    ) {
         return RegisterItemCommand.builder()
-            .name(registerItemRequest.name())
-            .price(registerItemRequest.price())
-            .description(registerItemRequest.description())
-            .quantity(registerItemRequest.quantity())
-            .discount(registerItemRequest.discount())
-            .maxBuyQuantity(registerItemRequest.maxBuyQuantity())
-            .mainCategoryId(registerItemRequest.mainCategoryId())
-            .subCategoryId(registerItemRequest.subCategoryId())
+            .name(name)
+            .price(price)
+            .description(description)
+            .quantity(quantity)
+            .discount(discount)
+            .maxBuyQuantity(maxBuyQuantity)
+            .mainCategoryId(mainCategoryId)
+            .subCategoryId(subCategoryId)
             .build();
     }
 }
