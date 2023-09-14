@@ -98,7 +98,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             reviewRepository.save(givenReview);
 
             Long result = 1L;
-            String cacheKey = "item:" + givenItem.getItemId();
+            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
 
             // when
             log.info("DB에서 총 리뷰 수 가져오기");
@@ -149,10 +149,40 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             userRepository.save(givenUser);
             reviewRepository.save(givenReview);
 
-            String cacheKey = "item:" + givenItem.getItemId();
+            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
 
             // when
             redisCacheService.plusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
+                cacheKey);
+            Long dbCount = redisCacheService.getTotalNumberOfReviewsByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            Long cachedCount = redisCacheService.getTotalNumberOfReviewsByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            // then
+            assertEquals(dbCount, cachedCount);
+        }
+    }
+
+    @Nested
+    @DisplayName("상품의 총 리뷰 수를 감소하는 서비스 실행 시")
+    class MinusOneToTotalNumberOfReviewsByItemId {
+
+        @Test
+        @DisplayName("Redis에 값이 없으면 DB에서 가져오고, 값이 있으면 Redis에 총 리뷰 수를 -1한다.")
+        void shouldMinusOneToTotalNumberOfReviewsByItemId() {
+            // given
+            mainCategoryRepository.save(givenMainCategory);
+            subCategoryRepository.save(givenSubCategory);
+            itemRepository.save(givenItem);
+            userRepository.save(givenUser);
+            reviewRepository.save(givenReview);
+
+            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+
+            // when
+            redisCacheService.minusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
                 cacheKey);
             Long dbCount = redisCacheService.getTotalNumberOfReviewsByItemId(
                 givenItem.getItemId(), cacheKey);
