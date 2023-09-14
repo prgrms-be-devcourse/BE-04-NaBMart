@@ -9,4 +9,7 @@ public interface ItemRepositoryCustom {
 
     List<Item> findNewItemsOrderBy(Long lastIdx, Long lastItemId, ItemSortType sortType,
         Pageable pageable);
+
+    List<Item> findHotItemsOrderBy(Long lastIdx, Long lastItemId, ItemSortType sortType,
+        Pageable pageable);
 }

@@ -92,8 +92,10 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
-        return FindItemsResponse.from(itemRepository.findNewItemsOrderBy(findNewItemsCommand.lastIdx(),
-            findNewItemsCommand.lastItemId(), findNewItemsCommand.sortType(), findNewItemsCommand.pageRequest()));
+        return FindItemsResponse.from(
+            itemRepository.findNewItemsOrderBy(findNewItemsCommand.lastIdx(),
+                findNewItemsCommand.lastItemId(), findNewItemsCommand.sortType(),
+                findNewItemsCommand.pageRequest()));
     }
 
     @Transactional
@@ -218,31 +220,9 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public FindItemsResponse findHotItems(FindHotItemsCommand findHotItemsCommand) {
-        List<Item> items = findHotItemsFrom(findHotItemsCommand);
+        List<Item> items = itemRepository.findHotItemsOrderBy(findHotItemsCommand.lastIdx(),
+            findHotItemsCommand.lastItemId(), findHotItemsCommand.sortType(),
+            findHotItemsCommand.pageRequest());
         return FindItemsResponse.from(items);
-    }
-
-    private List<Item> findHotItemsFrom(FindHotItemsCommand findHotItemsCommand) {
-        return switch (findHotItemsCommand.sortType()) {
-            case NEW -> itemRepository.findHotItemOrderByItemIdDesc(findHotItemsCommand.lastIdx(),
-                findHotItemsCommand.pageRequest());
-            case LOWEST_AMOUNT ->
-                itemRepository.findHotItemOrderByPriceAsc(findHotItemsCommand.lastIdx().intValue(),
-                    findHotItemsCommand.pageRequest());
-            case HIGHEST_AMOUNT ->
-                itemRepository.findHotItemOrderByPriceDesc(findHotItemsCommand.lastIdx().intValue(),
-                    findHotItemsCommand.pageRequest());
-            case DISCOUNT -> itemRepository.findHotItemOrderByDiscountDesc(
-                findHotItemsCommand.lastIdx().intValue(), findHotItemsCommand.pageRequest());
-            default -> {
-                int lastIdx = findHotItemsCommand.lastIdx().intValue();
-                if (lastIdx != Integer.MAX_VALUE) {
-                    lastIdx = orderItemRepository.countByOrderItemId(findHotItemsCommand.lastIdx())
-                        .intValue();
-                }
-                yield itemRepository.findHotItemOrderByOrdersDesc(lastIdx,
-                    findHotItemsCommand.pageRequest());
-            }
-        };
     }
 }
