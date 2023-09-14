@@ -5,6 +5,7 @@ import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static com.prgrms.nabmart.domain.user.support.UserFixture.user;
 
 import com.prgrms.nabmart.domain.coupon.UserCoupon;
+import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.OrderStatus;
@@ -60,6 +61,8 @@ public class OrderFixture {
     }
 
     private static OrderItem orderItem() {
+        Item item = item();
+        ReflectionTestUtils.setField(item, "itemId", 1L);
         return new OrderItem(item(), 1);
     }
 

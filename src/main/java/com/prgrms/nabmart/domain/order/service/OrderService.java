@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private static final Integer PAGE_SIZE = 10;
+
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;

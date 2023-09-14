@@ -117,7 +117,7 @@ public class Order extends BaseTimeEntity {
         this.price -= userCoupon.getDiscount();
 
     }
-
+    
     private void calculateDeliveryFee(final int totalPrice) {
         if (totalPrice >= 43000) {
             this.deliveryFee = 0;

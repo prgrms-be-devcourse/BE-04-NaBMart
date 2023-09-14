@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.order.service;
 
+
 import static com.prgrms.nabmart.domain.coupon.support.CouponFixture.userCoupon;
 import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.completedOrder;
@@ -169,6 +170,7 @@ public class OrderServiceTest {
             // Given
             User user = user();
             Item item = item();
+
             ReflectionTestUtils.setField(item, "itemId", 1L);
             int getQuantity = item.getQuantity();
             int quantityToOrder = getQuantity + 1; // 상품의 재고를 초과하는 수량
@@ -179,6 +181,7 @@ public class OrderServiceTest {
             CreateOrdersCommand createOrdersCommand = createOrdersCommand(createOrderRequest);
 
             when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
+
             when(itemRepository.findByItemId(any())).thenReturn(Optional.ofNullable(item));
 
             // When
