@@ -17,8 +17,11 @@ import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindNewItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindNewItemsResponse.FindNewItemResponse;
 import com.prgrms.nabmart.domain.item.service.response.ItemRedisDto;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
+import com.prgrms.nabmart.domain.review.service.RedisCacheService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,7 @@ public class ItemService {
     private final MainCategoryRepository mainCategoryRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final ItemCacheService itemCacheService;
+    private final RedisCacheService redisCacheService;
 
     @Transactional
     public Long saveItem(RegisterItemCommand registerItemCommand) {
@@ -93,11 +97,18 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
-        return FindItemsResponse.from(
-            itemRepository.findNewItemsOrderBy(findNewItemsCommand.lastIdx(),
-                findNewItemsCommand.lastItemId(), findNewItemsCommand.sortType(),
-                findNewItemsCommand.pageRequest()));
+    public FindNewItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
+        List<ItemRedisDto> itemRedisDtos = itemCacheService.getNewItems();
+
+        List<FindNewItemResponse> items = itemRedisDtos.stream().map(item -> FindNewItemResponse.of(
+            item.itemId(),
+            item.name(),
+            item.price(),
+            item.discount(),
+            redisCacheService.getTotalNumberOfReviewsByItemId(item.itemId(), "reviewCount_Item_" + item.itemId())
+        )).toList();
+
+        return FindNewItemsResponse.from(items);
     }
 
     @Transactional

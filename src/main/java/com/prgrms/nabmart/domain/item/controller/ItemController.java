@@ -11,6 +11,7 @@ import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindNewItemsResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +59,7 @@ public class ItemController {
     }
 
     @GetMapping("/new")
-    public ResponseEntity<FindItemsResponse> findNewItems(
+    public ResponseEntity<FindNewItemsResponse> findNewItems(
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastItemId,
         @RequestParam int size,
