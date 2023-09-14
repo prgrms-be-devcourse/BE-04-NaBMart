@@ -97,7 +97,15 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public FindNewItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
+    public FindItemsResponse findNewItems(FindNewItemsCommand findNewItemsCommand) {
+        return FindItemsResponse.from(
+            itemRepository.findNewItemsOrderBy(findNewItemsCommand.lastIdx(),
+                findNewItemsCommand.lastItemId(), findNewItemsCommand.sortType(),
+                findNewItemsCommand.pageRequest()));
+    }
+
+    @Transactional(readOnly = true)
+    public FindNewItemsResponse findNewItemsWithRedis() {
         List<ItemRedisDto> itemRedisDtos = itemCacheService.getNewItems();
 
         List<FindNewItemResponse> items = itemRedisDtos.stream().map(item -> FindNewItemResponse.of(

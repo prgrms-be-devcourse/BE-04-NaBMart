@@ -59,7 +59,7 @@ public class ItemController {
     }
 
     @GetMapping("/new")
-    public ResponseEntity<FindNewItemsResponse> findNewItems(
+    public ResponseEntity<FindItemsResponse> findNewItems(
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastItemId,
         @RequestParam int size,
@@ -68,6 +68,11 @@ public class ItemController {
         FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(lastIdx, lastItemId, size,
             sort);
         return ResponseEntity.ok(itemService.findNewItems(findNewItemsCommand));
+    }
+
+    @GetMapping("/new-items")
+    public ResponseEntity<FindNewItemsResponse> findNewItemsWithRedis() {
+        return ResponseEntity.ok(itemService.findNewItemsWithRedis());
     }
 
     @GetMapping("/hot")
