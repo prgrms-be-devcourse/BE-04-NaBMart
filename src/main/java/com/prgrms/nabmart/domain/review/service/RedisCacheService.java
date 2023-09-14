@@ -12,7 +12,7 @@ public class RedisCacheService {
     private final ReviewRepository reviewRepository;
     private final RedisTemplate<String, Long> redisTemplate;
 
-    public Long getTotalReviewsByItemId(
+    public Long getTotalNumberOfReviewsByItemId(
         final Long itemId,
         final String cacheKey
     ) {
@@ -29,7 +29,7 @@ public class RedisCacheService {
         return dbCount;
     }
 
-    public void updateTotalReviewsByItemId(
+    public void plusOneToTotalNumberOfReviewsByItemId(
         final Long itemId,
         final String cacheKey
     ) {

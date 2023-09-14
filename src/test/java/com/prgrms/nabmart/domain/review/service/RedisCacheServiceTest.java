@@ -85,11 +85,11 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
     @Nested
     @DisplayName("상품의 총 리뷰 수를 가져오는 Service 실행 시")
-    class GetTotalReviewsByItemId {
+    class GetTotalNumberOfReviewsByItem {
 
         @Test
         @DisplayName("Redis에 값이 없으면 DB에서 가져오고, 값이 있으면 Redis에서 가져온다.")
-        public void shouldGetTotalReviewsByItem() {
+        public void shouldGetTotalNumberOfReviewsByItem() {
             // given
             mainCategoryRepository.save(givenMainCategory);
             subCategoryRepository.save(givenSubCategory);
@@ -104,7 +104,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             log.info("DB에서 총 리뷰 수 가져오기");
             long startTime = System.currentTimeMillis();
 
-            Long dbCount = redisCacheService.getTotalReviewsByItemId(givenItem.getItemId(),
+            Long dbCount = redisCacheService.getTotalNumberOfReviewsByItemId(givenItem.getItemId(),
                 cacheKey);
 
             long stopTime = System.currentTimeMillis();
@@ -119,7 +119,8 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
             long startTime2 = System.currentTimeMillis();
 
-            Long cachedCount = redisCacheService.getTotalReviewsByItemId(givenItem.getItemId(),
+            Long cachedCount = redisCacheService.getTotalNumberOfReviewsByItemId(
+                givenItem.getItemId(),
                 cacheKey);
 
             long stopTime2 = System.currentTimeMillis();
@@ -136,11 +137,11 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
     @Nested
     @DisplayName("상품의 총 리뷰 수를 추가하는 서비스 실행 시")
-    class PlusOneAtTotalReviewsByItemId {
+    class PlusOneToTotalNumberOfReviewsByItemId {
 
         @Test
         @DisplayName("Redis에 값이 없으면 DB에서 가져오고, 값이 있으면 Redis에 총 리뷰 수를 +1한다.")
-        void shouldPlusOneAtTotalReviewsByItemId() {
+        void shouldPlusOneToTotalNumberOfReviewsByItemId() {
             // given
             mainCategoryRepository.save(givenMainCategory);
             subCategoryRepository.save(givenSubCategory);
@@ -151,11 +152,12 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             String cacheKey = "item:" + givenItem.getItemId();
 
             // when
-            redisCacheService.updateTotalReviewsByItemId(givenItem.getItemId(), cacheKey);
-            Long dbCount = redisCacheService.getTotalReviewsByItemId(
+            redisCacheService.plusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
+                cacheKey);
+            Long dbCount = redisCacheService.getTotalNumberOfReviewsByItemId(
                 givenItem.getItemId(), cacheKey);
 
-            Long cachedCount = redisCacheService.getTotalReviewsByItemId(
+            Long cachedCount = redisCacheService.getTotalNumberOfReviewsByItemId(
                 givenItem.getItemId(), cacheKey);
 
             // then
