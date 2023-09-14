@@ -42,6 +42,8 @@ public class OrderServiceIntegrationTest {
         properties.setProperty("TOSS_SECRET_KEY", "tossSecretKey");
         properties.setProperty("REDIS_HOST", "redisHost");
         properties.setProperty("REDIS_PORT", "6379");
+        properties.setProperty("spring.data.redis.host", "localhost");
+        properties.setProperty("spring.data.redis.port", "6379");
     }
 
     @Autowired

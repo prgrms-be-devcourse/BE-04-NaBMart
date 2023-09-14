@@ -23,5 +23,7 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
         @Param("user") User user,
         @Param("isUsed") boolean isUsed,
         @Param("currentDate") LocalDate currentDate);
+
+    void deleteByUser(User findUser);
 }
 

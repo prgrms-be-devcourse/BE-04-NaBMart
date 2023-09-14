@@ -24,4 +24,10 @@ public class PaymentFixture {
 
         return payment;
     }
+
+    public static Payment successPayment(User user, Order order) {
+        Payment payment = pendingPayment(user, order);
+        ReflectionTestUtils.setField(payment, "paymentStatus", PaymentStatus.SUCCESS);
+        return payment;
+    }
 }

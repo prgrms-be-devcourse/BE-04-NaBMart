@@ -15,4 +15,6 @@ public interface LikeItemRepository extends JpaRepository<LikeItem, Long> {
 
     @Query("select li from LikeItem li join fetch li.item where li.user = :user")
     Page<LikeItem> findByUserWithItem(@Param("user") User user, Pageable pageable);
+
+    void deleteByUser(User user);
 }

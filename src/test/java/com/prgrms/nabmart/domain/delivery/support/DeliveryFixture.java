@@ -43,6 +43,12 @@ public final class DeliveryFixture {
         return delivery;
     }
 
+    public static Delivery completedDelivery(Order order, Rider rider) {
+        Delivery delivery = acceptedDelivery(order, rider);
+        delivery.completeDelivery();
+        return delivery;
+    }
+
     public static FindDeliveryCommand findDeliveryCommand() {
         return new FindDeliveryCommand(USER_ID, ORDER_ID);
     }
