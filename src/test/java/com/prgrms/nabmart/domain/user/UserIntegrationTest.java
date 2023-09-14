@@ -2,45 +2,29 @@ package com.prgrms.nabmart.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.prgrms.nabmart.base.IntegrationTest;
 import com.prgrms.nabmart.domain.cart.Cart;
 import com.prgrms.nabmart.domain.cart.CartItem;
-import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
-import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.cart.support.CartFixture;
 import com.prgrms.nabmart.domain.cart.support.CartItemFixture;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
-import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
-import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.coupon.Coupon;
 import com.prgrms.nabmart.domain.coupon.UserCoupon;
-import com.prgrms.nabmart.domain.coupon.repository.CouponRepository;
-import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
 import com.prgrms.nabmart.domain.coupon.support.CouponFixture;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.Rider;
-import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
-import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
-import com.prgrms.nabmart.domain.event.repository.EventItemRepository;
-import com.prgrms.nabmart.domain.event.repository.EventRepository;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.LikeItem;
-import com.prgrms.nabmart.domain.item.repository.ItemRepository;
-import com.prgrms.nabmart.domain.item.repository.LikeItemRepository;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
-import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
-import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.payment.Payment;
-import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
 import com.prgrms.nabmart.domain.payment.support.PaymentFixture;
 import com.prgrms.nabmart.domain.review.Review;
-import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import com.prgrms.nabmart.domain.review.support.ReviewFixture;
-import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.service.UserService;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import jakarta.persistence.EntityManager;
@@ -57,58 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-public class UserIntegrationTest {
-
-    @Autowired
-    protected CartItemRepository cartItemRepository;
-
-    @Autowired
-    protected CartRepository cartRepository;
-
-    @Autowired
-    protected MainCategoryRepository mainCategoryRepository;
-
-    @Autowired
-    protected SubCategoryRepository subCategoryRepository;
-
-    @Autowired
-    protected CouponRepository couponRepository;
-
-    @Autowired
-    protected UserCouponRepository userCouponRepository;
-
-    @Autowired
-    protected DeliveryRepository deliveryRepository;
-
-    @Autowired
-    protected RiderRepository riderRepository;
-
-    @Autowired
-    protected EventItemRepository eventItemRepository;
-
-    @Autowired
-    protected EventRepository eventRepository;
-
-    @Autowired
-    protected ItemRepository itemRepository;
-
-    @Autowired
-    protected LikeItemRepository likeItemRepository;
-
-    @Autowired
-    protected OrderItemRepository orderItemRepository;
-
-    @Autowired
-    protected OrderRepository orderRepository;
-
-    @Autowired
-    protected PaymentRepository paymentRepository;
-
-    @Autowired
-    protected ReviewRepository reviewRepository;
-
-    @Autowired
-    protected UserRepository userRepository;
+public class UserIntegrationTest extends IntegrationTest {
 
     @BeforeAll
     static void beforeAll() {

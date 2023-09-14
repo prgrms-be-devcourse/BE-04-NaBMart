@@ -2,35 +2,91 @@ package com.prgrms.nabmart.domain.delivery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.prgrms.nabmart.base.IntegrationTest;
 import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.category.SubCategory;
 import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
+import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
+import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
+import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
+import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
+import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
+import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.user.User;
+import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@Disabled("다른 테스트와 충돌 발생_해결 필요")
-public class DeliveryIntegrationTest extends IntegrationTest {
+@SpringBootTest
+public class DeliveryIntegrationTest {
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    MainCategoryRepository mainCategoryRepository;
+
+    @Autowired
+    SubCategoryRepository subCategoryRepository;
+
+    @Autowired
+    ItemRepository itemRepository;
+
+    @Autowired
+    OrderItemRepository orderItemRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    DeliveryRepository deliveryRepository;
 
     @Autowired
     DeliveryService deliveryService;
+
+    @Autowired
+    RiderRepository riderRepository;
+
+    @BeforeAll
+    static void beforeAll() {
+        Properties properties = System.getProperties();
+        properties.setProperty("ISSUER", "issuer");
+        properties.setProperty("CLIENT_SECRET", "clientSecret");
+        properties.setProperty("NAVER_CLIENT_ID", "naverClientId");
+        properties.setProperty("NAVER_CLIENT_SECRET", "naverClientSecret");
+        properties.setProperty("KAKAO_CLIENT_ID", "kakaoClientId");
+        properties.setProperty("KAKAO_CLIENT_SECRET", "kakaoClientSecret");
+        properties.setProperty("REDIRECT_URI",
+            "http://localhost:8080/login/oauth2/code/{registrationId}");
+        properties.setProperty("EXPIRY_SECONDS", "60");
+        properties.setProperty("TOSS_SUCCESS_URL", "tossSuccessUrl");
+        properties.setProperty("TOSS_FAIL_URL", "tossFailUrl");
+        properties.setProperty("TOSS_SECRET_KEY", "tossSecretKey");
+        properties.setProperty("REDIS_HOST", "localhost");
+        properties.setProperty("REDIS_PORT", "6379");
+        properties.setProperty("spring.data.redis.host", "localhost");
+        properties.setProperty("spring.data.redis.port", "6379");
+    }
+
 
     @Nested
     @DisplayName("acceptDelivery 메서드 실행 시")
@@ -77,6 +133,16 @@ public class DeliveryIntegrationTest extends IntegrationTest {
             Delivery delivery = new Delivery(order);
             deliveryRepository.save(delivery);
             return delivery;
+        }
+
+        @AfterEach
+        void tearDown() {
+            deliveryRepository.deleteAll();
+            riderRepository.deleteAll();
+            orderRepository.deleteAll();
+            itemRepository.deleteAll();
+            subCategoryRepository.deleteAll();
+            mainCategoryRepository.deleteAll();
         }
 
         @Test
