@@ -60,6 +60,10 @@ public class ReviewService {
             .orElseThrow(() -> new NotFoundReviewException("해당 리뷰를 찾을 수 없습니다."));
 
         reviewRepository.delete(foundReview);
+
+        String cacheKey = "reviewCount_Item_" + foundReview.getItem().getItemId();
+        redisCacheService.minusOneToTotalNumberOfReviewsByItemId(foundReview.getItem().getItemId(),
+            cacheKey);
     }
 
     @Transactional
