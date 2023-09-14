@@ -12,7 +12,10 @@ public class RedisCacheService {
     private final ReviewRepository reviewRepository;
     private final RedisTemplate<String, Long> redisTemplate;
 
-    public Long getTotalReviewsByItemId(Long itemId, String cacheKey) {
+    public Long getTotalReviewsByItemId(
+        final Long itemId,
+        final String cacheKey
+    ) {
         Long cachedCount = redisTemplate.opsForValue().get(cacheKey);
 
         if (cachedCount != null) {
@@ -24,5 +27,20 @@ public class RedisCacheService {
         redisTemplate.opsForValue().set(cacheKey, dbCount);
 
         return dbCount;
+    }
+
+    public void updateTotalReviewsByItemId(
+        final Long itemId,
+        final String cacheKey
+    ) {
+        Long cachedCount = redisTemplate.opsForValue().get(cacheKey);
+
+        if (cachedCount != null) {
+            redisTemplate.opsForValue().set(cacheKey, cachedCount + 1);
+        }
+
+        long dbCount = reviewRepository.countByItem_ItemId(itemId);
+
+        redisTemplate.opsForValue().set(cacheKey, dbCount);
     }
 }
