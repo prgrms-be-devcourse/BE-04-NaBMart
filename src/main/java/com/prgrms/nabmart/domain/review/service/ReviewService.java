@@ -46,6 +46,9 @@ public class ReviewService {
 
         Review savedReview = reviewRepository.save(review);
 
+        String cacheKey = "reviewCount_Item_" + foundItem.getItemId();
+        redisCacheService.plusOneToTotalNumberOfReviewsByItemId(foundItem.getItemId(), cacheKey);
+
         return savedReview.getReviewId();
     }
 
@@ -57,6 +60,10 @@ public class ReviewService {
             .orElseThrow(() -> new NotFoundReviewException("해당 리뷰를 찾을 수 없습니다."));
 
         reviewRepository.delete(foundReview);
+
+        String cacheKey = "reviewCount_Item_" + foundReview.getItem().getItemId();
+        redisCacheService.minusOneToTotalNumberOfReviewsByItemId(foundReview.getItem().getItemId(),
+            cacheKey);
     }
 
     @Transactional
@@ -101,8 +108,8 @@ public class ReviewService {
     ) {
         Item foundItem = findItemByItemId(itemId);
 
-        String cacheKey = "item:" + foundItem.getItemId();
-        return redisCacheService.getTotalReviewsByItemId(foundItem.getItemId(), cacheKey);
+        String cacheKey = "reviewCount_Item_" + foundItem.getItemId();
+        return redisCacheService.getTotalNumberOfReviewsByItemId(foundItem.getItemId(), cacheKey);
     }
 
     private Item findItemByItemId(Long itemId) {
