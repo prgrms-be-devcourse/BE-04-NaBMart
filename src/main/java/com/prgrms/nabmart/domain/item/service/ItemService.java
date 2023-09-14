@@ -17,6 +17,7 @@ import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.ItemRedisDto;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class ItemService {
     private final OrderItemRepository orderItemRepository;
     private final MainCategoryRepository mainCategoryRepository;
     private final SubCategoryRepository subCategoryRepository;
-    private static final int NEW_PRODUCT_REFERENCE_WEEK = 2;
+    private final ItemCacheService itemCacheService;
 
     @Transactional
     public Long saveItem(RegisterItemCommand registerItemCommand) {
@@ -55,6 +56,7 @@ public class ItemService {
             .build();
 
         Item savedItem = itemRepository.save(item);
+        itemCacheService.saveNewItem(ItemRedisDto.from(savedItem));
         return savedItem.getItemId();
     }
 
