@@ -46,6 +46,9 @@ public class ReviewService {
 
         Review savedReview = reviewRepository.save(review);
 
+        String cacheKey = "reviewCount_Item_" + foundItem.getItemId();
+        redisCacheService.plusOneToTotalNumberOfReviewsByItemId(foundItem.getItemId(), cacheKey);
+
         return savedReview.getReviewId();
     }
 
@@ -101,8 +104,8 @@ public class ReviewService {
     ) {
         Item foundItem = findItemByItemId(itemId);
 
-        String cacheKey = "item:" + foundItem.getItemId();
-        return redisCacheService.getTotalReviewsByItemId(foundItem.getItemId(), cacheKey);
+        String cacheKey = "reviewCount_Item_" + foundItem.getItemId();
+        return redisCacheService.getTotalNumberOfReviewsByItemId(foundItem.getItemId(), cacheKey);
     }
 
     private Item findItemByItemId(Long itemId) {

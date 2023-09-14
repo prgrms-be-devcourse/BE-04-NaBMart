@@ -53,6 +53,9 @@ class ReviewServiceTest {
     @Mock
     private ItemRepository itemRepository;
 
+    @Mock
+    private RedisCacheService redisCacheService;
+
     User givenUser;
     Item givenItem;
     MainCategory givenMainCategory;

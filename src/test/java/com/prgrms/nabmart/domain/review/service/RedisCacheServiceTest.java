@@ -19,6 +19,7 @@ import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,12 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
     @Autowired
     private SubCategoryRepository subCategoryRepository;
 
+    User givenUser;
+    Item givenItem;
+    MainCategory givenMainCategory;
+    SubCategory givenSubCategory;
+    Review givenReview;
+
     @BeforeAll
     static void beforeAll() {
         Properties properties = System.getProperties();
@@ -66,34 +73,39 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
         properties.setProperty("TOSS_SECRET_KEY", "tossSecretKey");
     }
 
+    @BeforeEach
+    void setUp() {
+        givenMainCategory = new MainCategory("메인카테고리");
+        givenSubCategory = new SubCategory(givenMainCategory, "서브카테고리");
+        givenItem = new Item("라면", 1000, "야미", 4, 0, 1, givenMainCategory, givenSubCategory);
+        givenUser = new User("test", "test@gmail.com", "kakao", "kakaoId", UserRole.ROLE_USER,
+            UserGrade.VIP, "인천");
+        givenReview = new Review(givenUser, givenItem, 5, "야미 인정이요");
+    }
+
     @Nested
-    @DisplayName("총 리뷰 수를 가져오는 Service 실행 시")
-    class GetTotalReviewsByItemId {
+    @DisplayName("상품의 총 리뷰 수를 가져오는 Service 실행 시")
+    class GetTotalNumberOfReviewsByItem {
 
         @Test
         @DisplayName("Redis에 값이 없으면 DB에서 가져오고, 값이 있으면 Redis에서 가져온다.")
-        public void shouldGetTotalReviewsByItem() {
+        public void shouldGetTotalNumberOfReviewsByItem() {
             // given
-            MainCategory mainCategory = new MainCategory("메인카테고리");
-            SubCategory subCategory = new SubCategory(mainCategory, "서브카테고리");
-            Item item = new Item("라면", 1000, "야미", 4, 0, 1, mainCategory, subCategory);
-            User user = new User("test", "test@gmail.com", "kakao", "kakaoId", UserRole.ROLE_USER,
-                UserGrade.VIP, "인천");
-            Review review = new Review(user, item, 5, "야미 인정이요");
-
-            mainCategoryRepository.save(mainCategory);
-            subCategoryRepository.save(subCategory);
-            itemRepository.save(item);
-            userRepository.save(user);
-            reviewRepository.save(review);
+            mainCategoryRepository.save(givenMainCategory);
+            subCategoryRepository.save(givenSubCategory);
+            itemRepository.save(givenItem);
+            userRepository.save(givenUser);
+            reviewRepository.save(givenReview);
 
             Long result = 1L;
-            String cacheKey = "item:" + item.getItemId();
+            String cacheKey = "item:" + givenItem.getItemId();
 
             // when
+            log.info("DB에서 총 리뷰 수 가져오기");
             long startTime = System.currentTimeMillis();
 
-            Long dbCount = redisCacheService.getTotalReviewsByItemId(item.getItemId(), cacheKey);
+            Long dbCount = redisCacheService.getTotalNumberOfReviewsByItemId(givenItem.getItemId(),
+                cacheKey);
 
             long stopTime = System.currentTimeMillis();
 
@@ -107,7 +119,8 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
             long startTime2 = System.currentTimeMillis();
 
-            Long cachedCount = redisCacheService.getTotalReviewsByItemId(item.getItemId(),
+            Long cachedCount = redisCacheService.getTotalNumberOfReviewsByItemId(
+                givenItem.getItemId(),
                 cacheKey);
 
             long stopTime2 = System.currentTimeMillis();
@@ -119,6 +132,36 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
             log.info("db : " + dbCount);
             log.info("Redis : " + cachedCount);
+        }
+    }
+
+    @Nested
+    @DisplayName("상품의 총 리뷰 수를 추가하는 서비스 실행 시")
+    class PlusOneToTotalNumberOfReviewsByItemId {
+
+        @Test
+        @DisplayName("Redis에 값이 없으면 DB에서 가져오고, 값이 있으면 Redis에 총 리뷰 수를 +1한다.")
+        void shouldPlusOneToTotalNumberOfReviewsByItemId() {
+            // given
+            mainCategoryRepository.save(givenMainCategory);
+            subCategoryRepository.save(givenSubCategory);
+            itemRepository.save(givenItem);
+            userRepository.save(givenUser);
+            reviewRepository.save(givenReview);
+
+            String cacheKey = "item:" + givenItem.getItemId();
+
+            // when
+            redisCacheService.plusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
+                cacheKey);
+            Long dbCount = redisCacheService.getTotalNumberOfReviewsByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            Long cachedCount = redisCacheService.getTotalNumberOfReviewsByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            // then
+            assertEquals(dbCount, cachedCount);
         }
     }
 }
