@@ -105,8 +105,8 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public FindNewItemsResponse findNewItemsWithRedis() {
-        List<ItemRedisDto> itemRedisDtos = itemCacheService.getNewItems();
+    public FindNewItemsResponse findNewItemsWithRedis(ItemSortType sortType) {
+        List<ItemRedisDto> itemRedisDtos = itemCacheService.getNewItems(sortType);
 
         List<FindNewItemResponse> items = itemRedisDtos.stream().map(item -> FindNewItemResponse.of(
             item.itemId(),

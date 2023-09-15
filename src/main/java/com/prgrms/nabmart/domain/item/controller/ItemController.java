@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.item.controller;
 
+import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterItemRequest;
 import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.ItemService;
@@ -71,8 +72,10 @@ public class ItemController {
     }
 
     @GetMapping("/new-items")
-    public ResponseEntity<FindNewItemsResponse> findNewItemsWithRedis() {
-        return ResponseEntity.ok(itemService.findNewItemsWithRedis());
+    public ResponseEntity<FindNewItemsResponse> findNewItemsWithRedis(
+        @RequestParam(defaultValue = "NEW") String sort
+    ) {
+        return ResponseEntity.ok(itemService.findNewItemsWithRedis(ItemSortType.valueOf(sort)));
     }
 
     @GetMapping("/hot")
