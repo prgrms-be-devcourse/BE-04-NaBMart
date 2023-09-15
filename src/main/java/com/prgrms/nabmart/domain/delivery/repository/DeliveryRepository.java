@@ -21,18 +21,11 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     Optional<Delivery> findByOrderIdWithOrder(@Param("orderId") Long orderId);
 
     @Query(value = "select d from Delivery d"
-        + " join fetch d.order"
-        + " where d.deliveryStatus"
-        + " = com.prgrms.nabmart.domain.delivery.DeliveryStatus.ACCEPTING_ORDER",
-    countQuery = "select d.deliveryId from Delivery d"
         + " where d.deliveryStatus"
         + " = com.prgrms.nabmart.domain.delivery.DeliveryStatus.ACCEPTING_ORDER")
     Page<Delivery> findWaitingDeliveries(Pageable pageable);
 
     @Query(value = "select d from Delivery d"
-        + " join fetch d.order"
-        + " where d.rider = :rider and d.deliveryStatus in :statuses",
-    countQuery = "select d.deliveryId from Delivery d"
         + " where d.rider = :rider and d.deliveryStatus in :statuses")
     Page<Delivery> findRiderDeliveries(
         @Param("rider") Rider rider,

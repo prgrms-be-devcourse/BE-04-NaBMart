@@ -22,7 +22,7 @@ public record FindDeliveryDetailResponse(
             delivery.getArrivedAt(),
             delivery.getOrder().getOrderId(),
             delivery.getOrder().getName(),
-            delivery.getOrder().getPrice(),
-            delivery.getOrder().getRiderRequest());
+            delivery.getOrderPrice(),
+            delivery.getRiderRequest());
     }
 }

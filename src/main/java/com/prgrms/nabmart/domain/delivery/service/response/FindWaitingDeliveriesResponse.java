@@ -32,8 +32,8 @@ public record FindWaitingDeliveriesResponse(
                 delivery.getDeliveryId(),
                 delivery.getArrivedAt(),
                 delivery.getCreatedAt(),
-                delivery.getOrder().getAddress(),
-                delivery.getOrder().getDeliveryFee());
+                delivery.getAddress(),
+                delivery.getDeliveryFee());
         }
     }
 }

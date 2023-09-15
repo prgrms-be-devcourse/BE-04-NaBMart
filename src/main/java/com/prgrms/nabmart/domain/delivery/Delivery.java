@@ -50,10 +50,26 @@ public class Delivery extends BaseTimeEntity {
     @Version
     private Long version;
 
+    @Column
+    private String address;
+
+    @Column
+    private Integer orderPrice;
+
+    @Column
+    private String riderRequest;
+
+    @Column
+    private Integer deliveryFee;
+
     @Builder
     public Delivery(final Order order) {
         this.order = order;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
+        this.address = order.getAddress();
+        this.orderPrice = order.getPrice();
+        this.riderRequest = order.getRiderRequest();
+        this.deliveryFee = order.getDeliveryFee();
     }
 
     public boolean isOwnByUser(final User user) {

@@ -39,10 +39,10 @@ public record FindRiderDeliveriesResponse(
                 delivery.getDeliveryStatus(),
                 delivery.getArrivedAt(),
                 delivery.getCreatedAt(),
-                delivery.getOrder().getAddress(),
-                delivery.getOrder().getPrice(),
-                delivery.getOrder().getRiderRequest(),
-                delivery.getOrder().getDeliveryFee());
+                delivery.getAddress(),
+                delivery.getOrderPrice(),
+                delivery.getRiderRequest(),
+                delivery.getDeliveryFee());
         }
     }
 }
