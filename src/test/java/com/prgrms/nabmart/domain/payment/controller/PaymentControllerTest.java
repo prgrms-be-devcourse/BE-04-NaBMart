@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.payment.PaymentStatus;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
 import com.prgrms.nabmart.domain.user.User;
@@ -86,7 +87,7 @@ public class PaymentControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("paySuccess 메서드 실행 시")
-    class PaySuccessTest {
+    class paySuccessTest {
 
         @Test
         @DisplayName("성공")
@@ -97,9 +98,9 @@ public class PaymentControllerTest extends BaseControllerTest {
 
             String paymentKey = "paymentKey";
 
-            when(paymentService.confirmPayment(user.getUserId(), order.getUuid(), paymentKey,
+            when(paymentService.processSuccessPayment(user.getUserId(), order.getUuid(), paymentKey,
                 order.getPrice()))
-                .thenReturn(new PaymentResponse("SUCCESS"));
+                .thenReturn(new PaymentResponse(PaymentStatus.SUCCESS.toString(), null));
 
             // when
             ResultActions result = mockMvc.perform(
@@ -119,10 +120,50 @@ public class PaymentControllerTest extends BaseControllerTest {
                         parameterWithName("amount").description("금액")
                     ),
                     responseFields(
-                        fieldWithPath("status").type(STRING).description("성공 여부")
+                        fieldWithPath("status").type(STRING).description("성공 여부"),
+                        fieldWithPath("message").type(STRING).description("에러 메시지").optional()
                     )
                 ));
         }
     }
+
+    @Nested
+    @DisplayName("payFail 메서드 실행 시")
+    class payFailTest {
+
+        @Test
+        @DisplayName("성공")
+        void pay() throws Exception {
+            // given
+            User user = userWithUserId();
+            Order order = pendingOrder(1, user);
+            String errorMessage = "errorMessage";
+
+            when(paymentService.processFailPayment(user.getUserId(), order.getUuid(), errorMessage))
+                .thenReturn(new PaymentResponse(PaymentStatus.FAILED.toString(), errorMessage));
+
+            // when
+            ResultActions result = mockMvc.perform(
+                get("/api/v1/pays/toss/fail")
+                    .queryParam("orderId", order.getUuid())
+                    .queryParam("message", errorMessage)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            result
+                .andExpect(status().isOk())
+                .andDo(document("get-pay-fail",
+                    queryParameters(
+                        parameterWithName("orderId").description("주문 ID"),
+                        parameterWithName("message").description("에러 메시지")
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(STRING).description("성공 여부"),
+                        fieldWithPath("message").type(STRING).description("에러 메시지")
+                    )
+                ));
+        }
+    }
+
 
 }

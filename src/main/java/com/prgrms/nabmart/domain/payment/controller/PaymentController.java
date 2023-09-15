@@ -36,6 +36,16 @@ public class PaymentController {
         @LoginUser Long userId
     ) {
         return ResponseEntity.ok(
-            paymentService.confirmPayment(userId, uuid, paymentKey, amount));
+            paymentService.processSuccessPayment(userId, uuid, paymentKey, amount));
+    }
+
+    @GetMapping("/toss/fail")
+    public ResponseEntity<PaymentResponse> payFail(
+        @RequestParam("orderId") String uuid,
+        @RequestParam("message") String errorMessage,
+        @LoginUser Long userId
+    ) {
+        return ResponseEntity.ok(
+            paymentService.processFailPayment(userId, uuid, errorMessage));
     }
 }
