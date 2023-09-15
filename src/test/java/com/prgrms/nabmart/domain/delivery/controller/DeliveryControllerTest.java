@@ -216,7 +216,16 @@ class DeliveryControllerTest extends BaseControllerTest {
                     ),
                     responseFields(
                         fieldWithPath("deliveries").type(ARRAY).description("배달 목록"),
-                        fieldWithPath("deliveries[].deliveryId").type(NUMBER).description("배달 ID"),
+                        fieldWithPath("deliveries[].deliveryId").type(NUMBER)
+                            .description("배달 ID"),
+                        fieldWithPath("deliveries[].arrivedAt").type(STRING)
+                            .description("배달 완료 예정 시간"),
+                        fieldWithPath("deliveries[].createdAt").type(STRING)
+                            .description("배달 접수 시간"),
+                        fieldWithPath("deliveries[].address").type(STRING)
+                            .description("배달 목적지"),
+                        fieldWithPath("deliveries[].deliveryFee").type(NUMBER)
+                            .description("배달비"),
                         fieldWithPath("page").type(NUMBER).description("페이지"),
                         fieldWithPath("totalElements").type(NUMBER).description("사이즈")
                     )
