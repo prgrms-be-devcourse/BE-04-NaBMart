@@ -34,7 +34,7 @@ public class Delivery extends BaseTimeEntity {
     private Long deliveryId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderId", nullable = false)
+    @JoinColumn(name = "orderId")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -85,5 +85,9 @@ public class Delivery extends BaseTimeEntity {
     public void completeDelivery() {
         this.arrivedAt = LocalDateTime.now();
         this.deliveryStatus = DeliveryStatus.DELIVERED;
+    }
+
+    public void deleteAboutUser() {
+        this.order = null;
     }
 }

@@ -47,4 +47,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     @Query("delete from Delivery d"
         + " where d.order = (select o from Order o where o.user = :user)")
     void deleteByUser(@Param("user") User user);
+
+    @Query("select d from Delivery d join d.order o where o.user = :user")
+    List<Delivery> findAllByUser(@Param("user") User user);
 }

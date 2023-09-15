@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.user.service;
 import com.prgrms.nabmart.domain.cart.repository.CartItemRepository;
 import com.prgrms.nabmart.domain.cart.repository.CartRepository;
 import com.prgrms.nabmart.domain.coupon.repository.UserCouponRepository;
+import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.item.repository.LikeItemRepository;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
@@ -15,6 +16,7 @@ import com.prgrms.nabmart.domain.user.service.request.FindUserCommand;
 import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +66,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         User findUser = findUserByUserId(userId);
+        releaseDeliveryAboutUserInfo(findUser);
         reviewRepository.deleteByUser(findUser);
         likeItemRepository.deleteByUser(findUser);
         cartItemRepository.deleteByUser(findUser);
@@ -73,6 +76,11 @@ public class UserService {
         orderRepository.deleteByUser(findUser);
         userCouponRepository.deleteByUser(findUser);
         userRepository.delete(findUser);
+    }
+
+    private void releaseDeliveryAboutUserInfo(User findUser) {
+        List<Delivery> userDeliveries = deliveryRepository.findAllByUser(findUser);
+        userDeliveries.forEach(Delivery::deleteAboutUser);
     }
 
     private User findUserByUserId(Long userId) {

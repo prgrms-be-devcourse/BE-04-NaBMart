@@ -122,7 +122,6 @@ public class UserIntegrationTest extends IntegrationTest {
             //then
             assertThat(orderRepository.findById(order.getOrderId())).isEmpty();
             assertThat(orderItemRepository.findById(orderItem.getOrderItemId())).isEmpty();
-            assertThat(deliveryRepository.findById(delivery.getDeliveryId())).isEmpty();
             assertThat(reviewRepository.findById(review.getReviewId())).isEmpty();
             assertThat(likeItemRepository.findById(likeItem.getLikeItemId())).isEmpty();
             assertThat(cartItemRepository.findById(cartItem.getCartItemId())).isEmpty();
@@ -133,7 +132,7 @@ public class UserIntegrationTest extends IntegrationTest {
         }
 
         @Test
-        @DisplayName("성공: 유저와 연관되지 않은 데이터는 삭제되지 않음")
+        @DisplayName("성공: 서비스와 연관된 데이터는 삭제되지 않음")
         void successWhenServiceDataStillAlive() {
             //given
             Long userId = user.getUserId();
@@ -150,6 +149,7 @@ public class UserIntegrationTest extends IntegrationTest {
             assertThat(itemRepository.findById(item.getItemId())).isNotEmpty();
             assertThat(couponRepository.findById(coupon.getCouponId())).isNotEmpty();
             assertThat(riderRepository.findById(rider.getRiderId())).isNotEmpty();
+            assertThat(deliveryRepository.findById(delivery.getDeliveryId())).isNotEmpty();
         }
     }
 }
