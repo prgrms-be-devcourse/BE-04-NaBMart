@@ -10,6 +10,7 @@ import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -150,6 +151,23 @@ class ItemRepositoryTest {
             // Then
             assertThat(items.size()).isEqualTo(5);
         }
+    }
+
+    @Test
+    @DisplayName("아이템 삭제 시, 아이템 조회가 안된다.")
+    public void deleteItem() {
+        // Given
+        MainCategory mainCategory = new MainCategory("main");
+        SubCategory subCategory = new SubCategory(mainCategory, "sub");
+        Item item = ItemFixture.item(mainCategory, subCategory);
+        Item savedItem = itemRepository.save(item);
+
+        // When
+        itemRepository.deleteById(savedItem.getItemId());
+
+        // Then
+        Optional<Item> findItem = itemRepository.findByItemId(savedItem.getItemId());
+        assertThat(findItem.isEmpty()).isEqualTo(true);
     }
 
     @Nested
