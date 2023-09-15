@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/deliveries")
+@RequestMapping("/api/v1")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
@@ -47,7 +47,7 @@ public class DeliveryController {
         return ResponseEntity.ok(findDeliveryDetailResponse);
     }
 
-    @PatchMapping("/{deliveryId}/accept")
+    @PatchMapping("/deliveries/{deliveryId}/accept")
     public ResponseEntity<Void> acceptDelivery(
         @PathVariable final Long deliveryId,
         @LoginUser final Long riderId) {
@@ -64,7 +64,7 @@ public class DeliveryController {
         }
     }
 
-    @PatchMapping("/{deliveryId}/pickup")
+    @PatchMapping("/deliveries/{deliveryId}/pickup")
     public ResponseEntity<Void> startDelivery(
         @PathVariable final Long deliveryId,
         @RequestBody @Valid StartDeliveryRequest startDeliveryRequest,
@@ -77,7 +77,7 @@ public class DeliveryController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{deliveryId}/complete")
+    @PatchMapping("/deliveries/{deliveryId}/complete")
     public ResponseEntity<Void> completeDelivery(
         @PathVariable final Long deliveryId,
         @LoginUser final Long riderId) {
@@ -87,7 +87,7 @@ public class DeliveryController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/waiting")
+    @GetMapping("/deliveries/waiting")
     public ResponseEntity<FindWaitingDeliveriesResponse> findWaitingDeliveries(
         final Pageable pageable) {
         FindWaitingDeliveriesCommand findWaitingDeliveriesCommand
@@ -97,7 +97,7 @@ public class DeliveryController {
         return ResponseEntity.ok(findWaitingDeliveriesResponse);
     }
 
-    @GetMapping
+    @GetMapping("/deliveries")
     public ResponseEntity<FindRiderDeliveriesResponse> findRiderDeliveries(
         FindRiderDeliveriesRequest findRiderDeliveriesRequest,
         final Pageable pageable,
