@@ -6,7 +6,6 @@ import com.prgrms.nabmart.domain.item.exception.InvalidItemException;
 import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.global.BaseTimeEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -71,13 +70,13 @@ public class Item extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isDeleted = Boolean.FALSE;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "item")
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "item")
     private List<LikeItem> likeItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "item")
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Builder
