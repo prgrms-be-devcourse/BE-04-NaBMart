@@ -98,7 +98,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             reviewRepository.save(givenReview);
 
             Long result = 1L;
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
 
             // when
             log.info("DB에서 총 리뷰 수 가져오기");
@@ -149,7 +149,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             userRepository.save(givenUser);
             reviewRepository.save(givenReview);
 
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
 
             // when
             redisCacheService.plusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
@@ -179,7 +179,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             userRepository.save(givenUser);
             reviewRepository.save(givenReview);
 
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
 
             // when
             redisCacheService.minusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
@@ -210,7 +210,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             reviewRepository.save(givenReview);
 
             double result = 5;
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
 
             // when
             log.info("DB에서 평균 평점 가져오기");

@@ -1,17 +1,26 @@
 package com.prgrms.nabmart.domain.review.service;
 
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class RedisCacheService {
 
     private final ReviewRepository reviewRepository;
     private final RedisTemplate<String, Long> numberOfReviewsRedisTemplate;
-    private final RedisTemplate<String, Double> rateRedisTemplate;
+    private final ListOperations<String, String> listOperations;
+
+    public RedisCacheService(
+        ReviewRepository reviewRepository,
+        RedisTemplate<String, Long> numberOfReviewsRedisTemplate,
+        RedisTemplate<String, String> rateRedisTemplate
+    ) {
+        this.reviewRepository = reviewRepository;
+        this.numberOfReviewsRedisTemplate = numberOfReviewsRedisTemplate;
+        this.listOperations = rateRedisTemplate.opsForList();
+    }
 
     public Long getTotalNumberOfReviewsByItemId(
         final Long itemId,
@@ -64,15 +73,17 @@ public class RedisCacheService {
         final Long itemId,
         final String cacheKey
     ) {
-        Double cachedAverageRate = rateRedisTemplate.opsForValue().get(cacheKey);
+        String averageRate = listOperations.index(cacheKey, 0);
 
-        if (cachedAverageRate != null) {
-            return cachedAverageRate;
+        if (averageRate != null) {
+            return Double.parseDouble(averageRate);
         }
 
         Double dbAverageRate = reviewRepository.findAverageRatingByItemId(itemId);
+        Long numberOfReviews = reviewRepository.countByItem_ItemId(itemId);
 
-        rateRedisTemplate.opsForValue().set(cacheKey, dbAverageRate);
+        listOperations.rightPushAll(cacheKey, String.valueOf(dbAverageRate),
+            String.valueOf(numberOfReviews));
 
         return dbAverageRate;
     }

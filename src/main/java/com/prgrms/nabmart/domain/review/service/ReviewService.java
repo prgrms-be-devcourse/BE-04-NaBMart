@@ -28,8 +28,8 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final RedisCacheService redisCacheService;
 
-    private static final String REVIEW_COUNT_CACHE_KEY = "reviewCount_Item_";
-    private static final String AVERAGE_RATE_CACHE_KEY = "averageRate_Item_";
+    private static final String REVIEW_COUNT_CACHE_KEY = "reviewCount:Item:";
+    private static final String AVERAGE_RATE_CACHE_KEY = "averageRate:Item:";
 
     @Transactional
     public Long registerReview(
