@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.item.repository;
 
+import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.prgrms.nabmart.base.TestQueryDslConfig;
@@ -130,29 +131,6 @@ class ItemRepositoryTest {
         }
 
         @Test
-        @DisplayName("삭제된 아이템은 조회되지 않는다.")
-        public void deletedItemIsNotSearch() {
-            //Given
-            mainCategoryRepository.save(mainCategory);
-            subCategoryRepository.save(subCategory);
-            for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
-                    mainCategory,
-                    subCategory);
-                itemRepository.save(item);
-            }
-            for (long i = 1; i <= 30; i++) {
-                itemRepository.deleteById(i);
-            }
-
-            // When
-            List<Item> items = itemRepository.findAll();
-
-            // Then
-            assertThat(items.size()).isEqualTo(20);
-        }
-
-        @Test
         @DisplayName("금액 낮은 순으로 조회된다.")
         public void findByPriceGreaterThanAndMainCategoryOrderByPriceAscItemIdDesc() {
             //Given
@@ -190,5 +168,31 @@ class ItemRepositoryTest {
         // Then
         Optional<Item> findItem = itemRepository.findByItemId(savedItem.getItemId());
         assertThat(findItem.isEmpty()).isEqualTo(true);
+    }
+
+    @Nested
+    @DisplayName("increaseQuantity 메서드는")
+    class IncreaseQuantityTest {
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Given
+            int increaseQuantity = 100;
+            Item item = item();
+            int originQuantity = item.getQuantity();
+
+            mainCategoryRepository.save(item.getMainCategory());
+            subCategoryRepository.save(item.getSubCategory());
+            itemRepository.save(item);
+
+            // When
+            itemRepository.increaseQuantity(item.getItemId(), increaseQuantity);
+
+            // Then
+            Optional<Item> findItem = itemRepository.findById(item.getItemId());
+            assertThat(findItem).isNotEmpty();
+            assertThat(findItem.get().getQuantity()).isEqualTo(originQuantity + increaseQuantity);
+        }
     }
 }

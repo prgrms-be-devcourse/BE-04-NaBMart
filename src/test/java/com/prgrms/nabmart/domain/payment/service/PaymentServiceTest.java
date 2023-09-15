@@ -18,20 +18,17 @@ import static org.mockito.Mockito.when;
 
 import com.prgrms.nabmart.domain.coupon.exception.InvalidUsedCouponException;
 import com.prgrms.nabmart.domain.order.Order;
-import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.exception.NotPayingOrderException;
-import com.prgrms.nabmart.domain.order.repository.OrderRepository;
+import com.prgrms.nabmart.domain.order.service.OrderService;
 import com.prgrms.nabmart.domain.payment.Payment;
+import com.prgrms.nabmart.domain.payment.PaymentStatus;
 import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.exception.NotFoundPaymentException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentAmountMismatchException;
-import com.prgrms.nabmart.domain.payment.exception.PaymentFailException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
-import com.prgrms.nabmart.domain.payment.service.response.TossPaymentApiResponse;
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.global.infrastructure.ApiService;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,10 +49,7 @@ class PaymentServiceTest {
     PaymentRepository paymentRepository;
 
     @Mock
-    OrderRepository orderRepository;
-
-    @Mock
-    ApiService apiService;
+    OrderService orderService;
 
     @Value("${payment.toss.success_url}")
     private String successCallBackUrl;
@@ -80,8 +74,8 @@ class PaymentServiceTest {
             PaymentRequestResponse expected = paymentRequestResponse(order, successCallBackUrl,
                 failCallBackUrl);
 
-            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
-                .thenReturn(Optional.of(order));
+            when(orderService.getOrderByOrderIdAndUserId(order.getOrderId(), user.getUserId()))
+                .thenReturn(order);
 
             // when
             PaymentRequestResponse result = paymentService.pay(order.getOrderId(),
@@ -94,32 +88,14 @@ class PaymentServiceTest {
         }
 
         @Test
-        @DisplayName("예외: order 가 존재하지 않을 경우, NotFoundOrderException 발생")
-        void throwExceptionWhenInvalidOrder() {
-            // given
-            User user = userWithUserId();
-            long noExistOrderId = 1L;
-
-            when(orderRepository.findByOrderIdAndUser_UserId(noExistOrderId, user.getUserId()))
-                .thenReturn(Optional.empty());
-
-            // when
-            Exception exception = catchException(
-                () -> paymentService.pay(noExistOrderId, user.getUserId()));
-
-            // then
-            assertThat(exception).isInstanceOf(NotFoundOrderException.class);
-        }
-
-        @Test
         @DisplayName("예외: order 가 Pending 상태가 아닐 경우, DuplicatePayException 발생")
         void throwExceptionWhenNotPendingOrder() {
             // given
             User user = userWithUserId();
             Order order = deliveringOrder(1L, user);
 
-            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
-                .thenReturn(Optional.of(order));
+            when(orderService.getOrderByOrderIdAndUserId(order.getOrderId(), user.getUserId()))
+                .thenReturn(order);
 
             // when
             Exception exception = catchException(
@@ -136,10 +112,10 @@ class PaymentServiceTest {
             User user = userWithUserId();
 
             Order order = pendingOrderWithCoupon(1L, user);
-            order.redeemCoupon();
+            order.useCoupon();
 
-            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(), user.getUserId()))
-                .thenReturn(Optional.of(order));
+            when(orderService.getOrderByOrderIdAndUserId(order.getOrderId(), user.getUserId()))
+                .thenReturn(order);
 
             // when
             Exception exception = catchException(
@@ -169,15 +145,11 @@ class PaymentServiceTest {
                 user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
-            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
-                .thenReturn(Optional.of(order));
-
-            when(apiService.getResult(any(), any(), any())).thenReturn(
-                    new TossPaymentApiResponse("카드", "DONE"))
-                .thenReturn(true);
+            when(orderService.getOrderByUuidAndUserId(order.getUuid(), user.getUserId()))
+                .thenReturn(order);
 
             // when
-            PaymentResponse result = paymentService.confirmPayment(user.getUserId(),
+            PaymentResponse result = paymentService.processSuccessPayment(user.getUserId(),
                 order.getUuid(), mockPaymentKey,
                 amount);
 
@@ -201,7 +173,7 @@ class PaymentServiceTest {
 
             // when
             Exception exception = catchException(
-                () -> paymentService.confirmPayment(user.getUserId(),
+                () -> paymentService.processSuccessPayment(user.getUserId(),
                     order.getUuid(), mockPaymentKey,
                     amount));
 
@@ -226,7 +198,7 @@ class PaymentServiceTest {
 
             // when
             Exception exception = catchException(
-                () -> paymentService.confirmPayment(user.getUserId(),
+                () -> paymentService.processSuccessPayment(user.getUserId(),
                     order.getUuid(), mockPaymentKey,
                     amount));
 
@@ -250,7 +222,7 @@ class PaymentServiceTest {
 
             // when
             Exception exception = catchException(
-                () -> paymentService.confirmPayment(user.getUserId(),
+                () -> paymentService.processSuccessPayment(user.getUserId(),
                     order.getUuid(), mockPaymentKey,
                     amount));
 
@@ -272,48 +244,52 @@ class PaymentServiceTest {
                 user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
-            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
-                .thenReturn(Optional.of(order));
+            when(orderService.getOrderByUuidAndUserId(order.getUuid(), user.getUserId()))
+                .thenReturn(order);
 
             // when
             Exception exception = catchException(
-                () -> paymentService.confirmPayment(user.getUserId(),
+                () -> paymentService.processSuccessPayment(user.getUserId(),
                     order.getUuid(), mockPaymentKey,
                     amount));
 
             // then
             assertThat(exception).isInstanceOf(NotPayingOrderException.class);
         }
+    }
+
+    @Nested
+    @DisplayName("processFailPayment 메서드 실행 시")
+    class CancelPaymentTest {
 
         @Test
-        @DisplayName("예외: 결제 상태가 DONE 이 아닌 경우, PaymentFailException 발생")
-        void throwExceptionWhenPayStatusIsNotDone() {
+        @DisplayName("성공")
+        void success() {
             // given
             User user = userWithUserId();
             Order order = payingOrder(1L, user);
             Payment payment = pendingPayment(user, order);
-            String mockPaymentKey = "mockPaymentKey";
-            int amount = order.getPrice();
+            String errorMessage = "errorMessage";
 
-            when(paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(),
-                user.getUserId()))
+            PaymentResponse expected = new PaymentResponse(PaymentStatus.FAILED.toString(),
+                errorMessage);
+
+            when(orderService.getOrderByUuidAndUserId(order.getUuid(), user.getUserId()))
+                .thenReturn(order);
+            when(
+                paymentRepository.findByOrder_UuidAndUser_UserId(order.getUuid(), user.getUserId()))
                 .thenReturn(Optional.of(payment));
 
-            when(orderRepository.findByUuidAndUser_UserId(order.getUuid(), user.getUserId()))
-                .thenReturn(Optional.of(order));
-
-            when(apiService.getResult(any(), any(), any())).thenReturn(
-                    new TossPaymentApiResponse("카드", "ABORTED"))
-                .thenReturn(true);
-
             // when
-            Exception exception = catchException(
-                () -> paymentService.confirmPayment(user.getUserId(),
-                    order.getUuid(), mockPaymentKey,
-                    amount));
+            PaymentResponse result = paymentService.processFailPayment(user.getUserId(),
+                order.getUuid(), errorMessage);
 
             // then
-            assertThat(exception).isInstanceOf(PaymentFailException.class);
+            assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.FAILED);
+            assertThat(result).usingRecursiveComparison().isEqualTo(expected);
+
+            verify(orderService, times(1)).cancelOrder(order);
+
         }
     }
 }

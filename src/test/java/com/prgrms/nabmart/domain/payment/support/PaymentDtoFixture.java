@@ -21,10 +21,10 @@ public class PaymentDtoFixture {
     }
 
     public static PaymentResponse paymentResponseWithSuccess() {
-        return new PaymentResponse("SUCCESS");
+        return new PaymentResponse("SUCCESS", null);
     }
 
     public static PaymentResponse paymentResponseWithFail() {
-        return new PaymentResponse("FAIL");
+        return new PaymentResponse("FAIL", "errorMessage");
     }
 }
