@@ -19,12 +19,13 @@ public final class DeliveryFixture {
     private static final Long DELIVERY_ID = 1L;
     private static final String ADDRESS = "주소지";
     private static final int DELIVERY_FEE = 3000;
-    private static final LocalDateTime ARRIVED_AT = LocalDateTime.now();
+    private static final LocalDateTime NOW = LocalDateTime.now();
     private static final DeliveryStatus DELIVERY_STATUS = DeliveryStatus.ACCEPTING_ORDER;
     private static final Long USER_ID = 1L;
     private static final Long ORDER_ID = 1L;
     private static final String ORDER_NAME = "비비고 왕교자 외 2개";
     private static final int ORDER_PRICE = 1000;
+    private static final String RIDER_REQUEST = "문 앞에 두고 벨 눌러주세요.";
     private static final int ESTIMATE_MINUTES = 20;
     private static final int PAGE = 0;
     private static final String RIDER_USERNAME = "username";
@@ -51,16 +52,17 @@ public final class DeliveryFixture {
         return new FindDeliveryDetailResponse(
             DELIVERY_ID,
             DELIVERY_STATUS,
-            ARRIVED_AT,
+            NOW,
+            NOW,
             ORDER_ID,
             ORDER_NAME,
-            ORDER_PRICE
-        );
+            ORDER_PRICE,
+            RIDER_REQUEST);
     }
 
     public static FindWaitingDeliveriesResponse findDeliveriesResponse() {
         FindWaitingDeliveryResponse findWaitingDeliveryResponse
-            = new FindWaitingDeliveryResponse(DELIVERY_ID);
+            = new FindWaitingDeliveryResponse(DELIVERY_ID, NOW, NOW, ADDRESS, DELIVERY_FEE);
         return new FindWaitingDeliveriesResponse(List.of(findWaitingDeliveryResponse), PAGE, 1);
     }
 

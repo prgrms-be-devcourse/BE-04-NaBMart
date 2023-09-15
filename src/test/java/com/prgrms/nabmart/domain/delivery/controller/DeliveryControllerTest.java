@@ -53,7 +53,7 @@ class DeliveryControllerTest extends BaseControllerTest {
 
             //when
             ResultActions resultActions = mockMvc
-                .perform(get("/api/v1/deliveries/{orderId}", orderId)
+                .perform(get("/api/v1/orders/{orderId}/deliveries", orderId)
                     .header(AUTHORIZATION, accessToken)
                     .accept(MediaType.APPLICATION_JSON));
 
@@ -68,11 +68,13 @@ class DeliveryControllerTest extends BaseControllerTest {
                     ),
                     responseFields(
                         fieldWithPath("deliveryId").type(NUMBER).description("배달 ID"),
-                        fieldWithPath("deliveryStatus").type(STRING).description("배달 ID"),
-                        fieldWithPath("arrivedAt").type(STRING).description("도착 시간"),
+                        fieldWithPath("deliveryStatus").type(STRING).description("배달 상태"),
+                        fieldWithPath("createdAt").type(STRING).description("배달 생성 시각"),
+                        fieldWithPath("arrivedAt").type(STRING).description("배달 완료 예정 시각"),
                         fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
-                        fieldWithPath("name").type(STRING).description("주문 이름"),
-                        fieldWithPath("price").type(NUMBER).description("주문 가격")
+                        fieldWithPath("orderName").type(STRING).description("주문 이름"),
+                        fieldWithPath("orderPrice").type(NUMBER).description("주문 가격"),
+                        fieldWithPath("riderRequest").type(STRING).description("배달원 요청 사항")
                     )
                 ));
         }
@@ -216,7 +218,16 @@ class DeliveryControllerTest extends BaseControllerTest {
                     ),
                     responseFields(
                         fieldWithPath("deliveries").type(ARRAY).description("배달 목록"),
-                        fieldWithPath("deliveries[].deliveryId").type(NUMBER).description("배달 ID"),
+                        fieldWithPath("deliveries[].deliveryId").type(NUMBER)
+                            .description("배달 ID"),
+                        fieldWithPath("deliveries[].arrivedAt").type(STRING)
+                            .description("배달 완료 예정 시간"),
+                        fieldWithPath("deliveries[].createdAt").type(STRING)
+                            .description("배달 접수 시간"),
+                        fieldWithPath("deliveries[].address").type(STRING)
+                            .description("배달 목적지"),
+                        fieldWithPath("deliveries[].deliveryFee").type(NUMBER)
+                            .description("배달비"),
                         fieldWithPath("page").type(NUMBER).description("페이지"),
                         fieldWithPath("totalElements").type(NUMBER).description("사이즈")
                     )
@@ -237,7 +248,10 @@ class DeliveryControllerTest extends BaseControllerTest {
                 1L,
                 deliveryStatus,
                 LocalDateTime.now().plusMinutes(20),
+                LocalDateTime.now(),
                 "address",
+                15000,
+                "문 앞에 두고 벨 눌러주세요.",
                 3000
             );
             FindRiderDeliveriesResponse findRiderDeliveriesResponse
@@ -266,6 +280,27 @@ class DeliveryControllerTest extends BaseControllerTest {
                         parameterWithName("deliveryStatuses").description("배달 상태 목록"),
                         parameterWithName("page").description("페이지"),
                         parameterWithName("size").description("페이지 사이즈")
+                    ),
+                    responseFields(
+                        fieldWithPath("deliveries").type(ARRAY).description("배달 목록"),
+                        fieldWithPath("deliveries[].deliveryId").type(NUMBER)
+                            .description("배달 ID"),
+                        fieldWithPath("deliveries[].deliveryStatus").type(STRING)
+                            .description("배달 상태"),
+                        fieldWithPath("deliveries[].arrivedAt").type(STRING)
+                            .description("배달 완료 예정 시각"),
+                        fieldWithPath("deliveries[].createdAt").type(STRING)
+                            .description("배달 생성 시각"),
+                        fieldWithPath("deliveries[].address").type(STRING)
+                            .description("배달 목적지"),
+                        fieldWithPath("deliveries[].orderPrice").type(NUMBER)
+                            .description("주문 가격"),
+                        fieldWithPath("deliveries[].riderRequest").type(STRING)
+                            .description("배달원 요청 사항"),
+                        fieldWithPath("deliveries[].deliveryFee").type(NUMBER)
+                            .description("배달비"),
+                        fieldWithPath("page").type(NUMBER).description("페이지"),
+                        fieldWithPath("totalElements").type(NUMBER).description("총 요소 갯수")
                     )
                 ));
         }
