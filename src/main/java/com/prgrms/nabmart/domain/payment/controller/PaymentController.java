@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.payment.controller;
 
+import com.prgrms.nabmart.domain.payment.service.PaymentClient;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentClient paymentClient;
 
     @PostMapping("/{orderId}")
     public ResponseEntity<PaymentRequestResponse> pay(
@@ -35,6 +37,8 @@ public class PaymentController {
         @RequestParam("amount") Integer amount,
         @LoginUser Long userId
     ) {
+        paymentClient.confirmPayment(uuid, paymentKey, amount);
+
         return ResponseEntity.ok(
             paymentService.processSuccessPayment(userId, uuid, paymentKey, amount));
     }

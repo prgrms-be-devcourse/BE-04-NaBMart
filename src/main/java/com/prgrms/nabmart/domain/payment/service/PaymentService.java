@@ -9,20 +9,11 @@ import com.prgrms.nabmart.domain.payment.PaymentStatus;
 import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
 import com.prgrms.nabmart.domain.payment.exception.NotFoundPaymentException;
 import com.prgrms.nabmart.domain.payment.exception.PaymentAmountMismatchException;
-import com.prgrms.nabmart.domain.payment.exception.PaymentFailException;
 import com.prgrms.nabmart.domain.payment.repository.PaymentRepository;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentRequestResponse;
 import com.prgrms.nabmart.domain.payment.service.response.PaymentResponse;
-import com.prgrms.nabmart.domain.payment.service.response.TossPaymentApiResponse;
-import com.prgrms.nabmart.global.infrastructure.ApiService;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,19 +23,12 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderService orderService;
-    private final ApiService apiService;
 
     @Value("${payment.toss.success-url}")
     private String successCallBackUrl;
 
     @Value("${payment.toss.fail-url}")
     private String failCallBackUrl;
-
-    @Value("${payment.toss.secret-key}")
-    private String secretKey;
-
-    @Value("${payment.toss.confirm-url}")
-    private String confirmUrl;
 
     @Transactional
     public PaymentRequestResponse pay(final Long orderId, final Long userId) {
@@ -105,13 +89,6 @@ public class PaymentService {
         Order order = getOrderByUuidAndUserId(uuid, userId);
         validateOrderStatusWithPaying(order);
 
-        HttpHeaders httpHeaders = getHttpHeaders();
-        JSONObject params = getParams(uuid, paymentKey, amount);
-
-        TossPaymentApiResponse paymentApiResponse = requestPaymentApi(httpHeaders, params);
-
-        validatePaymentResult(paymentApiResponse);
-
         payment.changeStatus(PaymentStatus.SUCCESS);
         payment.setPaymentKey(paymentKey);
 
@@ -126,14 +103,6 @@ public class PaymentService {
         }
     }
 
-    private TossPaymentApiResponse requestPaymentApi(HttpHeaders httpHeaders, JSONObject params) {
-        return apiService.getResult(
-            new HttpEntity<>(params, httpHeaders),
-            confirmUrl,
-            TossPaymentApiResponse.class
-        );
-    }
-
     private void validatePayment(Integer amount, Payment payment) {
         validatePaymentStatusWithPending(payment);
         validatePrice(amount, payment);
@@ -145,40 +114,10 @@ public class PaymentService {
         }
     }
 
-    private void validatePaymentResult(TossPaymentApiResponse paymentApiResponse) {
-        if (!paymentApiResponse.status().equals("DONE")) {
-            throw new PaymentFailException("결제가 실패되었습니다.");
-        }
-    }
-
-    private JSONObject getParams(String uuid, String paymentKey, Integer amount) {
-        JSONObject params = new JSONObject();
-        params.put("paymentKey", paymentKey);
-        params.put("orderId", uuid);
-        params.put("amount", amount);
-
-        return params;
-    }
-
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setBasicAuth(getEncodeAuth());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        return httpHeaders;
-    }
-
     private void validatePrice(Integer amount, Payment payment) {
         if (payment.isMisMatchPrice(amount)) {
             throw new PaymentAmountMismatchException("결제 금액이 일치하지 않습니다.");
         }
-    }
-
-    private String getEncodeAuth() {
-        return new String(
-            Base64.getEncoder()
-                .encode((secretKey + ":").getBytes(StandardCharsets.UTF_8))
-        );
     }
 
     private Payment getPaymentByUuidAndUserId(String uuid, Long userId) {
