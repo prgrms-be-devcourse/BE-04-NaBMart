@@ -194,4 +194,55 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             assertEquals(dbCount, cachedCount);
         }
     }
+
+    @Nested
+    @DisplayName("상품의 평균 평점을 가져오는 Service 실행 시")
+    class GetAverageRateOfReviewsByItem {
+
+        @Test
+        @DisplayName("Redis에 값이 없으면 DB에서 가져오고, 값이 있으면 Redis에서 가져온다.")
+        void shouldGetAverageRateOfReviewsByItem() {
+            // given
+            mainCategoryRepository.save(givenMainCategory);
+            subCategoryRepository.save(givenSubCategory);
+            itemRepository.save(givenItem);
+            userRepository.save(givenUser);
+            reviewRepository.save(givenReview);
+
+            double result = 5;
+            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+
+            // when
+            log.info("DB에서 평균 평점 가져오기");
+            long startTime = System.currentTimeMillis();
+
+            double dbAverageRate = redisCacheService.getAverageRatingByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            long stopTime = System.currentTimeMillis();
+
+            long elapsedTime = stopTime - startTime;
+            log.info("실행 시간 : " + elapsedTime);
+
+            assertEquals(dbAverageRate, result);
+
+            // then
+            log.info("DB 저장 이후 캐시 조회");
+
+            long startTime2 = System.currentTimeMillis();
+
+            double cachedAverageRate = redisCacheService.getAverageRatingByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            long stopTime2 = System.currentTimeMillis();
+
+            long elapsedTime2 = stopTime2 - startTime2;
+            log.info("실행 시간 : " + elapsedTime2);
+
+            assertEquals(dbAverageRate, cachedAverageRate);
+
+            log.info("db : " + dbAverageRate);
+            log.info("Redis : " + cachedAverageRate);
+        }
+    }
 }

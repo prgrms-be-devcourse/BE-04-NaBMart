@@ -95,11 +95,15 @@ class DeliveryServiceTest {
             assertThat(findDeliveryDetailResponse.deliveryStatus())
                 .isEqualTo(delivery.getDeliveryStatus());
             assertThat(findDeliveryDetailResponse.arrivedAt())
+                .isEqualTo(delivery.getCreatedAt());
+            assertThat(findDeliveryDetailResponse.arrivedAt())
                 .isEqualTo(delivery.getArrivedAt());
-            assertThat(findDeliveryDetailResponse.name())
+            assertThat(findDeliveryDetailResponse.orderName())
                 .isEqualTo(delivery.getOrder().getName());
-            assertThat(findDeliveryDetailResponse.price())
+            assertThat(findDeliveryDetailResponse.orderPrice())
                 .isEqualTo(delivery.getOrder().getPrice());
+            assertThat(findDeliveryDetailResponse.riderRequest())
+                .isEqualTo(delivery.getOrder().getRiderRequest());
         }
 
         @Test
