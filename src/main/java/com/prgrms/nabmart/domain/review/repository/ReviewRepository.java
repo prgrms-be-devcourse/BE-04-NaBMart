@@ -5,6 +5,8 @@ import com.prgrms.nabmart.domain.review.Review;
 import com.prgrms.nabmart.domain.user.User;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -13,4 +15,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByItemOrderByCreatedAt(Item item);
 
     Long countByItem_ItemId(Long itemId);
+
+    @Query("select avg(r.rate) from Review r where r.item.itemId = :itemId")
+    Double findAverageRatingByItemId(@Param("itemId") Long itemId);
 }
