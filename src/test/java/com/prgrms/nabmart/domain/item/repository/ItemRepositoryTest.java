@@ -9,10 +9,12 @@ import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -148,5 +150,25 @@ class ItemRepositoryTest {
             // Then
             assertThat(items.size()).isEqualTo(5);
         }
+    }
+
+    @Test
+    @DisplayName("아이템 삭제 시, update 쿼리가 발생한다.")
+    public void deleteItem() {
+        // Given
+        MainCategory mainCategory = new MainCategory("main");
+        SubCategory subCategory = new SubCategory(mainCategory, "sub");
+        Item item = ItemFixture.item(mainCategory, subCategory);
+        Item savedItem = itemRepository.save(item);
+
+        // When
+        itemRepository.deleteById(savedItem.getItemId());
+
+        // Then
+        Optional<Item> findItem = itemRepository.findByItemId(savedItem.getItemId());
+        assertThat(findItem.isEmpty()).isEqualTo(false);
+        assertThat(savedItem.getItemId()).isEqualTo(findItem.get().getItemId());
+        assertThat(savedItem.isDeleted()).isEqualTo(false);
+        assertThat(findItem.get().isDeleted()).isEqualTo(true);
     }
 }
