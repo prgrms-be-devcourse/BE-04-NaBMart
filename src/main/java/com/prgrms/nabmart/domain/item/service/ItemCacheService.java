@@ -1,12 +1,9 @@
 package com.prgrms.nabmart.domain.item.service;
 
-import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.service.response.ItemRedisDto;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,33 +21,14 @@ public class ItemCacheService {
         redisTemplate.opsForList().rightPush(NEW_PRODUCTS_KEY, itemRedisDto);
     }
 
-    public List<ItemRedisDto> getNewItems(ItemSortType sortType) {
-        return getNewItemsSorted(sortType);
-    }
-
-    private List<ItemRedisDto> getNewItemsSorted(ItemSortType sortType) {
+    public List<ItemRedisDto> getNewItems() {
         ListOperations<String, ItemRedisDto> listOperations = redisTemplate.opsForList();
         Long itemCount = listOperations.size(NEW_PRODUCTS_KEY);
         if (itemCount == null || itemCount == 0) {
             return null;
         }
 
-        List<ItemRedisDto> items = listOperations.range(NEW_PRODUCTS_KEY, 0, -1);
-
-        return switch (sortType) {
-            case LOWEST_AMOUNT -> items.stream()
-                .sorted(Comparator.comparingInt(ItemRedisDto::price))
-                .collect(Collectors.toList());
-            case HIGHEST_AMOUNT -> items.stream()
-                .sorted(Comparator.comparingInt(ItemRedisDto::price).reversed())
-                .collect(Collectors.toList());
-            case DISCOUNT -> items.stream()
-                .sorted(Comparator.comparingInt(ItemRedisDto::discount).reversed())
-                .collect(Collectors.toList());
-            default -> items.stream()
-                .sorted(Comparator.comparingLong(ItemRedisDto::itemId).reversed())
-                .collect(Collectors.toList());
-        };
+        return listOperations.range(NEW_PRODUCTS_KEY, 0, -1);
     }
 
     @Scheduled(cron = "0 0 * * * *")

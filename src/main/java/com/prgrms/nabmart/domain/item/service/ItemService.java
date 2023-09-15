@@ -22,6 +22,8 @@ import com.prgrms.nabmart.domain.item.service.response.FindNewItemsResponse.Find
 import com.prgrms.nabmart.domain.item.service.response.ItemRedisDto;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
 import com.prgrms.nabmart.domain.review.service.RedisCacheService;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,8 +108,7 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public FindNewItemsResponse findNewItemsWithRedis(ItemSortType sortType) {
-        List<ItemRedisDto> itemRedisDtos = itemCacheService.getNewItems(sortType);
-
+        List<ItemRedisDto> itemRedisDtos = itemCacheService.getNewItems();
         List<FindNewItemResponse> items = itemRedisDtos.stream().map(item -> FindNewItemResponse.of(
             item.itemId(),
             item.name(),
@@ -116,7 +117,19 @@ public class ItemService {
             redisCacheService.getTotalNumberOfReviewsByItemId(item.itemId(), "reviewCount_Item_" + item.itemId())
         )).toList();
 
-        return FindNewItemsResponse.from(items);
+        return FindNewItemsResponse.from(sortNewItems(items, sortType));
+    }
+
+    private List<FindNewItemResponse> sortNewItems(List<FindNewItemResponse> items, ItemSortType sortType) {
+        List<FindNewItemResponse> sortedItems = new ArrayList<>(items);
+        switch (sortType) {
+            case LOWEST_AMOUNT -> sortedItems.sort(Comparator.comparingInt(FindNewItemResponse::price));
+            case HIGHEST_AMOUNT -> sortedItems.sort(Comparator.comparingInt(FindNewItemResponse::price).reversed());
+            case NEW -> sortedItems.sort(Comparator.comparingLong(FindNewItemResponse::itemId).reversed());
+            case DISCOUNT -> sortedItems.sort(Comparator.comparingInt(FindNewItemResponse::discount).reversed());
+            default -> sortedItems.sort(Comparator.comparingLong(FindNewItemResponse::reviewCount).reversed());
+        }
+        return sortedItems;
     }
 
     @Transactional
