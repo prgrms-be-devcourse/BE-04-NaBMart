@@ -48,7 +48,8 @@
 </div>
 
 ## Architecture
-![image](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/956c0c51-2a09-4190-9640-6aec3c797205)
+![image](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/0f6c4cc8-022c-4e64-aa7a-642d15488156)
+
 
 ## ERD
 ![찐찐최종 B마트](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/f0b8c2f8-21c2-42b8-ab8a-a62a5569d839)
