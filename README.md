@@ -1,6 +1,8 @@
 # 🛒NaBMart
 
-<img width="640" alt="스크린샷 2023-09-15 오후 1 28 28" src="https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/97938489/0115f57b-e531-46fd-8a7a-7c77d3095f71">
+<img width="1000" height="300" alt="스크린샷 2023-09-15 오후 1 28 28" src="https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/b6ddf10b-afa4-4fcc-92fd-b745b77af15b">
+
+
 
 > B마트 클론코딩 프로젝트<br>
 > 1시간 이내에 소비자에게 상품을 배달하는 서비스
@@ -71,6 +73,8 @@ TOSS_FAIL_URL=http://localhost:8080/api/v1/pays/toss/fail;
 TOSS_SUCCESS_URL=http://localhost:8080/api/v1/pays/toss/success;
 TOSS_SECRET_KEY=
 ```
+
+[Additional Local or Docker Environment Variables](https://mellow-shadow-fed.notion.site/4ac5c19cc7254fcc8364bfa5f3653bca?p=d19f142187be44fe8a4e049afdae6035&pm=s)
 
 ## navy Team
 
