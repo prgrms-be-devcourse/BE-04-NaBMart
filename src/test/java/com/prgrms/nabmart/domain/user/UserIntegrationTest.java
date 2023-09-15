@@ -151,5 +151,21 @@ public class UserIntegrationTest extends IntegrationTest {
             assertThat(riderRepository.findById(rider.getRiderId())).isNotEmpty();
             assertThat(deliveryRepository.findById(delivery.getDeliveryId())).isNotEmpty();
         }
+
+        @Test
+        @DisplayName("성공: Delivery와 User 관련 필드 업데이트")
+        void successDeliveryUpdate() {
+            //given
+            Long userId = user.getUserId();
+
+            //when
+            userService.deleteUser(userId);
+            em.flush();
+            em.clear();
+
+            //then
+            assertThat(delivery.getAddress()).isEqualTo("삭제됨");
+            assertThat(delivery.getOrder()).isNull();
+        }
     }
 }

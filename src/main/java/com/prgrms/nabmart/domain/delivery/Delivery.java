@@ -28,6 +28,7 @@ public class Delivery extends BaseTimeEntity {
 
     private static final int ADDRESS_LENGTH = 500;
     private static final int ZERO = 0;
+    public static final String DELETED = "삭제됨";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -105,5 +106,6 @@ public class Delivery extends BaseTimeEntity {
 
     public void deleteAboutUser() {
         this.order = null;
+        this.address = DELETED;
     }
 }
