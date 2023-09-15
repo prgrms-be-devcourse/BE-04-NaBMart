@@ -53,10 +53,11 @@ public final class DeliveryFixture {
             DELIVERY_ID,
             DELIVERY_STATUS,
             NOW,
+            NOW,
             ORDER_ID,
             ORDER_NAME,
-            ORDER_PRICE
-        );
+            ORDER_PRICE,
+            RIDER_REQUEST);
     }
 
     public static FindWaitingDeliveriesResponse findDeliveriesResponse() {

@@ -68,11 +68,13 @@ class DeliveryControllerTest extends BaseControllerTest {
                     ),
                     responseFields(
                         fieldWithPath("deliveryId").type(NUMBER).description("배달 ID"),
-                        fieldWithPath("deliveryStatus").type(STRING).description("배달 ID"),
-                        fieldWithPath("arrivedAt").type(STRING).description("도착 시간"),
+                        fieldWithPath("deliveryStatus").type(STRING).description("배달 상태"),
+                        fieldWithPath("createdAt").type(STRING).description("배달 생성 시각"),
+                        fieldWithPath("arrivedAt").type(STRING).description("배달 완료 예정 시각"),
                         fieldWithPath("orderId").type(NUMBER).description("주문 ID"),
-                        fieldWithPath("name").type(STRING).description("주문 이름"),
-                        fieldWithPath("price").type(NUMBER).description("주문 가격")
+                        fieldWithPath("orderName").type(STRING).description("주문 이름"),
+                        fieldWithPath("orderPrice").type(NUMBER).description("주문 가격"),
+                        fieldWithPath("riderRequest").type(STRING).description("배달원 요청 사항")
                     )
                 ));
         }
