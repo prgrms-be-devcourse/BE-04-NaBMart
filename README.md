@@ -50,33 +50,38 @@
 ## Tech Stack
 <div align="left">
 <div>
-<img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=Java&logoColor=white">
-<img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=Spring-Boot&logoColor=white">
-<img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=Gradle&logoColor=white">
+    <img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=Java&logoColor=white">
+    <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=Gradle&logoColor=white">
+    <img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=Spring-Boot&logoColor=white">
 </div>
 
 <div>
-<img src="https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=flat-square&logo=Spring-Data-JPA&logoColor=white">
-<img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat-square&logo=Spring-Security&logoColor=white">
-<img src="https://img.shields.io/badge/JWT-000000?style=flat-square&logo=JSON-Web-Tokens&logoColor=white">
+    <img src="https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=flat-square&logo=Spring-Data-JPA&logoColor=white">
+    <img src="https://img.shields.io/badge/QueryDSL-009630?style=flat-square&logo=Gradle&logoColor=white">
+    <img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat-square&logo=Spring-Security&logoColor=white">
+    <img src="https://img.shields.io/badge/JWT-000000?style=flat-square&logo=JSON-Web-Tokens&logoColor=white">
+    <img src="https://img.shields.io/badge/OAuth%202.0-3EA0F6?style=flat-square&logo=OAuth&logoColor=white">
 </div>
 
 <div>
-<img src="https://img.shields.io/badge/OAuth%202.0-3EA0F6?style=flat-square&logo=OAuth&logoColor=white">
-<img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white">
-<img src="https://img.shields.io/badge/Redis-D62124?style=flat-square&logo=Redis&logoColor=white">
+    <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white">
+    <img src="https://img.shields.io/badge/Redis-D62124?style=flat-square&logo=Redis&logoColor=white">
 </div>
 
 <div>
-<img src="https://img.shields.io/badge/JUnit%205-25A162?style=flat-square&logo=JUnit&logoColor=white">
-<img src="https://img.shields.io/badge/RestDocs-2496ED?style=flat-square&logo=Swagger&logoColor=white">
-<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white">
+    <img src="https://img.shields.io/badge/JUnit%205-25A162?style=flat-square&logo=JUnit&logoColor=white">
+    <img src="https://img.shields.io/badge/RestDocs-2496ED?style=flat-square&logo=Swagger&logoColor=white">
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white">
+    <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=GitHub-Actions&logoColor=white">
 </div>
 
+### 툴
 <div>
-<img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=GitHub-Actions&logoColor=white">
-<img src="https://img.shields.io/badge/QueryDSL-009630?style=flat-square&logo=Gradle&logoColor=white">
-<img src="https://img.shields.io/badge/JMeter-D22128?style=flat-square&logo=Apache-JMeter&logoColor=white">
+    <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white">
+    <img src="https://img.shields.io/badge/Jira-0052CC?style=flat-square&logo=jirasoftware&logoColor=white">
+    <img src="https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white">
+    <img src="https://img.shields.io/badge/IntelliJ IDEA-4A154B?style=flat-square&logo=intellijidea&logoColor=white">
+    <img src="https://img.shields.io/badge/JMeter-D22128?style=flat-square&logo=Apache-JMeter&logoColor=white">
 </div>
 </div>
 
