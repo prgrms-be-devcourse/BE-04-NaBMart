@@ -53,7 +53,7 @@ class DeliveryControllerTest extends BaseControllerTest {
 
             //when
             ResultActions resultActions = mockMvc
-                .perform(get("/api/v1/deliveries/{orderId}", orderId)
+                .perform(get("/api/v1/orders/{orderId}/deliveries", orderId)
                     .header(AUTHORIZATION, accessToken)
                     .accept(MediaType.APPLICATION_JSON));
 

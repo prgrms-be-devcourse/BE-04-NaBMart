@@ -37,7 +37,7 @@ public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
-    @GetMapping("/{orderId}")
+    @GetMapping("/orders/{orderId}/deliveries")
     public ResponseEntity<FindDeliveryDetailResponse> findDelivery(
         @PathVariable final Long orderId,
         @LoginUser final Long userId) {
