@@ -71,7 +71,6 @@ public class UserService {
         likeItemRepository.deleteByUser(findUser);
         cartItemRepository.deleteByUser(findUser);
         cartRepository.deleteByUser(findUser);
-        deliveryRepository.deleteByUser(findUser);
         paymentRepository.deleteByUser(findUser);
         orderRepository.deleteByUser(findUser);
         userCouponRepository.deleteByUser(findUser);

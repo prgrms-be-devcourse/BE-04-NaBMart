@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -35,11 +34,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     @Lock(LockModeType.OPTIMISTIC)
     @Query("select d from Delivery d where d.deliveryId = :deliveryId")
     Optional<Delivery> findByIdOptimistic(@Param("deliveryId") Long deliveryId);
-
-    @Modifying
-    @Query("delete from Delivery d"
-        + " where d.order = (select o from Order o where o.user = :user)")
-    void deleteByUser(@Param("user") User user);
 
     @Query("select d from Delivery d join d.order o where o.user = :user")
     List<Delivery> findAllByUser(@Param("user") User user);
