@@ -17,7 +17,7 @@ public class ItemCacheService {
     private final RedisTemplate<String, ItemRedisDto> redisTemplate;
     private static final String NEW_PRODUCTS_KEY = "new_products";
 
-    public void saveNewItem(ItemRedisDto itemRedisDto) {
+    public void saveNewItem(final ItemRedisDto itemRedisDto) {
         redisTemplate.opsForList().rightPush(NEW_PRODUCTS_KEY, itemRedisDto);
     }
 
