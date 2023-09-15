@@ -21,6 +21,9 @@ import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
@@ -65,6 +68,9 @@ public class DeliveryIntegrationTest {
 
     @Autowired
     RiderRepository riderRepository;
+
+    @Autowired
+    EntityManagerFactory emf;
 
     @BeforeAll
     static void beforeAll() {
@@ -140,7 +146,11 @@ public class DeliveryIntegrationTest {
             deliveryRepository.deleteAll();
             riderRepository.deleteAll();
             orderRepository.deleteAll();
-            itemRepository.deleteAll();
+            EntityManager em = emf.createEntityManager();
+            EntityTransaction tx = em.getTransaction();
+            tx.begin();
+            em.createQuery("delete from Item").executeUpdate(); // 소프트 딜리트 아이템 강제 삭제
+            tx.commit();
             subCategoryRepository.deleteAll();
             mainCategoryRepository.deleteAll();
         }

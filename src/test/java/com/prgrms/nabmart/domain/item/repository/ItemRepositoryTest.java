@@ -9,10 +9,12 @@ import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -128,6 +130,29 @@ class ItemRepositoryTest {
         }
 
         @Test
+        @DisplayName("삭제된 아이템은 조회되지 않는다.")
+        public void deletedItemIsNotSearch() {
+            //Given
+            mainCategoryRepository.save(mainCategory);
+            subCategoryRepository.save(subCategory);
+            for (int i = 0; i < 50; i++) {
+                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory,
+                    subCategory);
+                itemRepository.save(item);
+            }
+            for (long i = 1; i <= 30; i++) {
+                itemRepository.deleteById(i);
+            }
+
+            // When
+            List<Item> items = itemRepository.findAll();
+
+            // Then
+            assertThat(items.size()).isEqualTo(20);
+        }
+
+        @Test
         @DisplayName("금액 낮은 순으로 조회된다.")
         public void findByPriceGreaterThanAndMainCategoryOrderByPriceAscItemIdDesc() {
             //Given
@@ -148,5 +173,22 @@ class ItemRepositoryTest {
             // Then
             assertThat(items.size()).isEqualTo(5);
         }
+    }
+
+    @Test
+    @DisplayName("아이템 삭제 시, 아이템 조회가 안된다.")
+    public void deleteItem() {
+        // Given
+        MainCategory mainCategory = new MainCategory("main");
+        SubCategory subCategory = new SubCategory(mainCategory, "sub");
+        Item item = ItemFixture.item(mainCategory, subCategory);
+        Item savedItem = itemRepository.save(item);
+
+        // When
+        itemRepository.deleteById(savedItem.getItemId());
+
+        // Then
+        Optional<Item> findItem = itemRepository.findByItemId(savedItem.getItemId());
+        assertThat(findItem.isEmpty()).isEqualTo(true);
     }
 }
