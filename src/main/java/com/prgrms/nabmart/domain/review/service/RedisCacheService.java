@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 public class RedisCacheService {
 
     private final ReviewRepository reviewRepository;
-    private final RedisTemplate<String, Long> redisTemplate;
+    private final RedisTemplate<String, Long> numberOfReviewsRedisTemplate;
+    private final RedisTemplate<String, Double> rateRedisTemplate;
 
     public Long getTotalNumberOfReviewsByItemId(
         final Long itemId,
         final String cacheKey
     ) {
-        Long cachedCount = redisTemplate.opsForValue().get(cacheKey);
+        Long cachedCount = numberOfReviewsRedisTemplate.opsForValue().get(cacheKey);
 
         if (cachedCount != null) {
             return cachedCount;
@@ -24,7 +25,7 @@ public class RedisCacheService {
 
         long dbCount = reviewRepository.countByItem_ItemId(itemId);
 
-        redisTemplate.opsForValue().set(cacheKey, dbCount);
+        numberOfReviewsRedisTemplate.opsForValue().set(cacheKey, dbCount);
 
         return dbCount;
     }
@@ -33,29 +34,46 @@ public class RedisCacheService {
         final Long itemId,
         final String cacheKey
     ) {
-        Long cachedCount = redisTemplate.opsForValue().get(cacheKey);
+        Long cachedCount = numberOfReviewsRedisTemplate.opsForValue().get(cacheKey);
 
         if (cachedCount != null) {
-            redisTemplate.opsForValue().set(cacheKey, cachedCount + 1);
+            numberOfReviewsRedisTemplate.opsForValue().set(cacheKey, cachedCount + 1);
         }
 
         long dbCount = reviewRepository.countByItem_ItemId(itemId);
 
-        redisTemplate.opsForValue().set(cacheKey, dbCount);
+        numberOfReviewsRedisTemplate.opsForValue().set(cacheKey, dbCount);
     }
 
     public void minusOneToTotalNumberOfReviewsByItemId(
         final Long itemId,
         final String cacheKey
     ) {
-        Long cachedCount = redisTemplate.opsForValue().get(cacheKey);
+        Long cachedCount = numberOfReviewsRedisTemplate.opsForValue().get(cacheKey);
 
         if (cachedCount != null) {
-            redisTemplate.opsForValue().set(cacheKey, cachedCount - 1);
+            numberOfReviewsRedisTemplate.opsForValue().set(cacheKey, cachedCount - 1);
         }
 
         long dbCount = reviewRepository.countByItem_ItemId(itemId);
 
-        redisTemplate.opsForValue().set(cacheKey, dbCount);
+        numberOfReviewsRedisTemplate.opsForValue().set(cacheKey, dbCount);
+    }
+
+    public double getAverageRatingByItemId(
+        final Long itemId,
+        final String cacheKey
+    ) {
+        Double cachedAverageRate = rateRedisTemplate.opsForValue().get(cacheKey);
+
+        if (cachedAverageRate != null) {
+            return cachedAverageRate;
+        }
+
+        Double dbAverageRate = reviewRepository.findAverageRatingByItemId(itemId);
+
+        rateRedisTemplate.opsForValue().set(cacheKey, dbAverageRate);
+
+        return dbAverageRate;
     }
 }

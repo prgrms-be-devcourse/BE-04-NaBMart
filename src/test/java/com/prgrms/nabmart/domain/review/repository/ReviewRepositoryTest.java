@@ -1,6 +1,7 @@
 package com.prgrms.nabmart.domain.review.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.prgrms.nabmart.base.TestQueryDslConfig;
 import com.prgrms.nabmart.domain.category.MainCategory;
@@ -116,6 +117,30 @@ class ReviewRepositoryTest {
             // then
             assertThat(reviewsByItem).hasSize(1);
             assertThat(reviewsByItem.get(0).getItem().getItemId()).isEqualTo(givenItem.getItemId());
+        }
+    }
+
+    @Nested
+    @DisplayName("findAverageRatingByItemId 실행 시")
+    class FindAverageRatingByItemId {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // given
+            userRepository.save(givenUser);
+            subCategoryRepository.save(givenSubCategory);
+            mainCategoryRepository.save(givenMainCategory);
+            itemRepository.save(givenItem);
+            reviewRepository.save(givenReview);
+            reviewRepository.save(new Review(givenUser, givenItem, 3, "그냥 그런듯"));
+
+            // when
+            Double foundAverageRate = reviewRepository.findAverageRatingByItemId(
+                givenItem.getItemId());
+
+            // then
+            assertEquals(foundAverageRate, 4);
         }
     }
 }
