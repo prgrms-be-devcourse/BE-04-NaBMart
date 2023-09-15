@@ -28,13 +28,14 @@ public class Delivery extends BaseTimeEntity {
 
     private static final int ADDRESS_LENGTH = 500;
     private static final int ZERO = 0;
+    public static final String DELETED = "삭제됨";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long deliveryId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderId", nullable = false)
+    @JoinColumn(name = "orderId")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,10 +51,26 @@ public class Delivery extends BaseTimeEntity {
     @Version
     private Long version;
 
+    @Column
+    private String address;
+
+    @Column
+    private Integer orderPrice;
+
+    @Column
+    private String riderRequest;
+
+    @Column
+    private Integer deliveryFee;
+
     @Builder
     public Delivery(final Order order) {
         this.order = order;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
+        this.address = order.getAddress();
+        this.orderPrice = order.getPrice();
+        this.riderRequest = order.getRiderRequest();
+        this.deliveryFee = order.getDeliveryFee();
     }
 
     public boolean isOwnByUser(final User user) {
@@ -85,5 +102,10 @@ public class Delivery extends BaseTimeEntity {
     public void completeDelivery() {
         this.arrivedAt = LocalDateTime.now();
         this.deliveryStatus = DeliveryStatus.DELIVERED;
+    }
+
+    public void deleteAboutUser() {
+        this.order = null;
+        this.address = DELETED;
     }
 }
