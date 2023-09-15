@@ -2,9 +2,8 @@ package com.prgrms.nabmart.domain.payment.service;
 
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderStatus;
-import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.exception.NotPayingOrderException;
-import com.prgrms.nabmart.domain.order.repository.OrderRepository;
+import com.prgrms.nabmart.domain.order.service.OrderService;
 import com.prgrms.nabmart.domain.payment.Payment;
 import com.prgrms.nabmart.domain.payment.PaymentStatus;
 import com.prgrms.nabmart.domain.payment.exception.DuplicatePayException;
@@ -32,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
     private final ApiService apiService;
 
     @Value("${payment.toss.success-url}")
@@ -56,7 +55,7 @@ public class PaymentService {
 
         validateOrderStatusWithPending(order);
         order.changeStatus(OrderStatus.PAYING);
-        order.redeemCoupon();
+        order.useCoupon();
 
         final Payment payment = buildPayment(order);
         paymentRepository.save(payment);
@@ -73,13 +72,11 @@ public class PaymentService {
 
 
     private Order getOrderByOrderIdAndUserId(Long orderId, Long userId) {
-        return orderRepository.findByOrderIdAndUser_UserId(orderId, userId)
-            .orElseThrow(() -> new NotFoundOrderException("주문 존재하지 않습니다."));
+        return orderService.getOrderByOrderIdAndUserId(orderId, userId);
     }
 
     private Order getOrderByUuidAndUserId(String uuid, Long userId) {
-        return orderRepository.findByUuidAndUser_UserId(uuid, userId)
-            .orElseThrow(() -> new NotFoundOrderException("주문 존재하지 않습니다."));
+        return orderService.getOrderByUuidAndUserId(uuid, userId);
     }
 
     private void validateOrderStatusWithPending(final Order order) {
@@ -96,7 +93,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentResponse confirmPayment(
+    public PaymentResponse processSuccessPayment(
         Long userId,
         String uuid,
         String paymentKey,
@@ -120,7 +117,7 @@ public class PaymentService {
 
         order.changeStatus(OrderStatus.PAYED);
 
-        return new PaymentResponse(payment.getPaymentStatus().toString());
+        return new PaymentResponse(payment.getPaymentStatus().toString(), null);
     }
 
     private void validateOrderStatusWithPaying(final Order order) {
@@ -138,11 +135,11 @@ public class PaymentService {
     }
 
     private void validatePayment(Integer amount, Payment payment) {
-        validatePaymentStatus(payment);
+        validatePaymentStatusWithPending(payment);
         validatePrice(amount, payment);
     }
 
-    private void validatePaymentStatus(final Payment payment) {
+    private void validatePaymentStatusWithPending(final Payment payment) {
         if (payment.isMisMatchStatus(PaymentStatus.PENDING)) {
             throw new DuplicatePayException("이미 처리된 결제입니다.");
         }
@@ -187,5 +184,19 @@ public class PaymentService {
     private Payment getPaymentByUuidAndUserId(String uuid, Long userId) {
         return paymentRepository.findByOrder_UuidAndUser_UserId(uuid, userId)
             .orElseThrow(() -> new NotFoundPaymentException("결제가 존재하지 않습니다."));
+    }
+
+    @Transactional
+    public PaymentResponse processFailPayment(Long userId, String uuid, String errorMessage) {
+        Payment payment = getPaymentByUuidAndUserId(uuid, userId);
+        validatePaymentStatusWithPending(payment);
+        payment.changeStatus(PaymentStatus.FAILED);
+
+        Order order = getOrderByUuidAndUserId(uuid, userId);
+        validateOrderStatusWithPaying(order);
+
+        orderService.cancelOrder(order);
+
+        return new PaymentResponse(payment.getPaymentStatus().toString(), errorMessage);
     }
 }
