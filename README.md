@@ -48,7 +48,7 @@
 </div>
 
 ## Architecture
-![image](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/0f6c4cc8-022c-4e64-aa7a-642d15488156)
+![bmart_architecture](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/67941526/7e7f6493-a2e0-4dd9-a3b6-bbeff6502303)
 
 
 ## ERD
