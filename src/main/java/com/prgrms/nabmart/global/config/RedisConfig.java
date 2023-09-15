@@ -26,11 +26,21 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Long> redisTemplate() {
+    public RedisTemplate<String, Long> stringToLongRedisTemplate() {
         RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(
-            new GenericToStringSerializer<>(Long.class)); // Long 값을 다루므로 설정 변경
+            new GenericToStringSerializer<>(Long.class));
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, Double> stringToDoubleRedisTemplate() {
+        RedisTemplate<String, Double> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(
+            new GenericToStringSerializer<>(Double.class));
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
