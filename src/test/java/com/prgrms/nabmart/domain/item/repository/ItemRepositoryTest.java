@@ -176,7 +176,7 @@ class ItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("아이템 삭제 시, update 쿼리가 발생한다.")
+    @DisplayName("아이템 삭제 시, 아이템 조회가 안된다.")
     public void deleteItem() {
         // Given
         MainCategory mainCategory = new MainCategory("main");
@@ -189,9 +189,6 @@ class ItemRepositoryTest {
 
         // Then
         Optional<Item> findItem = itemRepository.findByItemId(savedItem.getItemId());
-        assertThat(findItem.isEmpty()).isEqualTo(false);
-        assertThat(savedItem.getItemId()).isEqualTo(findItem.get().getItemId());
-        assertThat(savedItem.isDeleted()).isEqualTo(false);
-        assertThat(findItem.get().isDeleted()).isEqualTo(true);
+        assertThat(findItem.isEmpty()).isEqualTo(true);
     }
 }
