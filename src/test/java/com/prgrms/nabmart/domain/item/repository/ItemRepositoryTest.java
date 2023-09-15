@@ -130,6 +130,29 @@ class ItemRepositoryTest {
         }
 
         @Test
+        @DisplayName("삭제된 아이템은 조회되지 않는다.")
+        public void deletedItemIsNotSearch() {
+            //Given
+            mainCategoryRepository.save(mainCategory);
+            subCategoryRepository.save(subCategory);
+            for (int i = 0; i < 50; i++) {
+                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory,
+                    subCategory);
+                itemRepository.save(item);
+            }
+            for (long i = 1; i <= 30; i++) {
+                itemRepository.deleteById(i);
+            }
+
+            // When
+            List<Item> items = itemRepository.findAll();
+
+            // Then
+            assertThat(items.size()).isEqualTo(20);
+        }
+
+        @Test
         @DisplayName("금액 낮은 순으로 조회된다.")
         public void findByPriceGreaterThanAndMainCategoryOrderByPriceAscItemIdDesc() {
             //Given
