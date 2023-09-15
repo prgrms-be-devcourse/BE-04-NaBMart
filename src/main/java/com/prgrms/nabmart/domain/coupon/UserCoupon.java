@@ -51,5 +51,12 @@ public class UserCoupon extends BaseTimeEntity {
         }
         isUsed = true;
     }
+
+    public void unUse() {
+        if (isUsed == false) {
+            throw new InvalidUsedCouponException("사용하지 않은 쿠폰입니다.");
+        }
+        isUsed = false;
+    }
 }
 
