@@ -85,3 +85,21 @@
 ## ERD
 
 ### Environment Variables
+```
+CLIENT_SECRET=;
+EXPIRY_SECONDS=60;
+ISSUER=;
+
+KAKAO_CLIENT_ID=;
+KAKAO_CLIENT_SECRET=;
+NAVER_CLIENT_ID=;
+NAVER_CLIENT_SECRET=;
+REDIRECT_URI=http://localhost:8080/login/oauth2/code/{registrationId};
+
+REDIS_HOST=localhost;
+REDIS_PORT=6379;
+
+TOSS_FAIL_URL=http://localhost:8080/api/v1/pays/toss/fail;
+TOSS_SUCCESS_URL=http://localhost:8080/api/v1/pays/toss/success;
+TOSS_SECRET_KEY=
+```
