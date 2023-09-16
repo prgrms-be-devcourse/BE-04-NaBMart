@@ -1,26 +1,18 @@
 package com.prgrms.nabmart.domain.review.service;
 
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class RedisCacheService {
 
     private final ReviewRepository reviewRepository;
     private final RedisTemplate<String, Long> numberOfReviewsRedisTemplate;
     private final ListOperations<String, String> listOperations;
-
-    public RedisCacheService(
-        ReviewRepository reviewRepository,
-        RedisTemplate<String, Long> numberOfReviewsRedisTemplate,
-        RedisTemplate<String, String> rateRedisTemplate
-    ) {
-        this.reviewRepository = reviewRepository;
-        this.numberOfReviewsRedisTemplate = numberOfReviewsRedisTemplate;
-        this.listOperations = rateRedisTemplate.opsForList();
-    }
 
     public Long getTotalNumberOfReviewsByItemId(
         final Long itemId,
