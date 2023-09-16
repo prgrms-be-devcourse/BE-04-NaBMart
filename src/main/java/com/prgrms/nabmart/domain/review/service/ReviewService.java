@@ -50,7 +50,10 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(review);
 
         String cacheKey = REVIEW_COUNT_CACHE_KEY + foundItem.getItemId();
+
         redisCacheService.plusOneToTotalNumberOfReviewsByItemId(foundItem.getItemId(), cacheKey);
+        redisCacheService.updateAverageRatingByItemId(foundItem.getItemId(), cacheKey,
+            savedReview.getRate());
 
         return savedReview.getReviewId();
     }
