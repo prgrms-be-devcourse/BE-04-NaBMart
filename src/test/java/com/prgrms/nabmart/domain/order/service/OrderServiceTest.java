@@ -14,6 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.prgrms.nabmart.domain.coupon.Coupon;
@@ -25,6 +27,8 @@ import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.exception.InvalidItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.OrderItem;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.CreateOrderItemRequest;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
@@ -295,6 +299,27 @@ public class OrderServiceTest {
 
         // then
         assertThat(exception).isInstanceOf(InvalidCouponException.class);
+    }
+
+    @Nested
+    @DisplayName("cancelOrder 메서드 실행 시")
+    class CancelOrderTest {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // given
+            Order order = pendingOrder(1L, user());
+            OrderItem orderItem = order.getOrderItems().get(0);
+
+            // when
+            orderService.cancelOrder(order);
+
+            // then
+            assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELED);
+            verify(itemRepository, times(1)).increaseQuantity(orderItem.getItem().getItemId(),
+                orderItem.getQuantity());
+        }
     }
 }
 

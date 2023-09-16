@@ -27,6 +27,7 @@
 
 <div>
     <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white">
+    <img src="https://img.shields.io/badge/H2-000000?style=flat-square&logo=h2&logoColor=white">
     <img src="https://img.shields.io/badge/Redis-D62124?style=flat-square&logo=Redis&logoColor=white">
 </div>
 
@@ -48,7 +49,8 @@
 </div>
 
 ## Architecture
-![image](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/956c0c51-2a09-4190-9640-6aec3c797205)
+![bmart_architecture](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/67941526/7e7f6493-a2e0-4dd9-a3b6-bbeff6502303)
+
 
 ## ERD
 ![찐찐최종 B마트](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/f0b8c2f8-21c2-42b8-ab8a-a62a5569d839)

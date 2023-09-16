@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.item.repository;
 
+import static com.prgrms.nabmart.domain.item.support.ItemFixture.item;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.prgrms.nabmart.base.TestQueryDslConfig;
@@ -9,10 +10,12 @@ import com.prgrms.nabmart.domain.category.fixture.CategoryFixture;
 import com.prgrms.nabmart.domain.category.repository.MainCategoryRepository;
 import com.prgrms.nabmart.domain.category.repository.SubCategoryRepository;
 import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -147,6 +150,49 @@ class ItemRepositoryTest {
 
             // Then
             assertThat(items.size()).isEqualTo(5);
+        }
+    }
+
+    @Test
+    @DisplayName("아이템 삭제 시, 아이템 조회가 안된다.")
+    public void deleteItem() {
+        // Given
+        MainCategory mainCategory = new MainCategory("main");
+        SubCategory subCategory = new SubCategory(mainCategory, "sub");
+        Item item = ItemFixture.item(mainCategory, subCategory);
+        Item savedItem = itemRepository.save(item);
+
+        // When
+        itemRepository.deleteById(savedItem.getItemId());
+
+        // Then
+        Optional<Item> findItem = itemRepository.findByItemId(savedItem.getItemId());
+        assertThat(findItem.isEmpty()).isEqualTo(true);
+    }
+
+    @Nested
+    @DisplayName("increaseQuantity 메서드는")
+    class IncreaseQuantityTest {
+
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            // Given
+            int increaseQuantity = 100;
+            Item item = item();
+            int originQuantity = item.getQuantity();
+
+            mainCategoryRepository.save(item.getMainCategory());
+            subCategoryRepository.save(item.getSubCategory());
+            itemRepository.save(item);
+
+            // When
+            itemRepository.increaseQuantity(item.getItemId(), increaseQuantity);
+
+            // Then
+            Optional<Item> findItem = itemRepository.findById(item.getItemId());
+            assertThat(findItem).isNotEmpty();
+            assertThat(findItem.get().getQuantity()).isEqualTo(originQuantity + increaseQuantity);
         }
     }
 }
