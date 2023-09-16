@@ -210,7 +210,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             reviewRepository.save(givenReview);
 
             double result = 5;
-            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
+            String cacheKey = "averageRating:Item:" + givenItem.getItemId();
 
             // when
             log.info("DB에서 평균 평점 가져오기");
@@ -255,7 +255,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             userRepository.save(givenUser);
             reviewRepository.save(givenReview);
 
-            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
+            String cacheKey = "averageRating:Item:" + givenItem.getItemId();
 
             Review addReview = new Review(givenUser, givenItem, 3, "그냥 그러네");
             reviewRepository.save(addReview);
