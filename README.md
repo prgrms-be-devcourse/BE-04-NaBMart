@@ -27,6 +27,7 @@
 
 <div>
     <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white">
+    <img src="https://img.shields.io/badge/H2-000000?style=flat-square&logo=h2&logoColor=white">
     <img src="https://img.shields.io/badge/Redis-D62124?style=flat-square&logo=Redis&logoColor=white">
 </div>
 
