@@ -73,18 +73,33 @@ public class RedisCacheService {
         final Long itemId,
         final String cacheKey
     ) {
-        String averageRate = listOperations.index(cacheKey, 0);
+        String averageRating = listOperations.index(cacheKey, 0);
 
-        if (averageRate != null) {
-            return Double.parseDouble(averageRate);
+        if (averageRating != null) {
+            return Double.parseDouble(averageRating);
         }
 
-        Double dbAverageRate = reviewRepository.findAverageRatingByItemId(itemId);
+        Double dbAverageRating = reviewRepository.findAverageRatingByItemId(itemId);
         Long numberOfReviews = reviewRepository.countByItem_ItemId(itemId);
 
-        listOperations.rightPushAll(cacheKey, String.valueOf(dbAverageRate),
+        listOperations.rightPushAll(cacheKey, String.valueOf(dbAverageRating),
             String.valueOf(numberOfReviews));
 
-        return dbAverageRate;
+        return dbAverageRating;
+    }
+
+    public void updateAverageRatingByItemId(
+        final Long itemId,
+        final String cacheKey
+    ) {
+        Long cachedCount = numberOfReviewsRedisTemplate.opsForValue().get(cacheKey);
+
+        if (cachedCount != null) {
+            numberOfReviewsRedisTemplate.opsForValue().set(cacheKey, cachedCount + 1);
+        }
+
+        long dbCount = reviewRepository.countByItem_ItemId(itemId);
+
+        numberOfReviewsRedisTemplate.opsForValue().set(cacheKey, dbCount);
     }
 }

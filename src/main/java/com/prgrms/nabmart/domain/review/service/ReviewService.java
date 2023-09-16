@@ -29,7 +29,7 @@ public class ReviewService {
     private final RedisCacheService redisCacheService;
 
     private static final String REVIEW_COUNT_CACHE_KEY = "reviewCount:Item:";
-    private static final String AVERAGE_RATE_CACHE_KEY = "averageRate:Item:";
+    private static final String AVERAGE_RATE_CACHE_KEY = "averageRating:Item:";
 
     @Transactional
     public Long registerReview(
@@ -116,7 +116,7 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public Double findAverageRateByItem(
+    public Double findAverageRatingByItem(
         final Long itemId
     ) {
         Item foundItem = findItemByItemId(itemId);
