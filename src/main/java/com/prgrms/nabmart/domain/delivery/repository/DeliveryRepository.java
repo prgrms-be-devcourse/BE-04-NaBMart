@@ -21,7 +21,8 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     @Query(value = "select d from Delivery d"
         + " where d.deliveryStatus"
-        + " = com.prgrms.nabmart.domain.delivery.DeliveryStatus.ACCEPTING_ORDER")
+        + " = com.prgrms.nabmart.domain.delivery.DeliveryStatus.ACCEPTING_ORDER"
+        + " and d.rider is null")
     Page<Delivery> findWaitingDeliveries(Pageable pageable);
 
     @Query(value = "select d from Delivery d"

@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.delivery;
 
+import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.UnauthorizedDeliveryException;
 import com.prgrms.nabmart.domain.order.Order;
@@ -7,6 +8,8 @@ import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Version;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +46,7 @@ public class Delivery extends BaseTimeEntity {
     @JoinColumn(name = "riderId")
     private Rider rider;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DeliveryStatus deliveryStatus;
 
@@ -96,7 +101,14 @@ public class Delivery extends BaseTimeEntity {
     }
 
     public void assignRider(Rider rider) {
+        checkAlreadyAssignedToRider();
         this.rider = rider;
+    }
+
+    private void checkAlreadyAssignedToRider() {
+        if (Objects.nonNull(this.rider)) {
+            throw new AlreadyAssignedDeliveryException("이미 배차 완료된 배달입니다.");
+        }
     }
 
     public void completeDelivery() {
