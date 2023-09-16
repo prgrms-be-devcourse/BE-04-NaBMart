@@ -136,11 +136,11 @@ class ReviewRepositoryTest {
             reviewRepository.save(new Review(givenUser, givenItem, 3, "그냥 그런듯"));
 
             // when
-            Double foundAverageRate = reviewRepository.findAverageRatingByItemId(
+            Double foundAverageRating = reviewRepository.findAverageRatingByItemId(
                 givenItem.getItemId());
 
             // then
-            assertEquals(foundAverageRate, 4);
+            assertEquals(foundAverageRating, 4);
         }
     }
 }

@@ -28,8 +28,8 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final RedisCacheService redisCacheService;
 
-    private static final String REVIEW_COUNT_CACHE_KEY = "reviewCount_Item_";
-    private static final String AVERAGE_RATE_CACHE_KEY = "averageRate_Item_";
+    private static final String REVIEW_COUNT_CACHE_KEY = "reviewCount:Item:";
+    private static final String AVERAGE_RATE_CACHE_KEY = "averageRating:Item:";
 
     @Transactional
     public Long registerReview(
@@ -50,7 +50,10 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(review);
 
         String cacheKey = REVIEW_COUNT_CACHE_KEY + foundItem.getItemId();
+
         redisCacheService.plusOneToTotalNumberOfReviewsByItemId(foundItem.getItemId(), cacheKey);
+        redisCacheService.updateAverageRatingByItemId(foundItem.getItemId(), cacheKey,
+            savedReview.getRate());
 
         return savedReview.getReviewId();
     }
@@ -116,7 +119,7 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public Double findAverageRateByItem(
+    public Double findAverageRatingByItem(
         final Long itemId
     ) {
         Item foundItem = findItemByItemId(itemId);

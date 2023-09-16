@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.review.service;
 
 import com.prgrms.nabmart.domain.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ public class RedisCacheService {
 
     private final ReviewRepository reviewRepository;
     private final RedisTemplate<String, Long> numberOfReviewsRedisTemplate;
-    private final RedisTemplate<String, Double> rateRedisTemplate;
+    private final ListOperations<String, String> listOperations;
 
     public Long getTotalNumberOfReviewsByItemId(
         final Long itemId,
@@ -64,16 +65,47 @@ public class RedisCacheService {
         final Long itemId,
         final String cacheKey
     ) {
-        Double cachedAverageRate = rateRedisTemplate.opsForValue().get(cacheKey);
+        String averageRating = listOperations.index(cacheKey, 0);
 
-        if (cachedAverageRate != null) {
-            return cachedAverageRate;
+        if (averageRating != null) {
+            return Double.parseDouble(averageRating);
         }
 
-        Double dbAverageRate = reviewRepository.findAverageRatingByItemId(itemId);
+        Double dbAverageRating = reviewRepository.findAverageRatingByItemId(itemId);
+        Long numberOfReviews = reviewRepository.countByItem_ItemId(itemId);
 
-        rateRedisTemplate.opsForValue().set(cacheKey, dbAverageRate);
+        listOperations.rightPushAll(cacheKey, String.valueOf(dbAverageRating),
+            String.valueOf(numberOfReviews));
 
-        return dbAverageRate;
+        return dbAverageRating;
+    }
+
+    public void updateAverageRatingByItemId(
+        final Long itemId,
+        final String cacheKey,
+        final double newRating
+    ) {
+        String averageRating = listOperations.index(cacheKey, 0);
+        String totalNumberOfReviews = listOperations.index(cacheKey, 1);
+
+        if (averageRating != null && totalNumberOfReviews != null) {
+            double totalRating =
+                Double.parseDouble(averageRating) * Long.parseLong(totalNumberOfReviews);
+
+            long updatedTotalNumberOfReviews = Long.parseLong(totalNumberOfReviews) + 1;
+
+            double updatedAverageRating = Math.round(
+                (totalRating + newRating) / updatedTotalNumberOfReviews) * 100
+                / 100.0;
+
+            listOperations.set(cacheKey, 0, String.valueOf(updatedAverageRating));
+            listOperations.set(cacheKey, 1, String.valueOf(updatedTotalNumberOfReviews));
+        }
+
+        double dbAverageRating = reviewRepository.findAverageRatingByItemId(itemId);
+        long dbNumberOfReviews = reviewRepository.countByItem_ItemId(itemId);
+
+        listOperations.rightPushAll(cacheKey, String.valueOf(dbAverageRating),
+            String.valueOf(dbNumberOfReviews));
     }
 }
