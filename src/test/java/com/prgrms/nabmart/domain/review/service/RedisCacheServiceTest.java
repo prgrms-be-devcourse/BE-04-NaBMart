@@ -244,5 +244,37 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             log.info("db : " + dbAverageRating);
             log.info("Redis : " + cachedAverageRating);
         }
+
+        @Test
+        @DisplayName("Redis에 값이 있으면 Redis 값을 갱신한다.")
+        void shouldUpdateAverageRatingAndNumberOfReviews() {
+            // given
+            mainCategoryRepository.save(givenMainCategory);
+            subCategoryRepository.save(givenSubCategory);
+            itemRepository.save(givenItem);
+            userRepository.save(givenUser);
+            reviewRepository.save(givenReview);
+
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
+
+            Review addReview = new Review(givenUser, givenItem, 3, "그냥 그러네");
+            reviewRepository.save(addReview);
+
+            double result = 4;
+
+            // when
+            redisCacheService.updateAverageRatingByItemId(givenItem.getItemId(), cacheKey,
+                addReview.getRate());
+
+            double dbAverageRating = redisCacheService.getAverageRatingByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            double cachedAverageRating = redisCacheService.getAverageRatingByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            // then
+            assertEquals(result, dbAverageRating);
+            assertEquals(result, cachedAverageRating);
+        }
     }
 }
