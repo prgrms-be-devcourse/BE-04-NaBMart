@@ -32,7 +32,7 @@ public class UserController {
         return ResponseEntity.ok(findUserDetailResponse);
     }
 
-    @DeleteMapping("/users")
+    @DeleteMapping("/users/me")
     public ResponseEntity<Void> deleteUser(@LoginUser Long userId) {
         FindUserCommand findUserDetailCommand = FindUserCommand.from(userId);
         FindUserDetailResponse findUserDetailResponse = userService.findUser(findUserDetailCommand);

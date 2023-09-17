@@ -79,7 +79,7 @@ class UserControllerTest extends BaseControllerTest {
             given(userService.findUser(any())).willReturn(findUserDetailResponse);
 
             //when
-            ResultActions resultActions = mockMvc.perform(delete("/api/v1/users")
+            ResultActions resultActions = mockMvc.perform(delete("/api/v1/users/me")
                 .header("Authorization", accessToken));
 
             //then
