@@ -5,4 +5,6 @@ import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 public interface OAuthRestClient {
 
     void callUnlinkOAuthUser(FindUserDetailResponse userDetailResponse);
+
+    void refreshAccessToken(FindUserDetailResponse userDetailResponse);
 }
