@@ -10,6 +10,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -27,6 +28,18 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
     private static final String REFRESH_ACCESS_TOKEN_URI = "https://nid.naver.com/oauth2.0/token?"
         + "grant_type=refresh_token&client_id={client_id}&"
         + "client_secret={client_secret}&refresh_token={refresh_token}";
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String CLIENT_ID = "client_id";
+    private static final String CLIENT_SECRET = "client_secret";
+    private static final String ACCESS_TOKEN = "access_token";
+    private static final String GRANT_TYPE = "grant_type";
+    private static final String SERVICE_PROVIDER = "service_provider";
+    private static final String REFRESH_TOKEN = "refresh_token";
+    private static final String EXPIRES_IN = "expires_in";
+    private static final String DELETE = "delete";
+    private static final String NAVER = "NAVER";
+    private static final String RESULT = "result";
+    private static final String SUCCESS = "success";
 
     @Override
     public OAuthHttpMessage createUnlinkHttpMessage(
@@ -50,7 +63,7 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
 
     private HttpHeaders createHeader() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
+        headers.set(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         return headers;
     }
 
@@ -58,18 +71,18 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
         final ClientRegistration clientRegistration,
         final String accessToken) {
         Map<String, String> urlVariables = new HashMap<>();
-        urlVariables.put("client_id", clientRegistration.getClientId());
-        urlVariables.put("client_secret", clientRegistration.getClientSecret());
-        urlVariables.put("access_token", accessToken);
-        urlVariables.put("grant_type", "delete");
-        urlVariables.put("service_provider", "NAVER");
+        urlVariables.put(CLIENT_ID, clientRegistration.getClientId());
+        urlVariables.put(CLIENT_SECRET, clientRegistration.getClientSecret());
+        urlVariables.put(ACCESS_TOKEN, accessToken);
+        urlVariables.put(GRANT_TYPE, DELETE);
+        urlVariables.put(SERVICE_PROVIDER, NAVER);
         return urlVariables;
     }
 
     @Override
     public void checkSuccessUnlinkRequest(Map<String, Object> unlinkResponse) {
-        Optional.ofNullable(unlinkResponse.get("result"))
-            .filter(result -> result.equals("success"))
+        Optional.ofNullable(unlinkResponse.get(RESULT))
+            .filter(result -> result.equals(SUCCESS))
             .orElseThrow(() -> new OAuthUnlinkFailureException("소셜 로그인 연동 해제가 실패하였습니다."));
     }
 
@@ -90,17 +103,17 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
     private Map<String, String> createRefreshAccessTokenUriVariables(
         OAuth2AuthorizedClient authorizedClient) {
         Map<String, String> variables = new HashMap<>();
-        variables.put("client_id", authorizedClient.getClientRegistration().getClientId());
-        variables.put("client_secret", authorizedClient.getClientRegistration().getClientSecret());
-        variables.put("refresh_token", authorizedClient.getRefreshToken().getTokenValue());
-        variables.put("grant_type", "refresh_token");
+        variables.put(CLIENT_ID, authorizedClient.getClientRegistration().getClientId());
+        variables.put(CLIENT_SECRET, authorizedClient.getClientRegistration().getClientSecret());
+        variables.put(REFRESH_TOKEN, authorizedClient.getRefreshToken().getTokenValue());
+        variables.put(GRANT_TYPE, REFRESH_TOKEN);
         return variables;
     }
 
     @Override
     public OAuth2AccessToken extractAccessToken(Map response) {
-        String accessToken = (String) response.get("access_token");
-        String expiresInSeconds = (String) response.get("expires_in");
+        String accessToken = (String) response.get(ACCESS_TOKEN);
+        String expiresInSeconds = (String) response.get(EXPIRES_IN);
         Instant now = Instant.now();
         Instant expiresIn = now.plusSeconds(Long.parseLong(expiresInSeconds));
         return new OAuth2AccessToken(TokenType.BEARER, accessToken, now, expiresIn);
@@ -108,7 +121,7 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
 
     @Override
     public Optional<OAuth2RefreshToken> extractRefreshToken(Map response) {
-        String refreshToken = (String) response.get("refresh_token");
+        String refreshToken = (String) response.get(REFRESH_TOKEN);
         return Optional.ofNullable(refreshToken)
             .map(token -> new OAuth2RefreshToken(token, Instant.now()));
     }
