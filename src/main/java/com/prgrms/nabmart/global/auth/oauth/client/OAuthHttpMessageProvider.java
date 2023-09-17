@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 
 public interface OAuthHttpMessageProvider {
 
-    OAuthHttpMessage createUnlinkHttpMessage(
+    OAuthHttpMessage createUserUnlinkRequest(
         final FindUserDetailResponse userDetailResponse,
         final OAuth2AuthorizedClient authorizedClient);
 

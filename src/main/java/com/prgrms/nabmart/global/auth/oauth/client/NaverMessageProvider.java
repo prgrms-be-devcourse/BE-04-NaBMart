@@ -42,7 +42,7 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
     private static final String SUCCESS = "success";
 
     @Override
-    public OAuthHttpMessage createUnlinkHttpMessage(
+    public OAuthHttpMessage createUserUnlinkRequest(
         final FindUserDetailResponse userDetailResponse,
         final OAuth2AuthorizedClient authorizedClient) {
         String accessToken = getAccessToken(authorizedClient);

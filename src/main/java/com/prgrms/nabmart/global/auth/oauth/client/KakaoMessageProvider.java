@@ -40,7 +40,7 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
     private static final String EXPIRES_IN = "expires_in";
 
     @Override
-    public OAuthHttpMessage createUnlinkHttpMessage(
+    public OAuthHttpMessage createUserUnlinkRequest(
         final FindUserDetailResponse userDetailResponse,
         final OAuth2AuthorizedClient authorizedClient) {
         String accessToken = getAccessToken(authorizedClient);

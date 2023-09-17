@@ -41,7 +41,7 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
             refreshAccessToken(userDetailResponse);
         }
 
-        OAuthHttpMessage unlinkHttpMessage = oAuthHttpMessageProvider.createUnlinkHttpMessage(
+        OAuthHttpMessage unlinkHttpMessage = oAuthHttpMessageProvider.createUserUnlinkRequest(
             userDetailResponse, oAuth2AuthorizedClient);
         Map<String, Object> response = sendPostApiRequest(unlinkHttpMessage);
         log.info("회원의 연결이 종료되었습니다. 회원 ID={}", response);
