@@ -145,6 +145,11 @@ public class OrderService {
             .orElseThrow(() -> new NotFoundOrderException("order 가 존재하지 않습니다"));
     }
 
+    public Order getOrderByUuidAndUserId(final String uuid, final Long userId) {
+        return orderRepository.findByUuidAndUser_UserId(uuid, userId)
+            .orElseThrow(() -> new NotFoundOrderException("order 가 존재하지 않습니다"));
+    }
+
     private User findUserByUserId(final Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundUserException("존재하지 않은 사용자입니다."));
@@ -153,5 +158,15 @@ public class OrderService {
     private Item findItemByItemId(final Long itemId) {
         return itemRepository.findByItemId(itemId)
             .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
+    }
+
+    @Transactional
+    public void cancelOrder(final Order order) {
+        order.updateOrderStatus(OrderStatus.CANCELED);
+        order.unUseCoupon();
+        order.getOrderItems().forEach(
+            orderItem -> itemRepository.increaseQuantity(orderItem.getItem().getItemId(),
+                orderItem.getQuantity())
+        );
     }
 }

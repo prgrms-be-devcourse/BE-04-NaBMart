@@ -147,6 +147,11 @@ public class ItemService {
             mainCategory, subCategory, updateItemCommand.discount());
     }
 
+    @Transactional
+    public void deleteById(Long itemId) {
+        itemRepository.deleteById(itemId);
+    }
+
     private SubCategory getSubCategoryById(Long subCategoryId) {
         SubCategory subCategory = null;
         if (subCategoryId != null) {

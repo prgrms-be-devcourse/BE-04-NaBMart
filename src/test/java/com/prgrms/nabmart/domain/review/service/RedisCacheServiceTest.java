@@ -98,7 +98,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             reviewRepository.save(givenReview);
 
             Long result = 1L;
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
 
             // when
             log.info("DB에서 총 리뷰 수 가져오기");
@@ -149,7 +149,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             userRepository.save(givenUser);
             reviewRepository.save(givenReview);
 
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
 
             // when
             redisCacheService.plusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
@@ -179,7 +179,7 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             userRepository.save(givenUser);
             reviewRepository.save(givenReview);
 
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "reviewCount:Item:" + givenItem.getItemId();
 
             // when
             redisCacheService.minusOneToTotalNumberOfReviewsByItemId(givenItem.getItemId(),
@@ -197,11 +197,11 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
 
     @Nested
     @DisplayName("상품의 평균 평점을 가져오는 Service 실행 시")
-    class GetAverageRateOfReviewsByItem {
+    class GetAverageRatingOfReviewsByItem {
 
         @Test
         @DisplayName("Redis에 값이 없으면 DB에서 가져오고, 값이 있으면 Redis에서 가져온다.")
-        void shouldGetAverageRateOfReviewsByItem() {
+        void shouldGetAverageRatingOfReviewsByItem() {
             // given
             mainCategoryRepository.save(givenMainCategory);
             subCategoryRepository.save(givenSubCategory);
@@ -210,13 +210,13 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             reviewRepository.save(givenReview);
 
             double result = 5;
-            String cacheKey = "reviewCount_Item_" + givenItem.getItemId();
+            String cacheKey = "averageRating:Item:" + givenItem.getItemId();
 
             // when
             log.info("DB에서 평균 평점 가져오기");
             long startTime = System.currentTimeMillis();
 
-            double dbAverageRate = redisCacheService.getAverageRatingByItemId(
+            double dbAverageRating = redisCacheService.getAverageRatingByItemId(
                 givenItem.getItemId(), cacheKey);
 
             long stopTime = System.currentTimeMillis();
@@ -224,14 +224,14 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             long elapsedTime = stopTime - startTime;
             log.info("실행 시간 : " + elapsedTime);
 
-            assertEquals(dbAverageRate, result);
+            assertEquals(dbAverageRating, result);
 
             // then
             log.info("DB 저장 이후 캐시 조회");
 
             long startTime2 = System.currentTimeMillis();
 
-            double cachedAverageRate = redisCacheService.getAverageRatingByItemId(
+            double cachedAverageRating = redisCacheService.getAverageRatingByItemId(
                 givenItem.getItemId(), cacheKey);
 
             long stopTime2 = System.currentTimeMillis();
@@ -239,10 +239,42 @@ public class RedisCacheServiceTest extends RedisTestContainerConfig {
             long elapsedTime2 = stopTime2 - startTime2;
             log.info("실행 시간 : " + elapsedTime2);
 
-            assertEquals(dbAverageRate, cachedAverageRate);
+            assertEquals(dbAverageRating, cachedAverageRating);
 
-            log.info("db : " + dbAverageRate);
-            log.info("Redis : " + cachedAverageRate);
+            log.info("db : " + dbAverageRating);
+            log.info("Redis : " + cachedAverageRating);
+        }
+
+        @Test
+        @DisplayName("Redis에 값이 있으면 Redis 값을 갱신한다.")
+        void shouldUpdateAverageRatingAndNumberOfReviews() {
+            // given
+            mainCategoryRepository.save(givenMainCategory);
+            subCategoryRepository.save(givenSubCategory);
+            itemRepository.save(givenItem);
+            userRepository.save(givenUser);
+            reviewRepository.save(givenReview);
+
+            String cacheKey = "averageRating:Item:" + givenItem.getItemId();
+
+            Review addReview = new Review(givenUser, givenItem, 3, "그냥 그러네");
+            reviewRepository.save(addReview);
+
+            double result = 4;
+
+            // when
+            redisCacheService.updateAverageRatingByItemId(givenItem.getItemId(), cacheKey,
+                addReview.getRate());
+
+            double dbAverageRating = redisCacheService.getAverageRatingByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            double cachedAverageRating = redisCacheService.getAverageRatingByItemId(
+                givenItem.getItemId(), cacheKey);
+
+            // then
+            assertEquals(result, dbAverageRating);
+            assertEquals(result, cachedAverageRating);
         }
     }
 }

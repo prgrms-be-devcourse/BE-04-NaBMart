@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -297,13 +298,11 @@ class ItemControllerTest extends BaseControllerTest {
 
     }
 
-
     @Nested
     @DisplayName("상품 등록 api 호출 시")
     class SaveItem {
 
         RegisterItemRequest registerItemRequest = ItemFixture.registerItemRequest();
-        Long ITEM_ID = 1L;
 
         @Test
         @DisplayName("성공")
@@ -338,6 +337,32 @@ class ItemControllerTest extends BaseControllerTest {
                                 .description("상품 소카테고리 ID")
                         )
                     )
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("상품 삭제 api 호출 시")
+    class DeleteItem {
+
+        private static final Long ITEM_ID = 1L;
+
+        @Test
+        @DisplayName("성공")
+        public void deleteItem() throws Exception {
+
+            // When
+            ResultActions resultActions = mockMvc.perform(
+                delete("/api/v1/items/{itemId}", ITEM_ID)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // Then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(document(
+                    "Delete Item",
+                    pathParameters(
+                        parameterWithName("itemId").description("상품 ID")
+                    ))
                 );
         }
     }

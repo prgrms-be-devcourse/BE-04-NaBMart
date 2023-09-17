@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.order.repository;
 
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderStatus;
+import com.prgrms.nabmart.domain.user.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +22,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.createdAt <= :expiredTime AND o.status IN :statusList")
     List<Order> findByStatusInBeforeExpiredTime(LocalDateTime expiredTime,
         List<OrderStatus> statusList);
+
+    void deleteByUser(User findUser);
 }

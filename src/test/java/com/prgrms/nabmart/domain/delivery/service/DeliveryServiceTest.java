@@ -10,6 +10,7 @@ import static org.mockito.BDDMockito.given;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.Rider;
+import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
@@ -95,11 +96,15 @@ class DeliveryServiceTest {
             assertThat(findDeliveryDetailResponse.deliveryStatus())
                 .isEqualTo(delivery.getDeliveryStatus());
             assertThat(findDeliveryDetailResponse.arrivedAt())
+                .isEqualTo(delivery.getCreatedAt());
+            assertThat(findDeliveryDetailResponse.arrivedAt())
                 .isEqualTo(delivery.getArrivedAt());
-            assertThat(findDeliveryDetailResponse.name())
+            assertThat(findDeliveryDetailResponse.orderName())
                 .isEqualTo(delivery.getOrder().getName());
-            assertThat(findDeliveryDetailResponse.price())
+            assertThat(findDeliveryDetailResponse.orderPrice())
                 .isEqualTo(delivery.getOrder().getPrice());
+            assertThat(findDeliveryDetailResponse.riderRequest())
+                .isEqualTo(delivery.getOrder().getRiderRequest());
         }
 
         @Test
@@ -396,6 +401,21 @@ class DeliveryServiceTest {
             //then
             assertThatThrownBy(() -> deliveryService.acceptDelivery(acceptDeliveryCommand))
                 .isInstanceOf(NotFoundDeliveryException.class);
+        }
+
+        @Test
+        @DisplayName("예외: 이미 배차 완료된 배달")
+        void throwExceptionWhenAlreadyAssignedDelivery() {
+            //given
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
+            given(deliveryRepository.findByIdOptimistic(any())).willReturn(
+                Optional.ofNullable(delivery));
+            delivery.assignRider(rider);
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.acceptDelivery(acceptDeliveryCommand))
+                .isInstanceOf(AlreadyAssignedDeliveryException.class);
         }
     }
 

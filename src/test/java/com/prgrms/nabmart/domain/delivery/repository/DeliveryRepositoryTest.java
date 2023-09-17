@@ -88,6 +88,10 @@ class DeliveryRepositoryTest {
             int totalElements = 3;
             List<Order> orders = createAndSaveOrders(totalElements);
             List<Delivery> deliveries = createAndSaveDeliveries(orders);
+            List<Order> alreadyAssignedOrders = createAndSaveOrders(3);
+            List<Delivery> alreadyAssignedDeliveries
+                = createAndSaveDeliveries(alreadyAssignedOrders);
+            alreadyAssignedDeliveries.forEach(delivery -> delivery.assignRider(rider));
             PageRequest pageRequest = PageRequest.of(0, 10);
 
             //when

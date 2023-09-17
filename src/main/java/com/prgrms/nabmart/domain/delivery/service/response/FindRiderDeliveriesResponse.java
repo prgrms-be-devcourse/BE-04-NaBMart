@@ -27,7 +27,10 @@ public record FindRiderDeliveriesResponse(
         Long deliveryId,
         DeliveryStatus deliveryStatus,
         LocalDateTime arrivedAt,
+        LocalDateTime createdAt,
         String address,
+        int orderPrice,
+        String riderRequest,
         int deliveryFee) {
 
         public static FindRiderDeliveryResponse from(final Delivery delivery) {
@@ -35,8 +38,11 @@ public record FindRiderDeliveriesResponse(
                 delivery.getDeliveryId(),
                 delivery.getDeliveryStatus(),
                 delivery.getArrivedAt(),
-                delivery.getOrder().getAddress(),
-                delivery.getOrder().getDeliveryFee());
+                delivery.getCreatedAt(),
+                delivery.getAddress(),
+                delivery.getOrderPrice(),
+                delivery.getRiderRequest(),
+                delivery.getDeliveryFee());
         }
     }
 }

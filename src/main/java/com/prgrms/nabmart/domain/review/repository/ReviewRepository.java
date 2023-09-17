@@ -16,6 +16,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Long countByItem_ItemId(Long itemId);
 
+    void deleteByUser(User findUser);
+
     @Query("select avg(r.rate) from Review r where r.item.itemId = :itemId")
     Double findAverageRatingByItemId(@Param("itemId") Long itemId);
+
 }
