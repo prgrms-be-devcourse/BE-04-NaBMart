@@ -16,8 +16,8 @@ public record FindNewItemsResponse(List<FindNewItemResponse> items) {
     public record FindNewItemResponse(Long itemId, String name, int price, int discount,
                                       Long reviewCount, double rate) {
 
-        public static FindNewItemResponse of(Long itemId, String name, int price, int discount,
-            Long reviewCount, double rate) {
+        public static FindNewItemResponse of(final Long itemId, final String name, final int price, final int discount,
+            final Long reviewCount, final double rate) {
             return new FindNewItemResponse(itemId, name, price, discount, reviewCount, rate);
         }
     }
