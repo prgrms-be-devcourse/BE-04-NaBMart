@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.item.repository;
 
+import com.prgrms.nabmart.domain.category.MainCategory;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.ItemSortType;
 import java.util.List;
@@ -11,5 +12,9 @@ public interface ItemRepositoryCustom {
         Pageable pageable);
 
     List<Item> findHotItemsOrderBy(Long lastIdx, Long lastItemId, ItemSortType sortType,
+        Pageable pageable);
+
+    List<Item> findByMainCategoryOrderBy(MainCategory mainCategory, Long lastIdx, Long lastItemId,
+        ItemSortType sortType,
         Pageable pageable);
 }
