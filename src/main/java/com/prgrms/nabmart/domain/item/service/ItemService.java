@@ -43,6 +43,9 @@ public class ItemService {
     private final ItemCacheService itemCacheService;
     private final RedisCacheService redisCacheService;
 
+    private static final String REVIEW_COUNT_CACHE_KEY = "reviewCount:Item:";
+    private static final String AVERAGE_RATE_CACHE_KEY = "averageRating:Item:";
+
     @Transactional
     public Long saveItem(RegisterItemCommand registerItemCommand) {
         Long mainCategoryId = registerItemCommand.mainCategoryId();
@@ -114,7 +117,8 @@ public class ItemService {
             item.name(),
             item.price(),
             item.discount(),
-            redisCacheService.getTotalNumberOfReviewsByItemId(item.itemId(), "reviewCount_Item_" + item.itemId())
+            redisCacheService.getTotalNumberOfReviewsByItemId(item.itemId(), REVIEW_COUNT_CACHE_KEY + item.itemId()),
+            redisCacheService.getAverageRatingByItemId(item.itemId(), AVERAGE_RATE_CACHE_KEY + item.itemId())
         )).toList();
 
         return FindNewItemsResponse.from(sortNewItems(items, sortType));
