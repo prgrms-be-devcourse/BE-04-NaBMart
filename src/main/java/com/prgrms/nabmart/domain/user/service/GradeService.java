@@ -13,17 +13,12 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@EnableSchedulerLock(defaultLockAtMostFor = "PT60S")
 public class GradeService {
 
     private static final int ONE = 1;
@@ -32,9 +27,6 @@ public class GradeService {
     private final UserRepository userRepository;
     private final EntityManager entityManager;
 
-    @Async
-    @Scheduled(cron = "0 0 5 1 * *")
-    @SchedulerLock(name = "Update_User_Grade", lockAtLeastFor = "PT10S")
     @Transactional
     public void updateUserGrade() {
         long totalUserCount = userRepository.count();
