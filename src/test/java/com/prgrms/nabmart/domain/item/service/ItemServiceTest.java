@@ -24,6 +24,7 @@ import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.ItemRedisDto;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
 import java.util.Comparator;
@@ -53,6 +54,9 @@ class ItemServiceTest {
     @Mock
     private OrderItemRepository orderItemRepository;
 
+    @Mock
+    private ItemCacheService itemCacheService;
+
     @InjectMocks
     private ItemService itemService;
 
@@ -80,6 +84,7 @@ class ItemServiceTest {
             verify(mainCategoryRepository, times(1)).findById(anyLong());
             verify(subCategoryRepository, times(1)).findById(anyLong());
             verify(itemRepository, times(1)).save(any());
+            verify(itemCacheService, times(1)).saveNewItem(any(ItemRedisDto.class));
         }
     }
 

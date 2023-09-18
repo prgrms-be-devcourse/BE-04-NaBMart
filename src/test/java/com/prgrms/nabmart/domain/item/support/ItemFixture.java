@@ -21,6 +21,7 @@ import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse.FindItemResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindLikeItemsResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindLikeItemsResponse.FindLikeItemResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindNewItemsResponse;
 import com.prgrms.nabmart.domain.user.User;
 import java.util.List;
 import lombok.AccessLevel;
@@ -151,4 +152,8 @@ public final class ItemFixture {
         );
     }
 
+    public static FindNewItemsResponse findNewItemsResponse() {
+        return new FindNewItemsResponse(List.of(
+            new FindNewItemsResponse.FindNewItemResponse(1L, NAME, PRICE, DISCOUNT, 0L, RATE)));
+    }
 }
