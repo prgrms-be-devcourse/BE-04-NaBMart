@@ -139,50 +139,24 @@ public class ItemService {
     private List<Item> findItemsByMainCategoryFrom(
         FindItemsByCategoryCommand findItemsByCategoryCommand) {
 
+        Long lastItemId = findItemsByCategoryCommand.lastItemId();
         Long lastIdx = findItemsByCategoryCommand.lastIdx();
-        Long option = findItemsByCategoryCommand.option();
         ItemSortType itemSortType = findItemsByCategoryCommand.itemSortType();
         PageRequest pageRequest = findItemsByCategoryCommand.pageRequest();
         String mainCategoryName = findItemsByCategoryCommand.mainCategoryName().toLowerCase();
         MainCategory mainCategory = mainCategoryRepository.findByName(mainCategoryName)
             .orElseThrow(() -> new NotFoundCategoryException("없는 대카테고리입니다."));
 
-        switch (itemSortType) {
-            case NEW -> {
-                return itemRepository.findByItemIdLessThanAndMainCategoryOrderByItemIdDesc(
-                    lastIdx, mainCategory, pageRequest);
-            }
-            case HIGHEST_AMOUNT -> {
-                int price = option.intValue();
-                return itemRepository.findByMainCategoryAndPriceDesc(
-                    lastIdx, price, mainCategory, pageRequest);
-            }
-            case LOWEST_AMOUNT -> {
-                int price = option.intValue();
-                return itemRepository.findByByMainCategoryAndPriceAsc(
-                    lastIdx, price, mainCategory, pageRequest);
-            }
-            case DISCOUNT -> {
-                int discountRate = option.intValue();
-                return itemRepository.findByMainCategoryAndDiscountDesc(
-                    lastIdx, discountRate, mainCategory, pageRequest);
-            }
-            default -> {
-                Long totalOrderedQuantity = ItemSortType.POPULAR.getDefaultValue();
-                if (lastIdx != ItemSortType.POPULAR.getDefaultValue()) {
-                    totalOrderedQuantity = orderItemRepository.countByOrderItemId(lastIdx);
-                }
-                return itemRepository.findByOrderedQuantityAndMainCategory(
-                    lastIdx, totalOrderedQuantity, mainCategory, pageRequest);
-            }
-        }
+        return itemRepository.findByMainCategoryOrderBy(mainCategory, lastIdx, lastItemId,
+            itemSortType,
+            pageRequest);
     }
 
     private List<Item> findItemsBySubCategoryFrom(
         FindItemsByCategoryCommand findItemsByCategoryCommand) {
 
-        Long lastIdx = findItemsByCategoryCommand.lastIdx();
-        Long option = findItemsByCategoryCommand.option();
+        Long lastIdx = findItemsByCategoryCommand.lastItemId();
+        Long option = findItemsByCategoryCommand.lastIdx();
         ItemSortType itemSortType = findItemsByCategoryCommand.itemSortType();
         PageRequest pageRequest = findItemsByCategoryCommand.pageRequest();
         String mainCategoryName = findItemsByCategoryCommand.mainCategoryName().toLowerCase();
