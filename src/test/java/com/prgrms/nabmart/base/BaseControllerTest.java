@@ -16,6 +16,8 @@ import com.prgrms.nabmart.domain.payment.service.PaymentClient;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
 import com.prgrms.nabmart.domain.review.service.ReviewService;
 import com.prgrms.nabmart.domain.user.service.UserService;
+import com.prgrms.nabmart.global.auth.jwt.JwtAuthenticationProvider;
+import com.prgrms.nabmart.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.prgrms.nabmart.global.auth.oauth.client.OAuthRestClient;
 import com.prgrms.nabmart.global.auth.service.RiderAuthenticationService;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
@@ -31,8 +33,6 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -107,21 +107,22 @@ public abstract class BaseControllerTest {
 
     @BeforeEach
     void authenticationSetUp() {
-        Authentication authentication = AuthFixture.usernamePasswordAuthenticationToken();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         accessToken = AuthFixture.accessToken();
     }
 
     @BeforeEach
-    void restDocsSetUp(
+    void mockMvcSetUp(
         final WebApplicationContext context,
         final RestDocumentationContextProvider provider) {
+        JwtAuthenticationProvider jwtAuthenticationProvider
+            = new JwtAuthenticationProvider(AuthFixture.tokenProvider());
+
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-            .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
             .alwaysDo(print())
             .alwaysDo(restDocs)
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
+            .addFilter(new JwtAuthenticationFilter(jwtAuthenticationProvider))
+            .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
             .build();
     }
 

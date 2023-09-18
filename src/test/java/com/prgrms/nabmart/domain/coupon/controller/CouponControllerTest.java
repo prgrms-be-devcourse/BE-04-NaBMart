@@ -95,7 +95,8 @@ class CouponControllerTest extends BaseControllerTest {
             ResultActions resultActions = mockMvc.perform(
                 post("/api/v1/my-coupons/{couponId}", couponId)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(registerUserCouponCommand)));
+                    .content(objectMapper.writeValueAsString(registerUserCouponCommand))
+                    .header(AUTHORIZATION, accessToken));
 
             // Then
             resultActions
@@ -166,7 +167,8 @@ class CouponControllerTest extends BaseControllerTest {
 
             // When
             ResultActions resultActions = mockMvc.perform(get("/api/v1/my-coupons")
-                .contentType(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, accessToken));
 
             // Then
             resultActions.andExpect(status().isOk())

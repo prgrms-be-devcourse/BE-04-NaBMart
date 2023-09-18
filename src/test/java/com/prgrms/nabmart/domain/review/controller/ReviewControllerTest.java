@@ -48,7 +48,8 @@ class ReviewControllerTest extends BaseControllerTest {
             // when
             ResultActions resultActions = mockMvc.perform(post("/api/v1/reviews")
                 .content(objectMapper.writeValueAsString(registerReviewCommand))
-                .contentType(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, accessToken));
 
             // then
             resultActions
@@ -142,7 +143,8 @@ class ReviewControllerTest extends BaseControllerTest {
             // when
             ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/users/my-reviews")
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             resultActions.andExpect(status().isOk())
