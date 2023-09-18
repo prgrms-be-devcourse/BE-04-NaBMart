@@ -61,7 +61,8 @@ public class OrderControllerTest extends BaseControllerTest {
             // when
             ResultActions result = mockMvc.perform(
                 get("/api/v1/orders/{orderId}", order.getOrderId())
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             result
@@ -100,7 +101,8 @@ public class OrderControllerTest extends BaseControllerTest {
             // when
             ResultActions result = mockMvc.perform(
                 get("/api/v1/orders?page={page}", 1)
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             result
@@ -148,7 +150,8 @@ public class OrderControllerTest extends BaseControllerTest {
             ResultActions result = mockMvc.perform(
                 post("/api/v1/orders")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(createOrderRequest)));
+                    .content(objectMapper.writeValueAsString(createOrderRequest))
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             result
@@ -183,7 +186,8 @@ public class OrderControllerTest extends BaseControllerTest {
             ResultActions result = mockMvc.perform(
                 post("/api/v1/orders/{orderId}/apply-coupon", order.getOrderId())
                     .param("couponId", String.valueOf(1L))
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             result

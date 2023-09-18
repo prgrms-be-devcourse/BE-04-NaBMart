@@ -45,7 +45,8 @@ class CartItemControllerTest extends BaseControllerTest {
             // when
             ResultActions resultActions = mockMvc.perform(post("/api/v1/cart-items")
                 .content(objectMapper.writeValueAsString(registerCartItemCommand))
-                .contentType(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, accessToken));
 
             // then
             resultActions
@@ -146,7 +147,8 @@ class CartItemControllerTest extends BaseControllerTest {
                 // when
                 ResultActions resultActions = mockMvc.perform(
                     get("/api/v1/my-cart-items")
-                        .contentType(MediaType.APPLICATION_JSON));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, accessToken));
 
                 // then
                 resultActions.andExpect(status().isOk())
