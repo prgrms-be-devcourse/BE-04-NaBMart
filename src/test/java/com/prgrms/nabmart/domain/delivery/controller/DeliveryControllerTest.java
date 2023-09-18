@@ -207,7 +207,8 @@ class DeliveryControllerTest extends BaseControllerTest {
             ResultActions resultActions = mockMvc.perform(get("/api/v1/deliveries/waiting")
                 .param("page", String.valueOf(page))
                 .param("size", String.valueOf(size))
-                .accept(MediaType.APPLICATION_JSON));
+                .accept(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, accessToken));
 
             //then
             resultActions.andExpect(status().isOk())

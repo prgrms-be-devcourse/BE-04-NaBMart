@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,7 +24,6 @@ public final class AuthFixture {
     private static final String CLIENT_SECRET = "thisIsClientSecretForTestNotARealSecretSoDontWorry";
     private static final int EXPIRY_SECONDS = 60;
     private static final Long USER_ID = 1L;
-    private static final String TOKEN = "token";
     private static final String RIDER_USERNAME = "rider123";
     private static final String RIDER_PASSWORD = "rider123";
     private static final String RIDER_ADDRESS = "address";
@@ -33,8 +33,11 @@ public final class AuthFixture {
     }
 
     public static Authentication usernamePasswordAuthenticationToken() {
-        JwtAuthentication authentication = new JwtAuthentication(USER_ID, TOKEN);
-        return new UsernamePasswordAuthenticationToken(authentication, null);
+        JwtAuthentication authentication = new JwtAuthentication(USER_ID, accessToken());
+        return new UsernamePasswordAuthenticationToken(
+            authentication,
+            null,
+            UserRole.ROLE_USER.getAuthorities().stream().map(SimpleGrantedAuthority::new).toList());
     }
 
     public static RegisterUserResponse registerUserResponse() {
