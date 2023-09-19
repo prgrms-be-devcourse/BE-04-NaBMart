@@ -40,15 +40,15 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<FindItemsResponse> findItemsByCategory(
+        @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastItemId,
         @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long lastIdx,
-        @RequestParam(defaultValue = DEFAULT_PREVIOUS_ID) Long option,
         @RequestParam int size,
         @RequestParam String main,
         @RequestParam(required = false) String sub,
         @RequestParam String sort) {
 
         FindItemsByCategoryCommand findItemsByCategoryCommand = FindItemsByCategoryCommand.of(
-            lastIdx, option, main, sub, size, sort);
+            lastItemId, lastIdx, main, sub, size, sort);
         FindItemsResponse findItemsResponse = itemService.findItemsByCategory(
             findItemsByCategoryCommand);
         return ResponseEntity.ok(findItemsResponse);

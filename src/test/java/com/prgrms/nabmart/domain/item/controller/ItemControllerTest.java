@@ -56,14 +56,14 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then&When
             mockMvc.perform(get("/api/v1/items")
-                    .queryParam("lastIdx", "5")
+                    .queryParam("lastItemId", "5")
                     .queryParam("size", "3")
                     .queryParam("main", mainCategoryName)
                     .queryParam("sort", "DISCOUNT"))
                 .andExpect(status().isOk())
                 .andDo(restDocs.document(
                     queryParameters(
-                        parameterWithName("lastIdx").description("마지막에 조회한 아이템 Id"),
+                        parameterWithName("lastItemId").description("마지막에 조회한 아이템 Id"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("main").description("대카테고리명"),
                         parameterWithName("sort").description("정렬 기준명")
@@ -80,7 +80,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then&When
             mockMvc.perform(get("/api/v1/items")
-                    .queryParam("lastIdx", "5")
+                    .queryParam("lastItemId", "5")
                     .queryParam("size", "3")
                     .queryParam("main", mainCategoryName)
                     .queryParam("sub", subCategoryName)
@@ -88,7 +88,7 @@ class ItemControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andDo(restDocs.document(
                     queryParameters(
-                        parameterWithName("lastIdx").description("마지막에 조회한 아이템 Id"),
+                        parameterWithName("lastItemId").description("마지막에 조회한 아이템 Id"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("main").description("대카테고리명"),
                         parameterWithName("sub").description("대카테고리에 속한 소카테고리명"),
@@ -165,7 +165,7 @@ class ItemControllerTest extends BaseControllerTest {
             // When
             ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/items/new")
-                    .queryParam("lastIdx", "1")
+                    .queryParam("lastItemId", "1")
                     .queryParam("lastItemId", "1")
                     .queryParam("size", "5")
                     .queryParam("sort", "NEW")
@@ -175,7 +175,7 @@ class ItemControllerTest extends BaseControllerTest {
             resultActions.andExpect(status().isOk())
                 .andDo(document("Find New Items",
                     queryParameters(
-                        parameterWithName("lastIdx").description("마지막에 조회한 아이템의 특성값"),
+                        parameterWithName("lastItemId").description("마지막에 조회한 아이템의 특성값"),
                         parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("sort").description("정렬 기준명")
@@ -217,7 +217,7 @@ class ItemControllerTest extends BaseControllerTest {
             // When
             ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/items/hot")
-                    .queryParam("lastIdx", "-1")
+                    .queryParam("lastItemId", "-1")
                     .queryParam("lastItemId", "-1")
                     .queryParam("size", "3")
                     .queryParam("sort", "NEW")
@@ -227,7 +227,7 @@ class ItemControllerTest extends BaseControllerTest {
             resultActions.andExpect(status().isOk())
                 .andDo(document("Find Hot Items",
                     queryParameters(
-                        parameterWithName("lastIdx").description("마지막에 조회한 아이템의 특성값"),
+                        parameterWithName("lastItemId").description("마지막에 조회한 아이템의 특성값"),
                         parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
                         parameterWithName("size").description("조회할 아이템 수"),
                         parameterWithName("sort").description("정렬 기준명")

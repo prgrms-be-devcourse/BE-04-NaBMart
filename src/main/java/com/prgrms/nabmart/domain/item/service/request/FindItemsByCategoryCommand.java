@@ -7,8 +7,8 @@ import org.springframework.data.domain.PageRequest;
 
 @Slf4j
 public record FindItemsByCategoryCommand(
+    Long lastItemId,
     Long lastIdx,
-    Long option,
     String mainCategoryName,
     String subCategoryName,
     PageRequest pageRequest,
@@ -17,17 +17,19 @@ public record FindItemsByCategoryCommand(
     private static final int DEFAULT_PAGE_NUMBER = 0;
 
     public static FindItemsByCategoryCommand of(
-        Long lastIdx, Long option, String mainCategoryName, String subCategoryName, int pageSize,
+        Long lastItemId, Long lastIdx, String mainCategoryName, String subCategoryName,
+        int pageSize,
         String sortType
     ) {
         validateMainCategoryName(mainCategoryName);
         ItemSortType itemSortType = ItemSortType.from(sortType);
         PageRequest pageRequest = PageRequest.of(DEFAULT_PAGE_NUMBER, pageSize);
-        if (isFirstItemId(option)) {
-            option = redeclareLastIdx(itemSortType);
-            lastIdx = Long.MAX_VALUE;
+        if (isFirstItemId(lastItemId)) {
+            lastIdx = redeclareLastIdx(itemSortType);
+            lastItemId = Long.MAX_VALUE;
         }
-        return new FindItemsByCategoryCommand(lastIdx, option, mainCategoryName, subCategoryName,
+        return new FindItemsByCategoryCommand(lastItemId, lastIdx, mainCategoryName,
+            subCategoryName,
             pageRequest,
             itemSortType);
     }

@@ -22,4 +22,8 @@ public enum ItemSortType {
             .findAny()
             .orElseThrow(() -> new NotFoundItemSortTypeException("요청하신 정렬기준은 존재하지 않습니다."));
     }
+
+    public boolean isPopular() {
+        return this == POPULAR;
+    }
 }
