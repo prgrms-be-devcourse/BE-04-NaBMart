@@ -17,7 +17,6 @@ import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
-import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final OrderItemRepository orderItemRepository;
     private final MainCategoryRepository mainCategoryRepository;
     private final SubCategoryRepository subCategoryRepository;
-    private static final int NEW_PRODUCT_REFERENCE_WEEK = 2;
 
     @Transactional
     public Long saveItem(RegisterItemCommand registerItemCommand) {
@@ -148,15 +145,14 @@ public class ItemService {
             .orElseThrow(() -> new NotFoundCategoryException("없는 대카테고리입니다."));
 
         return itemRepository.findByMainCategoryOrderBy(mainCategory, lastIdx, lastItemId,
-            itemSortType,
-            pageRequest);
+            itemSortType, pageRequest);
     }
 
     private List<Item> findItemsBySubCategoryFrom(
         FindItemsByCategoryCommand findItemsByCategoryCommand) {
 
-        Long lastIdx = findItemsByCategoryCommand.lastItemId();
-        Long option = findItemsByCategoryCommand.lastIdx();
+        Long lastItemId = findItemsByCategoryCommand.lastItemId();
+        Long lastIdx = findItemsByCategoryCommand.lastIdx();
         ItemSortType itemSortType = findItemsByCategoryCommand.itemSortType();
         PageRequest pageRequest = findItemsByCategoryCommand.pageRequest();
         String mainCategoryName = findItemsByCategoryCommand.mainCategoryName().toLowerCase();
@@ -166,35 +162,8 @@ public class ItemService {
         SubCategory subCategory = subCategoryRepository.findByName(subCategoryName)
             .orElseThrow(() -> new NotFoundCategoryException("없는 소카테고리입니다."));
 
-        switch (itemSortType) {
-            case NEW -> {
-                return itemRepository.findByItemIdLessThanAndMainCategoryAndSubCategoryOrderByItemIdDesc(
-                    lastIdx, mainCategory, subCategory, pageRequest);
-            }
-            case HIGHEST_AMOUNT -> {
-                int price = option.intValue();
-                return itemRepository.findBySubCategoryAndPriceDesc(
-                    lastIdx, price, mainCategory, subCategory, pageRequest);
-            }
-            case LOWEST_AMOUNT -> {
-                int price = option.intValue();
-                return itemRepository.findBySubCategoryAndPriceAsc(
-                    lastIdx, price, mainCategory, subCategory, pageRequest);
-            }
-            case DISCOUNT -> {
-                int discountRate = option.intValue();
-                return itemRepository.findBySubCategoryAndDiscountDesc(
-                    lastIdx, discountRate, mainCategory, subCategory, pageRequest);
-            }
-            default -> {
-                Long totalOrderedQuantity = ItemSortType.POPULAR.getDefaultValue();
-                if (lastIdx != ItemSortType.POPULAR.getDefaultValue()) {
-                    totalOrderedQuantity = orderItemRepository.countByOrderItemId(lastIdx);
-                }
-                return itemRepository.findByOrderedQuantityAndMainCategoryAndSubCategory(
-                    lastIdx, totalOrderedQuantity, mainCategory, subCategory, pageRequest);
-            }
-        }
+        return itemRepository.findBySubCategoryOrderBy(mainCategory, subCategory, lastIdx,
+            lastItemId, itemSortType, pageRequest);
     }
 
     @Transactional(readOnly = true)
