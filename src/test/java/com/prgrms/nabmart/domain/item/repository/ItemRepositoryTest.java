@@ -193,6 +193,149 @@ class ItemRepositoryTest {
         }
     }
 
+    @Nested
+    @DisplayName("소카테고리 별로 아이템들이 ")
+    class FindBySubCategoryByCriteria {
+
+        MainCategory mainCategory = CategoryFixture.mainCategory();
+        SubCategory subCategory = CategoryFixture.subCategory(mainCategory);
+
+        @Test
+        @DisplayName("최신순으로 조회된다.")
+        public void findByItemIdLessThanAndMainCategoryOrderByItemIdDesc() {
+            //Given
+            List<Item> savedItems = new ArrayList<>();
+            mainCategoryRepository.save(mainCategory);
+            subCategoryRepository.save(subCategory);
+            for (int i = 0; i < 50; i++) {
+                Item item = new Item("item" + (i + 1), 1, "0", 1, 1, 1, mainCategory, subCategory);
+                itemRepository.save(item);
+                savedItems.add(item);
+            }
+
+            // When
+            PageRequest pageRequest = PageRequest.of(0, 5);
+            List<Item> items = itemRepository.findBySubCategoryOrderBy(
+                mainCategory, subCategory, 30L, Long.MAX_VALUE,
+                ItemSortType.NEW, pageRequest);
+
+            // Then
+            assertThat(items.size()).isEqualTo(5);
+            List<Item> expectedItems = savedItems.subList(24, 29);
+            Collections.reverse(expectedItems);
+            List<String> actual = items.stream()
+                .map(Item::getName)
+                .toList();
+            List<String> expected = expectedItems.stream()
+                .map(Item::getName)
+                .toList();
+
+            assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
+        }
+
+        @Test
+        @DisplayName("할인율 높은 순으로 조회된다.")
+        public void findByItemIdLessThanAndMainCategoryOrderByItemIdDescDiscountDesc() {
+            //Given
+            mainCategoryRepository.save(mainCategory);
+            subCategoryRepository.save(subCategory);
+            for (int i = 0; i < 50; i++) {
+                Item item = new Item("item" + (i + 1), 0, "0", 0, (int) (Math.random() * 100), 0,
+                    mainCategory,
+                    subCategory);
+                itemRepository.save(item);
+            }
+
+            // When
+            PageRequest pageRequest = PageRequest.of(0, 5);
+            List<Item> items = itemRepository.findBySubCategoryOrderBy(
+                mainCategory, subCategory, 100L, Long.MAX_VALUE,
+                ItemSortType.DISCOUNT, pageRequest);
+
+            // Then
+            assertThat(items.size()).isEqualTo(5);
+        }
+
+        @Test
+        @DisplayName("금액 높은 순으로 조회된다.")
+        public void findByPriceLessThanAndMainCategoryOrderByPriceDescItemIdDesc() {
+            //Given
+            mainCategoryRepository.save(mainCategory);
+            subCategoryRepository.save(subCategory);
+            for (int i = 0; i < 50; i++) {
+                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory,
+                    subCategory);
+                itemRepository.save(item);
+            }
+
+            // When
+            PageRequest pageRequest = PageRequest.of(0, 5);
+            List<Item> items = itemRepository.findBySubCategoryOrderBy(
+                mainCategory, subCategory, 100000L, Long.MAX_VALUE,
+                ItemSortType.HIGHEST_AMOUNT, pageRequest);
+
+            // Then
+            assertThat(items.size()).isEqualTo(5);
+        }
+
+        @Test
+        @DisplayName("금액 낮은 순으로 조회된다.")
+        public void findByPriceGreaterThanAndMainCategoryOrderByPriceAscItemIdDesc() {
+            //Given
+            mainCategoryRepository.save(mainCategory);
+            subCategoryRepository.save(subCategory);
+            for (int i = 0; i < 50; i++) {
+                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory,
+                    subCategory);
+                itemRepository.save(item);
+            }
+
+            // When
+            PageRequest pageRequest = PageRequest.of(0, 5);
+            List<Item> items = itemRepository.findBySubCategoryOrderBy(
+                mainCategory, subCategory, 0L, Long.MAX_VALUE,
+                ItemSortType.LOWEST_AMOUNT, pageRequest);
+
+            // Then
+            assertThat(items.size()).isEqualTo(5);
+        }
+
+        @Test
+        @DisplayName("인기 순으로 조회된다.")
+        public void findByOrderCount() {
+
+            //Given
+            mainCategoryRepository.save(mainCategory);
+            subCategoryRepository.save(subCategory);
+            for (int i = 0; i < 50; i++) {
+                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory,
+                    subCategory);
+                itemRepository.save(item);
+                OrderItem orderItem = new OrderItem(item, (50 - i));
+                orderItemRepository.save(orderItem);
+            }
+            List<Long> expected = List.of(1L, 2L, 3L, 4L, 5L);
+
+            // When
+            PageRequest pageRequest = PageRequest.of(0, 5);
+            List<Item> items = itemRepository.findBySubCategoryOrderBy(
+                mainCategory, subCategory, 10000L, Long.MAX_VALUE,
+                ItemSortType.POPULAR, pageRequest);
+
+            List<Long> actual = items.stream()
+                .map(Item::getItemId)
+                .toList();
+            // Then
+            assertThat(items.size()).isEqualTo(5);
+            assertThat(expected).usingRecursiveComparison()
+                .isEqualTo(actual);
+        }
+    }
+
     @Test
     @DisplayName("아이템 삭제 시, 아이템 조회가 안된다.")
     public void deleteItem() {

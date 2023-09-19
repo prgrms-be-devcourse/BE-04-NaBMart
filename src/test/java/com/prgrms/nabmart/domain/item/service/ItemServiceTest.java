@@ -2,7 +2,6 @@ package com.prgrms.nabmart.domain.item.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -284,8 +283,8 @@ class ItemServiceTest {
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
-            when(itemRepository.findByItemIdLessThanAndMainCategoryAndSubCategoryOrderByItemIdDesc(
-                anyLong(), any(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findBySubCategoryOrderBy(
+                any(), any(), anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findItemsByCategory(
@@ -308,9 +307,8 @@ class ItemServiceTest {
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
-            when(
-                itemRepository.findBySubCategoryAndDiscountDesc(
-                    anyLong(), anyInt(), any(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findBySubCategoryOrderBy(
+                any(), any(), anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findItemsByCategory(
@@ -330,9 +328,8 @@ class ItemServiceTest {
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
-            when(
-                itemRepository.findBySubCategoryAndPriceDesc(
-                    anyLong(), anyInt(), any(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findBySubCategoryOrderBy(
+                any(), any(), anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findItemsByCategory(
@@ -352,9 +349,8 @@ class ItemServiceTest {
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
-            when(
-                itemRepository.findBySubCategoryAndPriceAsc(
-                    anyLong(), anyInt(), any(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findBySubCategoryOrderBy(
+                any(), any(), anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findItemsByCategory(
@@ -374,9 +370,8 @@ class ItemServiceTest {
 
             when(mainCategoryRepository.findByName(any())).thenReturn(Optional.of(mainCategory));
             when(subCategoryRepository.findByName(any())).thenReturn(Optional.of(subCategory));
-            when(orderItemRepository.countByOrderItemId(anyLong())).thenReturn(Long.MAX_VALUE);
-            when(itemRepository.findByOrderedQuantityAndMainCategoryAndSubCategory(
-                anyLong(), anyLong(), any(), any(), any())).thenReturn(expectedItems);
+            when(itemRepository.findBySubCategoryOrderBy(
+                any(), any(), anyLong(), anyLong(), any(), any())).thenReturn(expectedItems);
 
             // When
             FindItemsResponse itemsResponse = itemService.findItemsByCategory(
