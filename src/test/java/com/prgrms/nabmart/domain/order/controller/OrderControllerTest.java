@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -197,6 +198,30 @@ public class OrderControllerTest extends BaseControllerTest {
                         fieldWithPath("totalPrice").type(NUMBER).description("쿠폰 적용후 총 가격"),
                         fieldWithPath("discountPrice").type(NUMBER).description("쿠폰 할인 금액")
                     )));
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteOrder 메서드 실행 시")
+    class DeleteOrder {
+
+        @Test
+        @DisplayName("성공")
+        void deleteOrder() throws Exception {
+            // given
+            User user = user();
+            Order order = pendingOrder(1L, user);
+
+            // when
+            ResultActions result = mockMvc.perform(
+                delete("/api/v1/orders/{orderId}", order.getOrderId())
+                    .header(AUTHORIZATION, accessToken));
+
+            // then
+            result
+                .andExpect(status().isNoContent())
+                .andDo(restDocs.document(
+                ));
         }
     }
 }
