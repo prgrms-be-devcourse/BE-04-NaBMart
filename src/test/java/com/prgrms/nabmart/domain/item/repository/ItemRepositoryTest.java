@@ -66,8 +66,7 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), 1, "0", 1, 1, 1, mainCategory, subCategory);
-                itemRepository.save(item);
+                Item item = getSavedItem(i, 1, "0", 1, 1, 1, mainCategory, null);
                 savedItems.add(item);
             }
 
@@ -99,10 +98,8 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), 0, "0", 0, (int) (Math.random() * 100), 0,
-                    mainCategory,
-                    subCategory);
-                itemRepository.save(item);
+                getSavedItem(i, (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory, null);
             }
 
             // When
@@ -121,10 +118,8 @@ class ItemRepositoryTest {
             //Given
             mainCategoryRepository.save(mainCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
-                    mainCategory,
-                    null);
-                itemRepository.save(item);
+                getSavedItem(i, (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory, null);
             }
 
             // When
@@ -144,12 +139,9 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
-                    mainCategory,
-                    subCategory);
-                itemRepository.save(item);
+                getSavedItem(i, (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory, null);
             }
-
             // When
             PageRequest pageRequest = PageRequest.of(0, 5);
             List<Item> items = itemRepository.findByMainCategoryOrderBy(
@@ -160,6 +152,7 @@ class ItemRepositoryTest {
             assertThat(items.size()).isEqualTo(5);
         }
 
+
         @Test
         @DisplayName("인기 순으로 조회된다.")
         public void findByOrderCount() {
@@ -168,14 +161,12 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
-                    mainCategory,
-                    subCategory);
-                itemRepository.save(item);
+                Item item = getSavedItem(i, (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory, subCategory);
                 OrderItem orderItem = new OrderItem(item, (50 - i));
                 orderItemRepository.save(orderItem);
             }
-            List<Long> expected = List.of(1L, 2L, 3L, 4L, 5L);
+            List<Long> expectedItemIds = List.of(1L, 2L, 3L, 4L, 5L);
 
             // When
             PageRequest pageRequest = PageRequest.of(0, 5);
@@ -183,13 +174,9 @@ class ItemRepositoryTest {
                 mainCategory, 10000L, Long.MAX_VALUE,
                 ItemSortType.POPULAR, pageRequest);
 
-            List<Long> actual = items.stream()
-                .map(Item::getItemId)
-                .toList();
             // Then
-            assertThat(items.size()).isEqualTo(5);
-            assertThat(expected).usingRecursiveComparison()
-                .isEqualTo(actual);
+            assertThat(items).map(Item::getItemId)
+                .isEqualTo(expectedItemIds);
         }
     }
 
@@ -208,8 +195,7 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), 1, "0", 1, 1, 1, mainCategory, subCategory);
-                itemRepository.save(item);
+                Item item = getSavedItem(i, 1, "0", 1, 1, 1, mainCategory, subCategory);
                 savedItems.add(item);
             }
 
@@ -241,10 +227,9 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), 0, "0", 0, (int) (Math.random() * 100), 0,
+                getSavedItem(i, 0, "0", 0, (int) (Math.random() * 100), 0,
                     mainCategory,
                     subCategory);
-                itemRepository.save(item);
             }
 
             // When
@@ -264,10 +249,8 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
-                    mainCategory,
-                    subCategory);
-                itemRepository.save(item);
+                getSavedItem(i, (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory, subCategory);
             }
 
             // When
@@ -287,10 +270,8 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
-                    mainCategory,
-                    subCategory);
-                itemRepository.save(item);
+                getSavedItem(i, (int) (Math.random() * 1000), "0", 0, 0, 0,
+                    mainCategory, subCategory);
             }
 
             // When
@@ -311,10 +292,9 @@ class ItemRepositoryTest {
             mainCategoryRepository.save(mainCategory);
             subCategoryRepository.save(subCategory);
             for (int i = 0; i < 50; i++) {
-                Item item = new Item("item" + (i + 1), (int) (Math.random() * 1000), "0", 0, 0, 0,
+                Item item = getSavedItem(i, (int) (Math.random() * 1000), "0", 0, 0, 0,
                     mainCategory,
                     subCategory);
-                itemRepository.save(item);
                 OrderItem orderItem = new OrderItem(item, (50 - i));
                 orderItemRepository.save(orderItem);
             }
@@ -377,5 +357,15 @@ class ItemRepositoryTest {
             assertThat(findItem).isNotEmpty();
             assertThat(findItem.get().getQuantity()).isEqualTo(originQuantity + increaseQuantity);
         }
+    }
+
+    private Item getSavedItem(int i, int price, String description, int quantity, int discount,
+        int maxBuyQuantity, MainCategory mainCategory, SubCategory subCategory) {
+
+        Item item = new Item(
+            "item" + (i + 1), price, description, quantity, discount, maxBuyQuantity,
+            mainCategory, subCategory);
+        itemRepository.save(item);
+        return item;
     }
 }
