@@ -87,6 +87,22 @@ public class OrderService {
         }
     }
 
+    @Transactional
+    public void cancelOrder(final Order order) {
+        order.updateOrderStatus(OrderStatus.CANCELED);
+        order.unUseCoupon();
+        order.getOrderItems().forEach(
+            orderItem -> itemRepository.increaseQuantity(orderItem.getItem().getItemId(),
+                orderItem.getQuantity())
+        );
+    }
+
+    @Transactional
+    public void deleteOrder(final Long orderId, final Long userId) {
+        Order order = getOrderByOrderIdAndUserId(orderId, userId);
+        orderRepository.delete(order);
+    }
+
     private static void updateItemQuantity(Order order) {
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
@@ -158,15 +174,5 @@ public class OrderService {
     private Item findItemByItemId(final Long itemId) {
         return itemRepository.findByItemId(itemId)
             .orElseThrow(() -> new NotFoundItemException("존재하지 않는 상품입니다."));
-    }
-
-    @Transactional
-    public void cancelOrder(final Order order) {
-        order.updateOrderStatus(OrderStatus.CANCELED);
-        order.unUseCoupon();
-        order.getOrderItems().forEach(
-            orderItem -> itemRepository.increaseQuantity(orderItem.getItem().getItemId(),
-                orderItem.getQuantity())
-        );
     }
 }
