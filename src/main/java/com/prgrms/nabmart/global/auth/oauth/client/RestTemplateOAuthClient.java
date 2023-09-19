@@ -38,11 +38,13 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
 
         refreshAccessTokenIfNotValid(userDetailResponse, oAuth2AuthorizedClient);
 
-        OAuthHttpMessage unlinkHttpMessage = oAuthHttpMessageProvider.createUserUnlinkRequest(
+        OAuthHttpMessage unlinkHttpMessage = oAuthHttpMessageProvider.createUnlinkUserRequest(
             userDetailResponse, oAuth2AuthorizedClient);
+
         Map<String, Object> response = sendPostApiRequest(unlinkHttpMessage);
         log.info("회원의 연결이 종료되었습니다. 회원 ID={}", response);
-        oAuthHttpMessageProvider.checkSuccessUnlinkRequest(response);
+
+        oAuthHttpMessageProvider.verifySuccessUnlinkUserRequest(response);
         authorizedClientService.removeAuthorizedClient(
             userDetailResponse.provider(),
             userDetailResponse.provider());
@@ -57,7 +59,7 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
     }
 
     @Override
-    public void refreshAccessToken(final FindUserDetailResponse userDetailResponse) {
+    public void callRefreshAccessToken(final FindUserDetailResponse userDetailResponse) {
         OAuthProvider oAuthProvider = OAuthProvider.getOAuthProvider(userDetailResponse.provider());
         OAuthHttpMessageProvider oAuthHttpMessageProvider = oAuthProvider.getOAuthHttpMessageProvider();
         OAuth2AuthorizedClient oAuth2AuthorizedClient = authorizedClientService.loadAuthorizedClient(
@@ -79,24 +81,25 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
             oAuth2AuthorizedClient.getPrincipalName(),
             refreshedAccessToken,
             refreshedRefreshToken);
-        String principalName = updatedAuthorizedClient.getPrincipalName();
         Authentication authenticationForTokenRefresh
-            = getAuthenticationForTokenRefresh(principalName);
+            = getAuthenticationForTokenRefresh(updatedAuthorizedClient);
         authorizedClientService.saveAuthorizedClient(
             updatedAuthorizedClient,
             authenticationForTokenRefresh);
     }
 
-    private Authentication getAuthenticationForTokenRefresh(String principalName) {
+    private Authentication getAuthenticationForTokenRefresh(
+        OAuth2AuthorizedClient updatedAuthorizedClient) {
+        String principalName = updatedAuthorizedClient.getPrincipalName();
         return UsernamePasswordAuthenticationToken.authenticated(
             principalName, null, List.of());
     }
 
-    private Map sendPostApiRequest(OAuthHttpMessage refreshAccessTokenRequest) {
+    private Map sendPostApiRequest(OAuthHttpMessage request) {
         return restTemplate.postForObject(
-            refreshAccessTokenRequest.uri(),
-            refreshAccessTokenRequest.httpMessage(),
+            request.uri(),
+            request.httpMessage(),
             Map.class,
-            refreshAccessTokenRequest.uriVariables());
+            request.uriVariables());
     }
 }

@@ -28,11 +28,11 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
     private static final String ACCESS_TOKEN_REFRESH_URI = "https://kauth.kakao.com/oauth/token";
 
     @Override
-    public OAuthHttpMessage createUserUnlinkRequest(
+    public OAuthHttpMessage createUnlinkUserRequest(
         final FindUserDetailResponse userDetailResponse,
         final OAuth2AuthorizedClient authorizedClient) {
         String accessToken = getAccessToken(authorizedClient);
-        HttpEntity<MultiValueMap<String, String>> unlinkHttpMeesage = createUnlinkOAuthUserMessage(
+        HttpEntity<MultiValueMap<String, String>> unlinkHttpMeesage = createUnlinkUserMessage(
             userDetailResponse, accessToken);
         return new OAuthHttpMessage(UNLINK_URI, unlinkHttpMeesage, new HashMap<>());
     }
@@ -41,11 +41,12 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
         return authorizedClient.getAccessToken().getTokenValue();
     }
 
-    private HttpEntity<MultiValueMap<String, String>> createUnlinkOAuthUserMessage(
+    private HttpEntity<MultiValueMap<String, String>> createUnlinkUserMessage(
         final FindUserDetailResponse userDetailResponse,
         final String accessToken) {
         HttpHeaders headers = createHeader(accessToken);
-        MultiValueMap<String, String> multiValueMap = createUnlinkMessageBody(userDetailResponse);
+        MultiValueMap<String, String> multiValueMap
+            = createUnlinkUserMessageBody(userDetailResponse);
         return new HttpEntity<>(multiValueMap, headers);
     }
 
@@ -56,7 +57,7 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
         return headers;
     }
 
-    private MultiValueMap<String, String> createUnlinkMessageBody(
+    private MultiValueMap<String, String> createUnlinkUserMessageBody(
         final FindUserDetailResponse userDetailResponse) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add(TARGET_ID_TYPE, USER_ID);
@@ -65,7 +66,7 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
     }
 
     @Override
-    public void checkSuccessUnlinkRequest(Map<String, Object> unlinkResponse) {
+    public void verifySuccessUnlinkUserRequest(Map<String, Object> unlinkResponse) {
         Optional.ofNullable(unlinkResponse.get(ID))
             .orElseThrow(() -> new OAuthUnlinkFailureException("소셜 로그인 연동 해제가 실패하였습니다."));
     }

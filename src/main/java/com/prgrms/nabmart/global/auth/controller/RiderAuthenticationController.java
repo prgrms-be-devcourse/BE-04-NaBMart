@@ -2,9 +2,9 @@ package com.prgrms.nabmart.global.auth.controller;
 
 import com.prgrms.nabmart.global.auth.controller.request.SignupRiderRequest;
 import com.prgrms.nabmart.global.auth.service.request.SignupRiderCommand;
-import com.prgrms.nabmart.global.auth.controller.request.RiderLoginRequest;
+import com.prgrms.nabmart.global.auth.controller.request.LoginRiderRequest;
 import com.prgrms.nabmart.global.auth.service.RiderAuthenticationService;
-import com.prgrms.nabmart.global.auth.service.request.RiderLoginCommand;
+import com.prgrms.nabmart.global.auth.service.request.LoginRiderCommand;
 import com.prgrms.nabmart.global.auth.service.response.RiderLoginResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -37,11 +37,11 @@ public class RiderAuthenticationController {
 
     @PostMapping("/riders/login")
     public ResponseEntity<RiderLoginResponse> riderLogin(
-        @RequestBody @Valid RiderLoginRequest riderLoginRequest) {
-        RiderLoginCommand riderLoginCommand
-            = RiderLoginCommand.of(riderLoginRequest.username(), riderLoginRequest.password());
+        @RequestBody @Valid LoginRiderRequest loginRiderRequest) {
+        LoginRiderCommand loginRiderCommand
+            = LoginRiderCommand.of(loginRiderRequest.username(), loginRiderRequest.password());
         RiderLoginResponse riderLoginResponse
-            = riderAuthenticationService.riderLogin(riderLoginCommand);
+            = riderAuthenticationService.loginRider(loginRiderCommand);
         return ResponseEntity.ok(riderLoginResponse);
     }
 }

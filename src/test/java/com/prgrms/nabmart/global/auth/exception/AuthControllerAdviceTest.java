@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-class AuthExceptionHandlerTest {
+class AuthControllerAdviceTest {
 
     @RestController
     static class AuthExceptionTestController {
@@ -36,7 +36,7 @@ class AuthExceptionHandlerTest {
     @BeforeEach
     void setUp() {
         mvc = MockMvcBuilders.standaloneSetup(new AuthExceptionTestController())
-            .setControllerAdvice(new AuthExceptionHandler())
+            .setControllerAdvice(new AuthControllerAdvice())
             .build();
     }
 
