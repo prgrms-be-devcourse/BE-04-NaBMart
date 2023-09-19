@@ -1,6 +1,8 @@
 package com.prgrms.nabmart.global.auth.controller;
 
 import com.prgrms.nabmart.global.auth.exception.AuthException;
+import com.prgrms.nabmart.global.auth.exception.DuplicateUsernameException;
+import com.prgrms.nabmart.global.auth.exception.InvalidJwtException;
 import com.prgrms.nabmart.global.auth.exception.OAuthUnlinkFailureException;
 import com.prgrms.nabmart.global.auth.exception.UnAuthenticationException;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
@@ -18,9 +20,16 @@ public class AuthControllerAdvice {
             .body(ErrorTemplate.of(ex.getMessage()));
     }
 
-    @ExceptionHandler({OAuthUnlinkFailureException.class, UnAuthenticationException.class})
-    public ResponseEntity<ErrorTemplate> authenticationFailExHand(AuthException ex) {
+    @ExceptionHandler({OAuthUnlinkFailureException.class, UnAuthenticationException.class,
+        InvalidJwtException.class})
+    public ResponseEntity<ErrorTemplate> authenticationFailExHandle(AuthException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(ErrorTemplate.of(ex.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateUsernameException.class)
+    public ResponseEntity<ErrorTemplate> duplicateUsernameExHandle(AuthException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(ErrorTemplate.of(ex.getMessage()));
     }
 }

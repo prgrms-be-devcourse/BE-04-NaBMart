@@ -21,7 +21,7 @@ class AuthControllerAdviceTest {
     @RestController
     static class AuthExceptionTestController {
 
-        @GetMapping("/auth-ex")
+        @GetMapping("/jwt-ex")
         public void authEx() {
             throw new InvalidJwtException("잘못된 토큰");
         }
@@ -29,6 +29,16 @@ class AuthControllerAdviceTest {
         @GetMapping("/oauth-unlink-ex")
         public void oauthUnlinkEx() {
             throw new OAuthUnlinkFailureException("소셜 로그인 연동 해제 실패");
+        }
+
+        @GetMapping("/un-auth-ex")
+        public void unAuthEx() {
+            throw new UnAuthenticationException("인증되지 않음");
+        }
+
+        @GetMapping("/duplicate-username-ex")
+        public void usernameDuplicateEx() {
+            throw new DuplicateUsernameException("사용자명 중복");
         }
     }
 
@@ -46,15 +56,15 @@ class AuthControllerAdviceTest {
     class AuthExceptionTest {
 
         @Test
-        @DisplayName("성공: authException 잡아서 처리")
-        void throwAuthException() throws Exception {
+        @DisplayName("성공: invalidJwtException 잡아서 처리")
+        void throwInvalidJwtException() throws Exception {
             //given
             //when
-            ResultActions resultActions = mvc.perform(get("/auth-ex"));
+            ResultActions resultActions = mvc.perform(get("/jwt-ex"));
 
             //then
             resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").isString());
         }
 
@@ -68,6 +78,19 @@ class AuthControllerAdviceTest {
             //then
             resultActions.andDo(print())
                 .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").isString());
+        }
+
+        @Test
+        @DisplayName("성공: duplicateUsernameException 잡아서 처리")
+        void throwDuplicateUsernameException() throws Exception {
+            //given
+            //when
+            ResultActions resultActions = mvc.perform(get("/duplicate-username-ex"));
+
+            //then
+            resultActions.andDo(print())
+                .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").isString());
         }
     }
