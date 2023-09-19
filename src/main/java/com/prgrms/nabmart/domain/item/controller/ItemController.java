@@ -1,5 +1,6 @@
 package com.prgrms.nabmart.domain.item.controller;
 
+import com.prgrms.nabmart.domain.item.ItemSortType;
 import com.prgrms.nabmart.domain.item.controller.request.RegisterItemRequest;
 import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.ItemService;
@@ -11,6 +12,7 @@ import com.prgrms.nabmart.domain.item.service.request.RegisterItemCommand;
 import com.prgrms.nabmart.domain.item.service.request.UpdateItemCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindNewItemsResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +70,13 @@ public class ItemController {
         FindNewItemsCommand findNewItemsCommand = FindNewItemsCommand.of(lastIdx, lastItemId, size,
             sort);
         return ResponseEntity.ok(itemService.findNewItems(findNewItemsCommand));
+    }
+
+    @GetMapping("/new-items")
+    public ResponseEntity<FindNewItemsResponse> findNewItemsWithRedis(
+        @RequestParam(defaultValue = "NEW") String sort
+    ) {
+        return ResponseEntity.ok(itemService.findNewItemsWithRedis(ItemSortType.valueOf(sort)));
     }
 
     @GetMapping("/hot")

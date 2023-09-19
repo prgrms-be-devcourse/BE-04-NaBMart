@@ -59,7 +59,8 @@ public class PaymentControllerTest extends BaseControllerTest {
             // when
             ResultActions result = mockMvc.perform(
                 post("/api/v1/pays/{orderId}", order.getOrderId())
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             result
@@ -104,7 +105,8 @@ public class PaymentControllerTest extends BaseControllerTest {
                     .queryParam("orderId", order.getUuid())
                     .queryParam("paymentKey", paymentKey)
                     .queryParam("amount", String.valueOf(order.getPrice()))
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             result
@@ -143,7 +145,8 @@ public class PaymentControllerTest extends BaseControllerTest {
                 get("/api/v1/pays/toss/fail")
                     .queryParam("orderId", order.getUuid())
                     .queryParam("message", errorMessage)
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(AUTHORIZATION, accessToken));
 
             // then
             result

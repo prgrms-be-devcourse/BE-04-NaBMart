@@ -25,6 +25,7 @@ import com.prgrms.nabmart.domain.item.controller.request.UpdateItemRequest;
 import com.prgrms.nabmart.domain.item.service.request.FindItemsByCategoryCommand;
 import com.prgrms.nabmart.domain.item.service.response.FindItemDetailResponse;
 import com.prgrms.nabmart.domain.item.service.response.FindItemsResponse;
+import com.prgrms.nabmart.domain.item.service.response.FindNewItemsResponse;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -364,6 +365,57 @@ class ItemControllerTest extends BaseControllerTest {
                         parameterWithName("itemId").description("상품 ID")
                     ))
                 );
+        }
+    }
+
+    @Nested
+    @DisplayName("신상품 조회 Api with redis")
+    class FindNewItemsWithRedis {
+
+        FindNewItemsResponse findNewItemsResponse = ItemFixture.findNewItemsResponse();
+
+        @Test
+        @DisplayName("성공")
+        public void findNewItemsWithRedis() throws Exception {
+            // Given
+            given(itemService.findNewItemsWithRedis(any())).willReturn(findNewItemsResponse);
+
+
+            // When
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/v1/items/new-items")
+                    .queryParam("lastIdx", "-1")
+                    .queryParam("lastItemId", "-1")
+                    .queryParam("size", "3")
+                    .queryParam("sort", "NEW")
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // Then
+            resultActions.andExpect(status().isOk())
+                .andDo(document("Find New Items with Redis",
+                    queryParameters(
+                        parameterWithName("lastIdx").description("마지막에 조회한 아이템의 특성값"),
+                        parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
+                        parameterWithName("size").description("조회할 아이템 수"),
+                        parameterWithName("sort").description("정렬 기준명")
+                    ),
+                    responseFields(
+                        fieldWithPath("items").type(ARRAY)
+                            .description("List of items"),
+                        fieldWithPath("items[].itemId").type(NUMBER)
+                            .description("상품 ID"),
+                        fieldWithPath("items[].name").type(STRING)
+                            .description("상품 이름"),
+                        fieldWithPath("items[].price").type(NUMBER)
+                            .description("상품 가격"),
+                        fieldWithPath("items[].discount").type(NUMBER)
+                            .description("상품 할인"),
+                        fieldWithPath("items[].reviewCount").type(NUMBER)
+                            .description("리뷰 수"),
+                        fieldWithPath("items[].rate").type(NUMBER)
+                            .description("평점")
+                    )
+                ));
         }
     }
 }

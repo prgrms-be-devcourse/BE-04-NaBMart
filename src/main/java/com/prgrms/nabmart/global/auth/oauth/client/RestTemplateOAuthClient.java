@@ -46,6 +46,9 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
         Map<String, Object> response = sendPostApiRequest(unlinkHttpMessage);
         log.info("회원의 연결이 종료되었습니다. 회원 ID={}", response);
         oAuthHttpMessageProvider.checkSuccessUnlinkRequest(response);
+        authorizedClientService.removeAuthorizedClient(
+            userDetailResponse.provider(),
+            userDetailResponse.provider());
     }
 
     @Override
