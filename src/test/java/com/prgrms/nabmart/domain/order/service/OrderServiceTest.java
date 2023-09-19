@@ -321,5 +321,24 @@ public class OrderServiceTest {
                 orderItem.getQuantity());
         }
     }
-}
 
+    @Nested
+    @DisplayName("deleteOrder 메서드 실행 시")
+    class DeleteOrder {
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            // given
+            Order order = pendingOrder(1L, user());
+
+            // when
+            when(orderRepository.findByOrderIdAndUser_UserId(order.getOrderId(),
+                user().getUserId())).thenReturn(Optional.of(order));
+            orderService.deleteOrder(order.getOrderId(), user().getUserId());
+
+            // then
+            verify(orderRepository, times(1)).delete(order);
+        }
+    }
+}
