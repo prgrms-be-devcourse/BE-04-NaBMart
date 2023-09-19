@@ -36,10 +36,7 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
             userDetailResponse.provider(),
             userDetailResponse.providerId());
 
-        Instant expiresAt = oAuth2AuthorizedClient.getAccessToken().getExpiresAt();
-        if(expiresAt.isBefore(Instant.now())) {
-            refreshAccessToken(userDetailResponse);
-        }
+        refreshAccessTokenIfNotValid(userDetailResponse, oAuth2AuthorizedClient);
 
         OAuthHttpMessage unlinkHttpMessage = oAuthHttpMessageProvider.createUserUnlinkRequest(
             userDetailResponse, oAuth2AuthorizedClient);
@@ -49,6 +46,14 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
         authorizedClientService.removeAuthorizedClient(
             userDetailResponse.provider(),
             userDetailResponse.provider());
+    }
+
+    private void refreshAccessTokenIfNotValid(FindUserDetailResponse userDetailResponse,
+        OAuth2AuthorizedClient oAuth2AuthorizedClient) {
+        Instant expiresAt = oAuth2AuthorizedClient.getAccessToken().getExpiresAt();
+        if(expiresAt.isBefore(Instant.now())) {
+            callRefreshAccessToken(userDetailResponse);
+        }
     }
 
     @Override
