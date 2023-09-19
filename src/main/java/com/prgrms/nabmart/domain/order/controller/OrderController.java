@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,6 +72,15 @@ public class OrderController {
         @LoginUser Long userId
     ) {
         return ResponseEntity.ok(orderService.findOrders(userId, page));
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> deleteOrder(
+        @PathVariable Long orderId,
+        @LoginUser Long userId
+    ) {
+        orderService.deleteOrder(orderId, userId);
+        return ResponseEntity.noContent().build();
     }
 
     @ExceptionHandler(OrderException.class)
