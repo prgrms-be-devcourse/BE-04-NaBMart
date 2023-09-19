@@ -1,5 +1,6 @@
-package com.prgrms.nabmart.domain.user.service;
+package com.prgrms.nabmart.domain.user.scheduler;
 
+import com.prgrms.nabmart.domain.user.service.GradeService;
 import lombok.RequiredArgsConstructor;
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
