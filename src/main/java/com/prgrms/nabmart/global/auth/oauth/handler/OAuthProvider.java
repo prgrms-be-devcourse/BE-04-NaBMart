@@ -20,21 +20,8 @@ import java.util.stream.Stream;
 @Getter
 @RequiredArgsConstructor
 public enum OAuthProvider {
-    KAKAO("kakao", attributes -> {
-        Map<String, String> properties = (Map<String, String>) attributes.get("properties");
-        String oAuthUserId = String.valueOf(attributes.get("id"));
-        String nickname = properties.get("nickname");
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        String email = String.valueOf(kakaoAccount.get("email"));
-        return new OAuthUserInfo(oAuthUserId, nickname, email);
-    }, new KakaoMessageProvider()),
-    NAVER("naver", attributes -> {
-        Map<String, String> response = (Map<String, String>) attributes.get("response");
-        String oAuthUserId = response.get("id");
-        String nickname = response.get("nickname");
-        String email = response.get("email");
-        return new OAuthUserInfo(oAuthUserId, nickname, email);
-    }, new NaverMessageProvider());
+    KAKAO("kakao", OAuthProvider::extractKakaoUserInfo, new KakaoMessageProvider()),
+    NAVER("naver", OAuthProvider::extractNaverUserInfo, new NaverMessageProvider());
 
     private static final Map<String, OAuthProvider> PROVIDERS =
         Collections.unmodifiableMap(Stream.of(values())
@@ -43,6 +30,23 @@ public enum OAuthProvider {
     private final String name;
     private final Function<Map<String, Object>, OAuthUserInfo> extractUserInfo;
     private final OAuthHttpMessageProvider oAuthHttpMessageProvider;
+
+    private static OAuthUserInfo extractNaverUserInfo(Map<String, Object> attributes) {
+        Map<String, String> response = (Map<String, String>) attributes.get("response");
+        String oAuthUserId = response.get("id");
+        String nickname = response.get("nickname");
+        String email = response.get("email");
+        return new OAuthUserInfo(oAuthUserId, nickname, email);
+    }
+
+    private static OAuthUserInfo extractKakaoUserInfo(Map<String, Object> attributes) {
+        Map<String, String> properties = (Map<String, String>) attributes.get("properties");
+        String oAuthUserId = String.valueOf(attributes.get("id"));
+        String nickname = properties.get("nickname");
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        String email = String.valueOf(kakaoAccount.get("email"));
+        return new OAuthUserInfo(oAuthUserId, nickname, email);
+    }
 
     public static OAuthProvider getOAuthProvider(final String provider) {
         OAuthProvider oAuthProvider = PROVIDERS.get(provider);
