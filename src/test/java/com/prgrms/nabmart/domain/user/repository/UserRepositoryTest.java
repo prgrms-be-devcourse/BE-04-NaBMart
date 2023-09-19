@@ -23,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
 @Import({JpaAuditingConfig.class, TestQueryDslConfig.class})
@@ -77,7 +75,6 @@ class UserRepositoryTest {
     @DisplayName("getUserOrderCount 메서드 실행 시")
     class GetUserOrderCountTest {
 
-        Pageable pageable = PageRequest.of(0, 5);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = now.minusDays(1);
         LocalDateTime end = now.plusDays(1);
@@ -91,7 +88,7 @@ class UserRepositoryTest {
 
             //when
             List<UserOrderCount> userOrderCounts
-                = userRepository.getUserOrderCount(start, end, pageable);
+                = userRepository.getUserOrderCount(start, end);
 
             //then
             assertThat(userOrderCounts).hasSize(1);
@@ -109,7 +106,7 @@ class UserRepositoryTest {
 
             //when
             List<UserOrderCount> userOrderCounts
-                = userRepository.getUserOrderCount(start, end, pageable);
+                = userRepository.getUserOrderCount(start, end);
 
             //then
             assertThat(userOrderCounts).hasSize(2);

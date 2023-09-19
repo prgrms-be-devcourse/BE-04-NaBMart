@@ -6,8 +6,8 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
 import com.prgrms.nabmart.domain.user.User;
-import com.prgrms.nabmart.domain.user.repository.response.UserOrderCount;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
+import com.prgrms.nabmart.domain.user.repository.response.UserOrderCount;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,12 +76,11 @@ class GradeServiceTest {
             UserOrderCount vipCount = createUserOrderCount(users.get(1).getUserId(), 5);
             UserOrderCount vvipCount = createUserOrderCount(users.get(2).getUserId(), 10);
             UserOrderCount rvipCount = createUserOrderCount(users.get(3).getUserId(), 20);
+            List<UserOrderCount> userOrderCounters = List.of(normalCount, vipCount, vvipCount,
+                rvipCount);
 
-            PageImpl<UserOrderCount> givenResult = new PageImpl<>(
-                List.of(normalCount, vipCount, vvipCount, rvipCount));
-            given(userRepository.count()).willReturn(4L);
-            given(userRepository.getUserOrderCount(any(), any(), any())).willReturn(
-                givenResult.getContent());
+            given(userRepository.getUserOrderCount(any(), any())).willReturn(
+                userOrderCounters);
 
             //when
             gradeService.updateUserGrade();
