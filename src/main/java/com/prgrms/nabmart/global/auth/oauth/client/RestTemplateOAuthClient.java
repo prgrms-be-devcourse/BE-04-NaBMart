@@ -2,7 +2,7 @@ package com.prgrms.nabmart.global.auth.oauth.client;
 
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthHttpMessage;
-import com.prgrms.nabmart.global.auth.oauth.handler.OAuthProvider;
+import com.prgrms.nabmart.global.auth.oauth.OAuthProvider;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;

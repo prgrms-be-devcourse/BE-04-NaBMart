@@ -1,4 +1,4 @@
-package com.prgrms.nabmart.global.auth.oauth.handler;
+package com.prgrms.nabmart.global.auth.oauth;
 
 import com.prgrms.nabmart.global.auth.exception.InvalidProviderException;
 import com.prgrms.nabmart.global.auth.oauth.client.KakaoMessageProvider;
