@@ -14,6 +14,7 @@ import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.exception.DuplicateLikeItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundLikeItemException;
+import com.prgrms.nabmart.domain.item.exception.UnauthorizedLikeItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.repository.LikeItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
@@ -26,7 +27,6 @@ import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
-import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -173,7 +173,7 @@ class LikeItemServiceTest {
             //when
             //then
             assertThatThrownBy(() -> likeItemService.deleteLikeItem(notEqualsUserIdCommand))
-                .isInstanceOf(AuthorizationException.class);
+                .isInstanceOf(UnauthorizedLikeItemException.class);
         }
     }
 

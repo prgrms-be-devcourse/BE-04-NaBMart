@@ -5,6 +5,7 @@ import com.prgrms.nabmart.domain.item.LikeItem;
 import com.prgrms.nabmart.domain.item.exception.DuplicateLikeItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundItemException;
 import com.prgrms.nabmart.domain.item.exception.NotFoundLikeItemException;
+import com.prgrms.nabmart.domain.item.exception.UnauthorizedLikeItemException;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.repository.LikeItemRepository;
 import com.prgrms.nabmart.domain.item.service.request.DeleteLikeItemCommand;
@@ -14,7 +15,6 @@ import com.prgrms.nabmart.domain.item.service.response.FindLikeItemsResponse;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class LikeItemService {
     public void deleteLikeItem(DeleteLikeItemCommand deleteLikeItemCommand) {
         LikeItem likeItem = findLikeItemByLikeItemId(deleteLikeItemCommand);
         if (!likeItem.isSameUser(deleteLikeItemCommand.userId())) {
-            throw new AuthorizationException("권한이 없습니다.");
+            throw new UnauthorizedLikeItemException("권한이 없습니다.");
         }
         likeItemRepository.delete(likeItem);
     }
