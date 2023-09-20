@@ -5,8 +5,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -20,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
+import com.prgrms.nabmart.domain.delivery.controller.request.RegisterDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
@@ -36,6 +39,45 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 class DeliveryControllerTest extends BaseControllerTest {
+
+    @Nested
+    @DisplayName("배달 생성 API 호출 시")
+    class RegisterDeliveryTest {
+
+        @Test
+        @DisplayName("성공")
+        void registerDelivery() throws Exception {
+            //given
+            RegisterDeliveryRequest registerDeliveryRequest
+                = new RegisterDeliveryRequest(60);
+
+            given(deliveryService.registerDelivery(any())).willReturn(1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                post("/api/v1/orders/{orderId}/deliveries", 1L)
+                .header(AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerDeliveryRequest)));
+
+            //then
+            resultActions.andExpect(status().isCreated())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("orderId").description("주문 ID")
+                    ),
+                    requestFields(
+                        fieldWithPath("estimateMinutes").type(NUMBER).description("배달 예상 시간(분)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("생성된 리소스 위치")
+                    )
+                ));
+        }
+    }
 
     @Nested
     @DisplayName("배달 현황 조회 API 호출 시")
