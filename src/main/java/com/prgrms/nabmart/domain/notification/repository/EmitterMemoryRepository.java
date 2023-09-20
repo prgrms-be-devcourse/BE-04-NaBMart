@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Repository
-public class EmitterMemoryRepository implements
-    EmitterRepository {
+public class EmitterMemoryRepository implements EmitterRepository {
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
