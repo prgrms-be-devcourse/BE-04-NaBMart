@@ -1,5 +1,6 @@
-package com.prgrms.nabmart.domain.notification;
+package com.prgrms.nabmart.domain.notification.controller;
 
+import com.prgrms.nabmart.domain.notification.controller.request.ConnectNotificationCommand;
 import com.prgrms.nabmart.domain.notification.service.NotificationService;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,9 @@ public class NotificationController {
         @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
         @LoginUser Long userId) {
 
-        SseEmitter sseEmitter = notificationService.connection(userId, lastEventId);
+        ConnectNotificationCommand connectNotificationCommand
+            = ConnectNotificationCommand.of(userId, lastEventId);
+        SseEmitter sseEmitter = notificationService.connectNotification(connectNotificationCommand);
         return ResponseEntity.ok(sseEmitter);
     }
 }
