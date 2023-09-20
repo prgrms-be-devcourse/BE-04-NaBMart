@@ -65,6 +65,7 @@ public class WebSecurityConfig {
 
     private RequestMatcher[] requestPermitAll() {
         List<RequestMatcher> requestMatchers = List.of(
+            antMatcher(GET, "/api/v1/notifications/**"),
             antMatcher(POST, "/oauth2/authorization/**"),
             antMatcher(POST, "/api/v1/riders/**"),
             antMatcher(GET, "/api/v1/categories/**"),
