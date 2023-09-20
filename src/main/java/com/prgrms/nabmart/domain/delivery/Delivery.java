@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryExcep
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.UnauthorizedDeliveryException;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -69,13 +70,15 @@ public class Delivery extends BaseTimeEntity {
     private Integer deliveryFee;
 
     @Builder
-    public Delivery(final Order order) {
+    public Delivery(final Order order, int estimateMinutes) {
         this.order = order;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
         this.address = order.getAddress();
         this.orderPrice = order.getPrice();
         this.riderRequest = order.getRiderRequest();
         this.deliveryFee = order.getDeliveryFee();
+        this.arrivedAt = LocalDateTime.now().plusMinutes(estimateMinutes);
+        order.updateOrderStatus(OrderStatus.DELIVERING);
     }
 
     public boolean isOwnByUser(final User user) {

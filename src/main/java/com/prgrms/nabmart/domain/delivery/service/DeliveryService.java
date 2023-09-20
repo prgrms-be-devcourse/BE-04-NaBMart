@@ -12,10 +12,14 @@ import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryComman
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
+import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
+import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
@@ -31,6 +35,17 @@ public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
     private final RiderRepository riderRepository;
+    private final OrderRepository orderRepository;
+
+    public Long registerDelivery(RegisterDeliveryCommand registerDeliveryCommand) {
+        Order order = orderRepository.findByOrderIdAndUser_UserId(
+                registerDeliveryCommand.orderId(),
+                registerDeliveryCommand.userId())
+            .orElseThrow(() -> new NotFoundOrderException("존재하지 않는 주문입니다."));
+        Delivery delivery = new Delivery(order, registerDeliveryCommand.estimateMinutes());
+        deliveryRepository.save(delivery);
+        return delivery.getDeliveryId();
+    }
 
     @Transactional(readOnly = true)
     public FindDeliveryDetailResponse findDelivery(FindDeliveryCommand findDeliveryCommand) {

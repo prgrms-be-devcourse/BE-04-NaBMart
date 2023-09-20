@@ -136,7 +136,7 @@ public class DeliveryIntegrationTest {
         }
 
         private Delivery createAndSaveDelivery() {
-            Delivery delivery = new Delivery(order);
+            Delivery delivery = new Delivery(order, 60);
             deliveryRepository.save(delivery);
             return delivery;
         }
