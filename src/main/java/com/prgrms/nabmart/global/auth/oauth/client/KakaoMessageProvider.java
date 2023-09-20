@@ -1,5 +1,9 @@
 package com.prgrms.nabmart.global.auth.oauth.client;
 
+import static com.prgrms.nabmart.global.auth.oauth.constant.OAuthConstant.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import com.prgrms.nabmart.global.auth.exception.OAuthUnlinkFailureException;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthHttpMessage;
@@ -8,7 +12,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,32 +22,17 @@ import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@RequiredArgsConstructor
 public class KakaoMessageProvider implements OAuthHttpMessageProvider {
 
     private static final String UNLINK_URI = "https://kapi.kakao.com/v1/user/unlink";
     private static final String ACCESS_TOKEN_REFRESH_URI = "https://kauth.kakao.com/oauth/token";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String TARGET_ID_TYPE = "target_id_type";
-    private static final String USER_ID = "user_id";
-    private static final String TARGET_ID = "target_id";
-    private static final String ID = "id";
-    private static final String APPLICATION_X_WWW_FORM_URLENCODED_CHARSET_UTF_8
-        = "application/x-www-form-urlencoded;charset=utf-8";
-    private static final String GRANT_TYPE = "grant_type";
-    private static final String REFRESH_TOKEN = "refresh_token";
-    private static final String CLIENT_ID = "client_id";
-    private static final String CLIENT_SECRET = "client_secret";
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String EXPIRES_IN = "expires_in";
 
     @Override
-    public OAuthHttpMessage createUserUnlinkRequest(
+    public OAuthHttpMessage createUnlinkUserRequest(
         final FindUserDetailResponse userDetailResponse,
         final OAuth2AuthorizedClient authorizedClient) {
         String accessToken = getAccessToken(authorizedClient);
-        HttpEntity<MultiValueMap<String, String>> unlinkHttpMeesage = createUnlinkOAuthUserMessage(
+        HttpEntity<MultiValueMap<String, String>> unlinkHttpMeesage = createUnlinkUserMessage(
             userDetailResponse, accessToken);
         return new OAuthHttpMessage(UNLINK_URI, unlinkHttpMeesage, new HashMap<>());
     }
@@ -53,11 +41,12 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
         return authorizedClient.getAccessToken().getTokenValue();
     }
 
-    private HttpEntity<MultiValueMap<String, String>> createUnlinkOAuthUserMessage(
+    private HttpEntity<MultiValueMap<String, String>> createUnlinkUserMessage(
         final FindUserDetailResponse userDetailResponse,
         final String accessToken) {
         HttpHeaders headers = createHeader(accessToken);
-        MultiValueMap<String, String> multiValueMap = createUnlinkMessageBody(userDetailResponse);
+        MultiValueMap<String, String> multiValueMap
+            = createUnlinkUserMessageBody(userDetailResponse);
         return new HttpEntity<>(multiValueMap, headers);
     }
 
@@ -68,7 +57,7 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
         return headers;
     }
 
-    private MultiValueMap<String, String> createUnlinkMessageBody(
+    private MultiValueMap<String, String> createUnlinkUserMessageBody(
         final FindUserDetailResponse userDetailResponse) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add(TARGET_ID_TYPE, USER_ID);
@@ -77,13 +66,14 @@ public class KakaoMessageProvider implements OAuthHttpMessageProvider {
     }
 
     @Override
-    public void checkSuccessUnlinkRequest(Map<String, Object> unlinkResponse) {
+    public void verifySuccessUnlinkUserRequest(Map<String, Object> unlinkResponse) {
         Optional.ofNullable(unlinkResponse.get(ID))
             .orElseThrow(() -> new OAuthUnlinkFailureException("소셜 로그인 연동 해제가 실패하였습니다."));
     }
 
     @Override
-    public OAuthHttpMessage createRefreshAccessTokenRequest(OAuth2AuthorizedClient authorizedClient) {
+    public OAuthHttpMessage createRefreshAccessTokenRequest(
+        OAuth2AuthorizedClient authorizedClient) {
         return new OAuthHttpMessage(
             ACCESS_TOKEN_REFRESH_URI,
             createRefreshAccessTokenMessage(authorizedClient),

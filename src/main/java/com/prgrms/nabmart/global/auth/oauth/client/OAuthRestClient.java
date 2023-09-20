@@ -6,5 +6,5 @@ public interface OAuthRestClient {
 
     void callUnlinkOAuthUser(FindUserDetailResponse userDetailResponse);
 
-    void refreshAccessToken(FindUserDetailResponse userDetailResponse);
+    void callRefreshAccessToken(FindUserDetailResponse userDetailResponse);
 }

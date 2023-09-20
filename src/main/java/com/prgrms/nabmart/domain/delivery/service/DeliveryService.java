@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.Rider;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
+import com.prgrms.nabmart.domain.delivery.exception.UnauthorizedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
@@ -18,7 +19,6 @@ import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveries
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class DeliveryService {
 
     private void checkAuthority(final Delivery delivery, final User user) {
         if (!delivery.isOwnByUser(user)) {
-            throw new AuthorizationException("권한이 없습니다.");
+            throw new UnauthorizedDeliveryException("권한이 없습니다.");
         }
     }
 
