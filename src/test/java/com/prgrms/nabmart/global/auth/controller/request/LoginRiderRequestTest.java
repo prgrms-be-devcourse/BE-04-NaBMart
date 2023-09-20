@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class RiderLoginRequestTest {
+class LoginRiderRequestTest {
 
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
@@ -33,11 +33,11 @@ class RiderLoginRequestTest {
         @DisplayName("성공")
         void success(String validUsername) {
             //given
-            RiderLoginRequest riderLoginRequest = new RiderLoginRequest(validUsername, password);
+            LoginRiderRequest loginRiderRequest = new LoginRiderRequest(validUsername, password);
 
             //when
-            Set<ConstraintViolation<RiderLoginRequest>> result
-                = validator.validate(riderLoginRequest);
+            Set<ConstraintViolation<LoginRiderRequest>> result
+                = validator.validate(loginRiderRequest);
 
             //then
             assertThat(result).hasSize(0);
@@ -50,11 +50,11 @@ class RiderLoginRequestTest {
         @DisplayName("예외: 유효하지 않은 사용자 이름")
         void throwExceptionWhenInvalidUsername(String invalidUsername) {
             //given
-            RiderLoginRequest riderLoginRequest = new RiderLoginRequest(invalidUsername, password);
+            LoginRiderRequest loginRiderRequest = new LoginRiderRequest(invalidUsername, password);
 
             //when
-            Set<ConstraintViolation<RiderLoginRequest>> result
-                = validator.validate(riderLoginRequest);
+            Set<ConstraintViolation<LoginRiderRequest>> result
+                = validator.validate(loginRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -67,11 +67,11 @@ class RiderLoginRequestTest {
         void throwExceptionWhenUsernameIsNull() {
             //given
             String nullUsername = null;
-            RiderLoginRequest riderLoginRequest = new RiderLoginRequest(nullUsername, password);
+            LoginRiderRequest loginRiderRequest = new LoginRiderRequest(nullUsername, password);
 
             //when
-            Set<ConstraintViolation<RiderLoginRequest>> result
-                = validator.validate(riderLoginRequest);
+            Set<ConstraintViolation<LoginRiderRequest>> result
+                = validator.validate(loginRiderRequest);
             //then
             assertThat(result).hasSize(1);
             assertThat(result).map(ConstraintViolation::getInvalidValue)
@@ -90,11 +90,11 @@ class RiderLoginRequestTest {
         @DisplayName("성공")
         void success(String validPassword) {
             //given
-            RiderLoginRequest riderLoginRequest = new RiderLoginRequest(username, validPassword);
+            LoginRiderRequest loginRiderRequest = new LoginRiderRequest(username, validPassword);
 
             //when
-            Set<ConstraintViolation<RiderLoginRequest>> result
-                = validator.validate(riderLoginRequest);
+            Set<ConstraintViolation<LoginRiderRequest>> result
+                = validator.validate(loginRiderRequest);
 
             //then
             assertThat(result).hasSize(0);
@@ -107,11 +107,11 @@ class RiderLoginRequestTest {
         @DisplayName("예외: 유효하지 않은 패스워드")
         void throwExceptionWhenInvalidPassword(String invalidPassword) {
             //given
-            RiderLoginRequest riderLoginRequest = new RiderLoginRequest(username, invalidPassword);
+            LoginRiderRequest loginRiderRequest = new LoginRiderRequest(username, invalidPassword);
 
             //when
-            Set<ConstraintViolation<RiderLoginRequest>> result
-                = validator.validate(riderLoginRequest);
+            Set<ConstraintViolation<LoginRiderRequest>> result
+                = validator.validate(loginRiderRequest);
 
             //then
             assertThat(result).hasSize(1);
@@ -124,11 +124,11 @@ class RiderLoginRequestTest {
         void throwExceptionWhenPasswordIsNull() {
             //given
             String nullPassword = null;
-            RiderLoginRequest riderLoginRequest = new RiderLoginRequest(username, nullPassword);
+            LoginRiderRequest loginRiderRequest = new LoginRiderRequest(username, nullPassword);
 
             //when
-            Set<ConstraintViolation<RiderLoginRequest>> result
-                = validator.validate(riderLoginRequest);
+            Set<ConstraintViolation<LoginRiderRequest>> result
+                = validator.validate(loginRiderRequest);
 
             //then
             assertThat(result).hasSize(1);

@@ -1,8 +1,8 @@
 package com.prgrms.nabmart.global.auth.support;
 
 import com.prgrms.nabmart.domain.delivery.Rider;
-import com.prgrms.nabmart.global.auth.controller.request.RiderLoginRequest;
-import com.prgrms.nabmart.global.auth.service.request.RiderLoginCommand;
+import com.prgrms.nabmart.global.auth.controller.request.LoginRiderRequest;
+import com.prgrms.nabmart.global.auth.service.request.LoginRiderCommand;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.jwt.JavaJwtTokenProvider;
@@ -53,12 +53,12 @@ public final class AuthFixture {
         return tokenProvider.createToken(createTokenCommand());
     }
 
-    public static RiderLoginCommand riderLoginCommand() {
-        return new RiderLoginCommand(RIDER_USERNAME, RIDER_PASSWORD);
+    public static LoginRiderCommand riderLoginCommand() {
+        return new LoginRiderCommand(RIDER_USERNAME, RIDER_PASSWORD);
     }
 
-    public static RiderLoginRequest riderLoginRequest() {
-        return new RiderLoginRequest(RIDER_USERNAME, RIDER_PASSWORD);
+    public static LoginRiderRequest riderLoginRequest() {
+        return new LoginRiderRequest(RIDER_USERNAME, RIDER_PASSWORD);
     }
 
     public static Rider rider() {

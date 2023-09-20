@@ -2,7 +2,7 @@ package com.prgrms.nabmart.global.auth.oauth.client;
 
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthHttpMessage;
-import com.prgrms.nabmart.global.auth.oauth.handler.OAuthProvider;
+import com.prgrms.nabmart.global.auth.oauth.OAuthProvider;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -36,23 +36,30 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
             userDetailResponse.provider(),
             userDetailResponse.providerId());
 
-        Instant expiresAt = oAuth2AuthorizedClient.getAccessToken().getExpiresAt();
-        if(expiresAt.isBefore(Instant.now())) {
-            refreshAccessToken(userDetailResponse);
-        }
+        refreshAccessTokenIfNotValid(userDetailResponse, oAuth2AuthorizedClient);
 
-        OAuthHttpMessage unlinkHttpMessage = oAuthHttpMessageProvider.createUserUnlinkRequest(
+        OAuthHttpMessage unlinkHttpMessage = oAuthHttpMessageProvider.createUnlinkUserRequest(
             userDetailResponse, oAuth2AuthorizedClient);
+
         Map<String, Object> response = sendPostApiRequest(unlinkHttpMessage);
         log.info("회원의 연결이 종료되었습니다. 회원 ID={}", response);
-        oAuthHttpMessageProvider.checkSuccessUnlinkRequest(response);
+
+        oAuthHttpMessageProvider.verifySuccessUnlinkUserRequest(response);
         authorizedClientService.removeAuthorizedClient(
             userDetailResponse.provider(),
             userDetailResponse.provider());
     }
 
+    private void refreshAccessTokenIfNotValid(FindUserDetailResponse userDetailResponse,
+        OAuth2AuthorizedClient oAuth2AuthorizedClient) {
+        Instant expiresAt = oAuth2AuthorizedClient.getAccessToken().getExpiresAt();
+        if(expiresAt.isBefore(Instant.now())) {
+            callRefreshAccessToken(userDetailResponse);
+        }
+    }
+
     @Override
-    public void refreshAccessToken(final FindUserDetailResponse userDetailResponse) {
+    public void callRefreshAccessToken(final FindUserDetailResponse userDetailResponse) {
         OAuthProvider oAuthProvider = OAuthProvider.getOAuthProvider(userDetailResponse.provider());
         OAuthHttpMessageProvider oAuthHttpMessageProvider = oAuthProvider.getOAuthHttpMessageProvider();
         OAuth2AuthorizedClient oAuth2AuthorizedClient = authorizedClientService.loadAuthorizedClient(
@@ -74,24 +81,25 @@ public class RestTemplateOAuthClient implements OAuthRestClient {
             oAuth2AuthorizedClient.getPrincipalName(),
             refreshedAccessToken,
             refreshedRefreshToken);
-        String principalName = updatedAuthorizedClient.getPrincipalName();
         Authentication authenticationForTokenRefresh
-            = getAuthenticationForTokenRefresh(principalName);
+            = getAuthenticationForTokenRefresh(updatedAuthorizedClient);
         authorizedClientService.saveAuthorizedClient(
             updatedAuthorizedClient,
             authenticationForTokenRefresh);
     }
 
-    private Authentication getAuthenticationForTokenRefresh(String principalName) {
+    private Authentication getAuthenticationForTokenRefresh(
+        OAuth2AuthorizedClient updatedAuthorizedClient) {
+        String principalName = updatedAuthorizedClient.getPrincipalName();
         return UsernamePasswordAuthenticationToken.authenticated(
             principalName, null, List.of());
     }
 
-    private Map sendPostApiRequest(OAuthHttpMessage refreshAccessTokenRequest) {
+    private Map sendPostApiRequest(OAuthHttpMessage request) {
         return restTemplate.postForObject(
-            refreshAccessTokenRequest.uri(),
-            refreshAccessTokenRequest.httpMessage(),
+            request.uri(),
+            request.httpMessage(),
             Map.class,
-            refreshAccessTokenRequest.uriVariables());
+            request.uriVariables());
     }
 }

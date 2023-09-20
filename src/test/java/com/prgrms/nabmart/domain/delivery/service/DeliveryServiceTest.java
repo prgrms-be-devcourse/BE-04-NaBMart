@@ -36,7 +36,6 @@ import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
 import com.prgrms.nabmart.domain.user.support.UserFixture;
-import com.prgrms.nabmart.global.auth.exception.AuthorizationException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -156,7 +155,7 @@ class DeliveryServiceTest {
             //when
             //then
             assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryCommand))
-                .isInstanceOf(AuthorizationException.class);
+                .isInstanceOf(UnauthorizedDeliveryException.class);
         }
     }
 
