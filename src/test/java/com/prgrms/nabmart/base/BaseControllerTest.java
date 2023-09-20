@@ -11,6 +11,7 @@ import com.prgrms.nabmart.domain.event.service.EventItemService;
 import com.prgrms.nabmart.domain.event.service.EventService;
 import com.prgrms.nabmart.domain.item.service.ItemService;
 import com.prgrms.nabmart.domain.item.service.LikeItemService;
+import com.prgrms.nabmart.domain.notification.service.NotificationService;
 import com.prgrms.nabmart.domain.order.service.OrderService;
 import com.prgrms.nabmart.domain.payment.service.PaymentClient;
 import com.prgrms.nabmart.domain.payment.service.PaymentService;
@@ -99,6 +100,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected RiderAuthenticationService riderAuthenticationService;
+
+    @MockBean
+    protected NotificationService notificationService;
 
     protected static final String AUTHORIZATION = "Authorization";
 
