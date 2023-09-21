@@ -9,6 +9,7 @@ import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryDetailCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
@@ -66,6 +67,16 @@ public class DeliveryController {
         FindDeliveryByOrderResponse findDeliveryByOrderResponse
             = deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand);
         return ResponseEntity.ok(findDeliveryByOrderResponse);
+    }
+
+    @GetMapping("/deliveries/{deliveryId}")
+    public ResponseEntity<FindDeliveryDetailResponse> findDelivery(
+        @PathVariable final Long deliveryId) {
+        FindDeliveryDetailCommand findDeliveryDetailCommand
+            = FindDeliveryDetailCommand.from(deliveryId);
+        FindDeliveryDetailResponse findDeliveryDetailResponse = deliveryService.findDelivery(
+            findDeliveryDetailCommand);
+        return ResponseEntity.ok(findDeliveryDetailResponse);
     }
 
     @PatchMapping("/deliveries/{deliveryId}/accept")

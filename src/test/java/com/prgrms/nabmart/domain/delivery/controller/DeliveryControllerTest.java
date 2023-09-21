@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
+import com.prgrms.nabmart.domain.delivery.controller.FindDeliveryDetailResponse.OrderItemResponse;
 import com.prgrms.nabmart.domain.delivery.controller.request.RegisterDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
@@ -81,11 +82,11 @@ class DeliveryControllerTest extends BaseControllerTest {
 
     @Nested
     @DisplayName("배달 현황 조회 API 호출 시")
-    class FindDeliveryTest {
+    class FindDeliveryByOrderTest {
 
         @Test
         @DisplayName("성공")
-        void findDelivery() throws Exception {
+        void findDeliveryByOrder() throws Exception {
             //given
             Long orderId = 1L;
             FindDeliveryByOrderResponse findDeliveryByOrderResponse
@@ -344,6 +345,61 @@ class DeliveryControllerTest extends BaseControllerTest {
                             .description("배달비"),
                         fieldWithPath("page").type(NUMBER).description("페이지"),
                         fieldWithPath("totalElements").type(NUMBER).description("총 요소 갯수")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("배달 상세 조회(라이더, 직원) API 조회")
+    class FindDeliveryTest {
+
+        @Test
+        @DisplayName("성공")
+        void findDelivery() throws Exception {
+            //given
+            Long deliveryId = 1L;
+            OrderItemResponse orderItemResponse = new OrderItemResponse("비비고 왕교자", 2, 5990);
+            FindDeliveryDetailResponse findDeliveryDetailResponse = new FindDeliveryDetailResponse(
+                1L,
+                DeliveryStatus.ACCEPTING_ORDER,
+                LocalDateTime.now().plusMinutes(30),
+                "address",
+                "비비고 왕교자 외 2개",
+                30000,
+                "배달 요청 사항",
+                3000,
+                List.of(orderItemResponse));
+
+            given(deliveryService.findDelivery(any())).willReturn(findDeliveryDetailResponse);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/v1/deliveries/{deliveryId}", deliveryId)
+                    .header(AUTHORIZATION, accessToken));
+
+            //then
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("deliveryId").description("배달 ID")
+                    ),
+                    responseFields(
+                        fieldWithPath("deliveryId").type(NUMBER).description("배달 ID"),
+                        fieldWithPath("deliveryStatus").type(STRING).description("배달 상태"),
+                        fieldWithPath("arrivedAt").type(STRING).description("배달 예상 도착 시간"),
+                        fieldWithPath("address").type(STRING).description("배달지 주소"),
+                        fieldWithPath("orderName").type(STRING).description("주문 이름"),
+                        fieldWithPath("orderPrice").type(NUMBER).description("주문 가격"),
+                        fieldWithPath("riderRequest").type(STRING).description("배달 요청 사항"),
+                        fieldWithPath("deliveryFee").type(NUMBER).description("배달비"),
+                        fieldWithPath("items").type(ARRAY).description("상품 목록"),
+                        fieldWithPath("items[].name").type(STRING).description("상품 이름"),
+                        fieldWithPath("items[].quantity").type(NUMBER).description("상품 갯수"),
+                        fieldWithPath("items[].price").type(NUMBER).description("상품 가격")
                     )
                 ));
         }
