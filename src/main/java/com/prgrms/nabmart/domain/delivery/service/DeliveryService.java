@@ -6,6 +6,7 @@ import static com.prgrms.nabmart.domain.notification.NotificationMessage.START_D
 
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.Rider;
+import com.prgrms.nabmart.domain.delivery.controller.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyRegisteredDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
@@ -15,6 +16,7 @@ import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryDetailCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
@@ -104,6 +106,21 @@ public class DeliveryService {
         if (!delivery.isOwnByUser(user)) {
             throw new UnauthorizedDeliveryException("권한이 없습니다.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public FindDeliveryDetailResponse findDelivery(
+        FindDeliveryDetailCommand findDeliveryDetailCommand) {
+        Delivery delivery = findDeliveryByDeliveryIdWithOrderAndOrderItems(
+            findDeliveryDetailCommand);
+        return FindDeliveryDetailResponse.from(delivery);
+    }
+
+    private Delivery findDeliveryByDeliveryIdWithOrderAndOrderItems(
+        FindDeliveryDetailCommand findDeliveryDetailCommand) {
+        return deliveryRepository.findByIdWithOrderAndItems(
+                findDeliveryDetailCommand.deliveryId())
+            .orElseThrow(() -> new NotFoundDeliveryException("존재하지 않는 배달입니다."));
     }
 
     @Transactional
