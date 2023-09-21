@@ -6,12 +6,10 @@ import com.prgrms.nabmart.domain.notification.Notification;
 import com.prgrms.nabmart.domain.notification.NotificationType;
 import com.prgrms.nabmart.domain.notification.controller.request.ConnectNotificationCommand;
 import com.prgrms.nabmart.domain.notification.repository.EmitterRepository;
-import com.prgrms.nabmart.domain.notification.repository.NotificationRepository;
 import com.prgrms.nabmart.domain.notification.service.request.SendNotificationCommand;
 import com.prgrms.nabmart.domain.notification.service.response.NotificationResponse;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,6 @@ public class NotificationService {
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 120;
 
     private final EmitterRepository emitterRepository;
-    private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
     public SseEmitter connectNotification(ConnectNotificationCommand connectNotificationCommand) {
@@ -65,20 +62,20 @@ public class NotificationService {
             log.error("알림 전송에 실패했습니다.", ex);
         }
     }
-
-    @Transactional
+    
     public void sendNotification(SendNotificationCommand sendNotificationCommand) {
         Long userId = sendNotificationCommand.userId();
+        String title = sendNotificationCommand.title();
         String content = sendNotificationCommand.content();
         NotificationType notificationType = sendNotificationCommand.notificationType();
 
         verifyExistsUser(userId);
         Notification notification = Notification.builder()
+            .title(title)
             .content(content)
             .userId(userId)
             .notificationType(notificationType)
             .build();
-        notificationRepository.save(notification);
 
         Map<String, SseEmitter> emitters = emitterRepository.findAllByIdStartWith(userId);
         emitters.forEach((key, emitter) -> {

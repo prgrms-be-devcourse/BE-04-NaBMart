@@ -1,5 +1,9 @@
 package com.prgrms.nabmart.domain.delivery.service;
 
+import static com.prgrms.nabmart.domain.notification.NotificationMessage.COMPLETE_DELIVERY;
+import static com.prgrms.nabmart.domain.notification.NotificationMessage.REGISTER_DELIVERY;
+import static com.prgrms.nabmart.domain.notification.NotificationMessage.START_DELIVERY;
+
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.Rider;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyRegisteredDeliveryException;
@@ -18,6 +22,9 @@ import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
+import com.prgrms.nabmart.domain.notification.NotificationType;
+import com.prgrms.nabmart.domain.notification.service.NotificationService;
+import com.prgrms.nabmart.domain.notification.service.request.SendNotificationCommand;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
@@ -37,6 +44,7 @@ public class DeliveryService {
     private final UserRepository userRepository;
     private final RiderRepository riderRepository;
     private final OrderRepository orderRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public Long registerDelivery(RegisterDeliveryCommand registerDeliveryCommand) {
@@ -45,12 +53,29 @@ public class DeliveryService {
         checkAlreadyRegisteredDelivery(order);
         Delivery delivery = new Delivery(order, registerDeliveryCommand.estimateMinutes());
         deliveryRepository.save(delivery);
+
+        sendRegisterDeliveryNotification(registerDeliveryCommand, delivery, order);
+
         return delivery.getDeliveryId();
+    }
+
+    private void sendRegisterDeliveryNotification(
+        RegisterDeliveryCommand registerDeliveryCommand,
+        Delivery delivery,
+        Order order) {
+        SendNotificationCommand notificationCommand = SendNotificationCommand.of(
+            delivery.getUserId(),
+            REGISTER_DELIVERY.getTitle(),
+            REGISTER_DELIVERY.getContentFromFormat(
+                order.getName(),
+                registerDeliveryCommand.estimateMinutes()),
+            NotificationType.DELIVERY);
+        notificationService.sendNotification(notificationCommand);
     }
 
     private void checkUserHasRegisterDeliveryAuthority(final Long userId) {
         User user = findUserByUserId(userId);
-        if(!user.isEmployee()) {
+        if (!user.isEmployee()) {
             throw new UnauthorizedDeliveryException("권한이 없습니다.");
         }
     }
@@ -61,7 +86,7 @@ public class DeliveryService {
     }
 
     private void checkAlreadyRegisteredDelivery(final Order order) {
-        if(deliveryRepository.existsByOrder(order)) {
+        if (deliveryRepository.existsByOrder(order)) {
             throw new AlreadyRegisteredDeliveryException("이미 배달이 생성된 주문입니다.");
         }
     }
@@ -99,6 +124,19 @@ public class DeliveryService {
         Delivery delivery = findDeliveryByDeliveryId(startDeliveryCommand.deliveryId());
         delivery.checkAuthority(rider);
         delivery.startDelivery(startDeliveryCommand.deliveryEstimateMinutes());
+
+        sendStartDeliveryNotification(startDeliveryCommand, delivery);
+    }
+
+    private void sendStartDeliveryNotification(
+        StartDeliveryCommand startDeliveryCommand,
+        Delivery delivery) {
+        SendNotificationCommand notificationCommand = SendNotificationCommand.of(
+            delivery.getUserId(),
+            START_DELIVERY.getTitle(),
+            START_DELIVERY.getContentFromFormat(startDeliveryCommand.deliveryEstimateMinutes()),
+            NotificationType.DELIVERY);
+        notificationService.sendNotification(notificationCommand);
     }
 
     @Transactional
@@ -107,6 +145,17 @@ public class DeliveryService {
         Delivery delivery = findDeliveryByDeliveryId(completeDeliveryCommand.deliveryId());
         delivery.checkAuthority(rider);
         delivery.completeDelivery();
+
+        sendCompleteDeliveryNotification(delivery);
+    }
+
+    private void sendCompleteDeliveryNotification(Delivery delivery) {
+        SendNotificationCommand notificationCommand = SendNotificationCommand.of(
+            delivery.getUserId(),
+            COMPLETE_DELIVERY.getTitle(),
+            COMPLETE_DELIVERY.getContentFromFormat(),
+            NotificationType.DELIVERY);
+        notificationService.sendNotification(notificationCommand);
     }
 
     private Rider findRiderByRiderId(final Long riderId) {
