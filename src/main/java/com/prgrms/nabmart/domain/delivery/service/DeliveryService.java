@@ -40,6 +40,7 @@ public class DeliveryService {
 
     @Transactional
     public Long registerDelivery(RegisterDeliveryCommand registerDeliveryCommand) {
+        checkUserHasRegisterDeliveryAuthority(registerDeliveryCommand.userId());
         Order order = findOrderByOrderIdPessimistic(registerDeliveryCommand);
         checkAlreadyRegisteredDelivery(order);
         Delivery delivery = new Delivery(order, registerDeliveryCommand.estimateMinutes());
@@ -47,10 +48,16 @@ public class DeliveryService {
         return delivery.getDeliveryId();
     }
 
+    private void checkUserHasRegisterDeliveryAuthority(final Long userId) {
+        User user = findUserByUserId(userId);
+        if(!user.isEmployee()) {
+            throw new UnauthorizedDeliveryException("권한이 없습니다.");
+        }
+    }
+
     private Order findOrderByOrderIdPessimistic(RegisterDeliveryCommand registerDeliveryCommand) {
-        Order order = orderRepository.findByIdPessimistic(registerDeliveryCommand.orderId())
+        return orderRepository.findByIdPessimistic(registerDeliveryCommand.orderId())
             .orElseThrow(() -> new NotFoundOrderException("존재하지 않는 주문입니다."));
-        return order;
     }
 
     private void checkAlreadyRegisteredDelivery(final Order order) {

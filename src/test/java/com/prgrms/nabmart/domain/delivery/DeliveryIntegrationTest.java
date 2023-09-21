@@ -132,23 +132,25 @@ public class DeliveryIntegrationTest {
         ExecutorService service;
         CountDownLatch latch;
         int treadPoolSize = 100;
-        User employee;
+        User employee = UserFixture.employee();
 
         @BeforeEach
         void setUpConcurrent() {
             service = Executors.newFixedThreadPool(treadPoolSize);
             latch = new CountDownLatch(treadPoolSize);
+            userRepository.save(employee);
         }
 
         @Test
         @DisplayName("성공: 여러명의 점원 중 한 명만 성공")
         void success() throws InterruptedException {
             //given
-            Long noUseUserId = 1L;
             List<Exception> exList = new ArrayList<>();
             int estimateMinutes = 30;
-            RegisterDeliveryCommand registerDeliveryCommand
-                = RegisterDeliveryCommand.of(order.getOrderId(), noUseUserId, estimateMinutes);
+            RegisterDeliveryCommand registerDeliveryCommand = RegisterDeliveryCommand.of(
+                order.getOrderId(),
+                employee.getUserId(),
+                estimateMinutes);
 
             //when
             for(int i=0; i<treadPoolSize; i++) {
