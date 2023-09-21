@@ -2,7 +2,7 @@ package com.prgrms.nabmart.domain.order.exception;
 
 public class UnauthorizedOrderException extends OrderException {
 
-    public UnauthorizedOrderException(String message) {
+    public UnauthorizedOrderException(final String message) {
         super(message);
     }
 }

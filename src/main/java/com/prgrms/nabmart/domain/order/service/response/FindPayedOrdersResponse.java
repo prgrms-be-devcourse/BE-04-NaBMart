@@ -9,9 +9,9 @@ public record FindPayedOrdersResponse(
     long totalElements) {
 
     public static FindPayedOrdersResponse of(
-        List<Order> orders,
-        int page,
-        long totalElements) {
+        final List<Order> orders,
+        final int page,
+        final long totalElements) {
         List<FindPayedOrderResponse> content = orders.stream()
             .map(FindPayedOrderResponse::from)
             .toList();
@@ -23,7 +23,7 @@ public record FindPayedOrdersResponse(
         String name,
         int price) {
 
-        public static FindPayedOrderResponse from(Order order) {
+        public static FindPayedOrderResponse from(final Order order) {
             return new FindPayedOrderResponse(
                 order.getOrderId(),
                 order.getName(),
