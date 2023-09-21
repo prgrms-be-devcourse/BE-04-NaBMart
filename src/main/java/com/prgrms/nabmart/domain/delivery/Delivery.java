@@ -69,6 +69,9 @@ public class Delivery extends BaseTimeEntity {
     @Column
     private Integer deliveryFee;
 
+    @Column
+    private Long userId;
+
     @Builder
     public Delivery(final Order order, final int estimateMinutes) {
         validateOrderStatus(order);
@@ -80,6 +83,7 @@ public class Delivery extends BaseTimeEntity {
         this.riderRequest = order.getRiderRequest();
         this.deliveryFee = order.getDeliveryFee();
         this.arrivedAt = LocalDateTime.now().plusMinutes(estimateMinutes);
+        this.userId = order.getUser().getUserId();
         order.updateOrderStatus(OrderStatus.DELIVERING);
     }
 
