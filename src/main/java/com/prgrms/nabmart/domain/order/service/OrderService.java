@@ -14,13 +14,16 @@ import com.prgrms.nabmart.domain.order.OrderItem;
 import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.CreateOrderItemRequest;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
+import com.prgrms.nabmart.domain.order.exception.UnauthorizedOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
 import com.prgrms.nabmart.domain.order.service.request.UpdateOrderByCouponCommand;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse;
 import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
+import com.prgrms.nabmart.domain.payment.service.request.FindPayedOrdersCommand;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
@@ -153,6 +156,24 @@ public class OrderService {
     private void validationCoupon(Order order, Coupon coupon) {
         if (order.getPrice() < coupon.getMinOrderPrice()) {
             throw new InvalidCouponException("총 주문 금액이 쿠폰 최소 사용 금액보다 작습니다");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public FindPayedOrdersResponse findPayedOrders(FindPayedOrdersCommand findPayedOrdersCommand) {
+        checkUserHasEmployeeAuthority(findPayedOrdersCommand.userId());
+        PageRequest pageRequest = PageRequest.of(findPayedOrdersCommand.page(), PAGE_SIZE);
+        Page<Order> findOrders = orderRepository.findAllStatusIsPayed(pageRequest);
+        return FindPayedOrdersResponse.of(
+            findOrders.getContent(),
+            findOrders.getNumber(),
+            findOrders.getTotalElements());
+    }
+
+    private void checkUserHasEmployeeAuthority(Long userId) {
+        User user = findUserByUserId(userId);
+        if(!user.isEmployee()) {
+            throw new UnauthorizedOrderException("권한이 없습니다.");
         }
     }
 

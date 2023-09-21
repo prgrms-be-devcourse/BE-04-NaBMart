@@ -17,6 +17,7 @@ import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.OrderItem;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.repository.OrderItemRepository;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.user.User;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 public class DeliveryIntegrationTest {
@@ -108,6 +110,7 @@ public class DeliveryIntegrationTest {
         mainCategoryRepository.save(mainCategory);
         subCategoryRepository.save(subCategory);
         itemRepository.save(item);
+        ReflectionTestUtils.setField(order, "status", OrderStatus.PAYED);
         orderRepository.save(order);
     }
 

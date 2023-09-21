@@ -11,9 +11,11 @@ import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.order.support.OrderFixture.updateOrderByCouponCommand;
 import static com.prgrms.nabmart.domain.user.support.UserFixture.user;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,17 +34,23 @@ import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest.CreateOrderItemRequest;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
+import com.prgrms.nabmart.domain.order.exception.UnauthorizedOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse.FindPayedOrderResponse;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
 import com.prgrms.nabmart.domain.order.service.request.UpdateOrderByCouponCommand;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
 import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
+import com.prgrms.nabmart.domain.payment.service.request.FindPayedOrdersCommand;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
+import com.prgrms.nabmart.domain.user.support.UserFixture;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -339,6 +347,60 @@ public class OrderServiceTest {
 
             // then
             verify(orderRepository, times(1)).delete(order);
+        }
+    }
+
+    @Nested
+    @DisplayName("findPayedOrders 메서드 실행 시")
+    class FindOrdersWaitingDeliveryTest {
+
+        User user = UserFixture.user();
+        User employee = UserFixture.employee();
+        FindPayedOrdersCommand findPayedOrdersCommand
+            = FindPayedOrdersCommand.of(1L, 0);
+        Item item = item();
+        int orderItemQuantity = 5;
+
+        private List<Order> createOrders(int end) {
+            return IntStream.range(0, end)
+                .mapToObj(i -> {
+                    OrderItem orderItem = new OrderItem(item, orderItemQuantity);
+                    return new Order(user, List.of(orderItem));
+                }).toList();
+        }
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            List<Order> orders = createOrders(5);
+            PageImpl<Order> ordersPage = new PageImpl<>(orders);
+
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(employee));
+            given(orderRepository.findAllStatusIsPayed(any())).willReturn(ordersPage);
+
+            //when
+            FindPayedOrdersResponse result = orderService.findPayedOrders(
+                findPayedOrdersCommand);
+
+            //then
+            int expectedPrice = item.getPrice() * orderItemQuantity;
+            assertThat(result.orders()).hasSize(5);
+            assertThat(result.orders()).map(FindPayedOrderResponse::price)
+                .containsOnly(expectedPrice);
+        }
+
+        @Test
+        @DisplayName("예외: 로그인 유저가 employee가 아님")
+        void throwExceptionWhenLoginUserIsNotEmployee() {
+            //given
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
+
+            //when
+            //then
+            assertThatThrownBy(
+                () -> orderService.findPayedOrders(findPayedOrdersCommand))
+                .isInstanceOf(UnauthorizedOrderException.class);
         }
     }
 }

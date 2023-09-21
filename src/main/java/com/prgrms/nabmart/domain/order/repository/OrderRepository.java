@@ -31,4 +31,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select o from Order o where o.orderId = :orderId")
     Optional<Order> findByIdPessimistic(@Param("orderId") Long orderId);
+
+    @Query("select o from Order o where o.status = com.prgrms.nabmart.domain.order.OrderStatus.PAYED")
+    Page<Order> findAllStatusIsPayed(Pageable pageable);
 }
