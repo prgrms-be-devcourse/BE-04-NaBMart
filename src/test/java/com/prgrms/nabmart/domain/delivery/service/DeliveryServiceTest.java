@@ -86,7 +86,7 @@ class DeliveryServiceTest {
     class RegisterDeliveryTest {
 
         User employee = UserFixture.employee();
-        Order order = OrderFixture.payingOrder(1L, user);
+        Order order = OrderFixture.payedOrder(1L, user);
         RegisterDeliveryCommand registerDeliveryCommand = RegisterDeliveryCommand.of(
             1L,
             1L,

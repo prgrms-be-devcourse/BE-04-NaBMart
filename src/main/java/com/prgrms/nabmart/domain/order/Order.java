@@ -161,4 +161,8 @@ public class Order extends BaseTimeEntity {
             userCoupon.unUse();
         }
     }
+
+    public boolean isPayed() {
+        return this.status == OrderStatus.PAYED;
+    }
 }

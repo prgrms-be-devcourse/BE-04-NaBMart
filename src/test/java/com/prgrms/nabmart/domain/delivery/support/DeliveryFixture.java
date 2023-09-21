@@ -8,6 +8,7 @@ import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveries
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse.FindWaitingDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -33,6 +34,7 @@ public final class DeliveryFixture {
     private static final String RIDER_ADDRESS = "address";
 
     public static Delivery waitingDelivery(Order order) {
+        order.updateOrderStatus(OrderStatus.PAYED);
         return Delivery.builder()
             .order(order)
             .build();

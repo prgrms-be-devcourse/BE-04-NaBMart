@@ -71,6 +71,8 @@ public class Delivery extends BaseTimeEntity {
 
     @Builder
     public Delivery(final Order order, final int estimateMinutes) {
+        validateOrderStatus(order);
+        validateEstimateMinutes(estimateMinutes);
         this.order = order;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
         this.address = order.getAddress();
@@ -79,6 +81,12 @@ public class Delivery extends BaseTimeEntity {
         this.deliveryFee = order.getDeliveryFee();
         this.arrivedAt = LocalDateTime.now().plusMinutes(estimateMinutes);
         order.updateOrderStatus(OrderStatus.DELIVERING);
+    }
+
+    private void validateOrderStatus(Order order) {
+        if(!order.isPayed()) {
+            throw new InvalidDeliveryException("결제 완료된 주문이 아닙니다.");
+        }
     }
 
     public boolean isOwnByUser(final User user) {
