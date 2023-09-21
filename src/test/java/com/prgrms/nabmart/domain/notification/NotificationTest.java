@@ -35,15 +35,15 @@ class NotificationTest {
         }
 
         @Test
-        @DisplayName("예외: 제목 길이가 20자를 초과")
-        void throwExceptionWhenTitleLengthGGraterThan20() {
+        @DisplayName("예외: 제목 길이가 30자를 초과")
+        void throwExceptionWhenTitleLengthGGraterThan31() {
             //given
-            String titleGT20 = "a".repeat(21);
+            String titleGT30 = "a".repeat(31);
 
             //when
             //then
             assertThatThrownBy(() -> Notification.builder()
-                .title(titleGT20)
+                .title(titleGT30)
                 .content("내용")
                 .userId(1L)
                 .notificationType(NotificationType.DELIVERY)
@@ -52,16 +52,16 @@ class NotificationTest {
         }
 
         @Test
-        @DisplayName("예외: 내용 길이가 50자를 초과")
-        void throwExceptionWhenContentLengthGraterThan50() {
+        @DisplayName("예외: 내용 길이가 100자를 초과")
+        void throwExceptionWhenContentLengthGraterThan100() {
             //given
-            String contentGT50 = "a".repeat(51);
+            String contentGT100 = "a".repeat(101);
 
             //when
             //then
             assertThatThrownBy(() -> Notification.builder()
                 .title("title")
-                .content(contentGT50)
+                .content(contentGT100)
                 .userId(1L)
                 .notificationType(NotificationType.DELIVERY)
                 .build())

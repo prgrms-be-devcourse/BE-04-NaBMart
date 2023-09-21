@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification extends BaseTimeEntity {
 
-    private static final int TITLE_LENGTH = 20;
-    private static final int CONTENT_LENGTH = 50;
+    private static final int TITLE_LENGTH = 30;
+    private static final int CONTENT_LENGTH = 100;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
