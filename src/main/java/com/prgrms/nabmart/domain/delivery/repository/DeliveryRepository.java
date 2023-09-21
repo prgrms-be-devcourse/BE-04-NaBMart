@@ -3,6 +3,7 @@ package com.prgrms.nabmart.domain.delivery.repository;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.Rider;
+import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.user.User;
 import jakarta.persistence.LockModeType;
 import java.util.List;
@@ -38,4 +39,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     @Query("select d from Delivery d join d.order o where o.user = :user")
     List<Delivery> findAllByUser(@Param("user") User user);
+
+    boolean existsByOrder(Order order);
 }

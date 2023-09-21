@@ -94,7 +94,7 @@ class DeliveryServiceTest {
         @DisplayName("성공")
         void success() {
             //given
-            given(orderRepository.findByOrderIdAndUser_UserId(any(), any()))
+            given(orderRepository.findByIdPessimistic(any()))
                 .willReturn(Optional.ofNullable(order));
 
             //when
@@ -108,8 +108,7 @@ class DeliveryServiceTest {
         @DisplayName("예외: orderId, userId와 일치하는 order가 없음")
         void throwExceptionWhenNotFoundOrder() {
             //given
-            given(orderRepository.findByOrderIdAndUser_UserId(any(), any()))
-                .willReturn(Optional.empty());
+            given(orderRepository.findByIdPessimistic(any())).willReturn(Optional.empty());
 
             //when
             //then

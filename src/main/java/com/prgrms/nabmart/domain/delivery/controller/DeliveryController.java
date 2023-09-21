@@ -45,9 +45,9 @@ public class DeliveryController {
 
     @PostMapping("/orders/{orderId}/deliveries")
     public ResponseEntity<Void> registerDelivery(
-        @PathVariable Long orderId,
-        @RequestBody RegisterDeliveryRequest registerDeliveryRequest,
-        @LoginUser Long userId) {
+        @PathVariable final Long orderId,
+        @RequestBody final RegisterDeliveryRequest registerDeliveryRequest,
+        @LoginUser final Long userId) {
         RegisterDeliveryCommand registerDeliveryCommand = RegisterDeliveryCommand.of(
             orderId,
             userId,

@@ -70,7 +70,7 @@ public class Delivery extends BaseTimeEntity {
     private Integer deliveryFee;
 
     @Builder
-    public Delivery(final Order order, int estimateMinutes) {
+    public Delivery(final Order order, final int estimateMinutes) {
         this.order = order;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
         this.address = order.getAddress();

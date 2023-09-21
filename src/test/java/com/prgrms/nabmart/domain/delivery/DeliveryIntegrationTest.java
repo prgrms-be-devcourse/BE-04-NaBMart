@@ -11,6 +11,7 @@ import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.item.Item;
 import com.prgrms.nabmart.domain.item.repository.ItemRepository;
 import com.prgrms.nabmart.domain.item.support.ItemFixture;
@@ -24,6 +25,7 @@ import com.prgrms.nabmart.domain.user.support.UserFixture;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
@@ -93,6 +95,80 @@ public class DeliveryIntegrationTest {
         properties.setProperty("spring.data.redis.port", "6379");
     }
 
+    User user = UserFixture.user();
+    MainCategory mainCategory = CategoryFixture.mainCategory();
+    SubCategory subCategory = CategoryFixture.subCategory(mainCategory);
+    Item item = ItemFixture.item(mainCategory, subCategory);
+    OrderItem orderItem = new OrderItem(item, 5);
+    Order order = new Order(user, List.of(orderItem));
+
+    @BeforeEach
+    void setUpData() {
+        userRepository.save(user);
+        mainCategoryRepository.save(mainCategory);
+        subCategoryRepository.save(subCategory);
+        itemRepository.save(item);
+        orderRepository.save(order);
+    }
+
+    @AfterEach
+    void tearDown() {
+        deliveryRepository.deleteAll();
+        riderRepository.deleteAll();
+        orderRepository.deleteAll();
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+        em.createQuery("delete from Item").executeUpdate(); // 소프트 딜리트 아이템 강제 삭제
+        tx.commit();
+        subCategoryRepository.deleteAll();
+        mainCategoryRepository.deleteAll();
+    }
+
+    @Nested
+    @DisplayName("registerDelivery 메서드 실행 시")
+    class RegisterDeliveryTest {
+
+        ExecutorService service;
+        CountDownLatch latch;
+        int treadPoolSize = 100;
+        User employee;
+
+        @BeforeEach
+        void setUpConcurrent() {
+            service = Executors.newFixedThreadPool(treadPoolSize);
+            latch = new CountDownLatch(treadPoolSize);
+        }
+
+        @Test
+        @DisplayName("성공: 여러명의 점원 중 한 명만 성공")
+        void success() throws InterruptedException {
+            //given
+            Long noUseUserId = 1L;
+            List<Exception> exList = new ArrayList<>();
+            int estimateMinutes = 30;
+            RegisterDeliveryCommand registerDeliveryCommand
+                = RegisterDeliveryCommand.of(order.getOrderId(), noUseUserId, estimateMinutes);
+
+            //when
+            for(int i=0; i<treadPoolSize; i++) {
+                service.execute(() -> {
+                    try {
+                        deliveryService.registerDelivery(registerDeliveryCommand);
+                    } catch (Exception ex) {
+                        exList.add(ex);
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+            }
+            latch.await();
+
+            //then
+            assertThat(exList).hasSize(treadPoolSize-1);
+        }
+    }
+
 
     @Nested
     @DisplayName("acceptDelivery 메서드 실행 시")
@@ -101,26 +177,10 @@ public class DeliveryIntegrationTest {
         ExecutorService service;
         CountDownLatch latch;
 
-        User user = UserFixture.user();
-        MainCategory mainCategory = CategoryFixture.mainCategory();
-        SubCategory subCategory = CategoryFixture.subCategory(mainCategory);
-        Item item = ItemFixture.item(mainCategory, subCategory);
-        OrderItem orderItem = new OrderItem(item, 5);
-        Order order = new Order(user, List.of(orderItem));
-
         @BeforeEach
         void setUpConcurrent() {
             service = Executors.newFixedThreadPool(4);
             latch = new CountDownLatch(4);
-        }
-
-        @BeforeEach
-        void setUpData() {
-            userRepository.save(user);
-            mainCategoryRepository.save(mainCategory);
-            subCategoryRepository.save(subCategory);
-            itemRepository.save(item);
-            orderRepository.save(order);
         }
 
         List<Rider> createAndSaveRiders(int end) {
@@ -139,20 +199,6 @@ public class DeliveryIntegrationTest {
             Delivery delivery = new Delivery(order, 60);
             deliveryRepository.save(delivery);
             return delivery;
-        }
-
-        @AfterEach
-        void tearDown() {
-            deliveryRepository.deleteAll();
-            riderRepository.deleteAll();
-            orderRepository.deleteAll();
-            EntityManager em = emf.createEntityManager();
-            EntityTransaction tx = em.getTransaction();
-            tx.begin();
-            em.createQuery("delete from Item").executeUpdate(); // 소프트 딜리트 아이템 강제 삭제
-            tx.commit();
-            subCategoryRepository.deleteAll();
-            mainCategoryRepository.deleteAll();
         }
 
         @Test

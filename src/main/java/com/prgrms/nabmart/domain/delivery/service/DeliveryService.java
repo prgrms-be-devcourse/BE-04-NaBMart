@@ -2,6 +2,7 @@ package com.prgrms.nabmart.domain.delivery.service;
 
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.Rider;
+import com.prgrms.nabmart.domain.delivery.exception.AlreadyRegisteredDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
 import com.prgrms.nabmart.domain.delivery.exception.UnauthorizedDeliveryException;
@@ -37,14 +38,25 @@ public class DeliveryService {
     private final RiderRepository riderRepository;
     private final OrderRepository orderRepository;
 
+    @Transactional
     public Long registerDelivery(RegisterDeliveryCommand registerDeliveryCommand) {
-        Order order = orderRepository.findByOrderIdAndUser_UserId(
-                registerDeliveryCommand.orderId(),
-                registerDeliveryCommand.userId())
-            .orElseThrow(() -> new NotFoundOrderException("존재하지 않는 주문입니다."));
+        Order order = findOrderByOrderIdPessimistic(registerDeliveryCommand);
+        checkAlreadyRegisteredDelivery(order);
         Delivery delivery = new Delivery(order, registerDeliveryCommand.estimateMinutes());
         deliveryRepository.save(delivery);
         return delivery.getDeliveryId();
+    }
+
+    private Order findOrderByOrderIdPessimistic(RegisterDeliveryCommand registerDeliveryCommand) {
+        Order order = orderRepository.findByIdPessimistic(registerDeliveryCommand.orderId())
+            .orElseThrow(() -> new NotFoundOrderException("존재하지 않는 주문입니다."));
+        return order;
+    }
+
+    private void checkAlreadyRegisteredDelivery(final Order order) {
+        if(deliveryRepository.existsByOrder(order)) {
+            throw new AlreadyRegisteredDeliveryException("이미 배달이 생성된 주문입니다.");
+        }
     }
 
     @Transactional(readOnly = true)
