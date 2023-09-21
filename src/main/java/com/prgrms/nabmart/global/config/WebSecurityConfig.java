@@ -99,7 +99,8 @@ public class WebSecurityConfig {
 
     private RequestMatcher[] requestHasRoleEmployee() {
         List<RequestMatcher> requestMatchers = List.of(
-            antMatcher(POST, "/api/v1/orders/*/deliveries")
+            antMatcher(POST, "/api/v1/orders/*/deliveries"),
+            antMatcher(GET, "/api/v1/orders/payed")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
