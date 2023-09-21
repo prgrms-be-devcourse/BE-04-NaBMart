@@ -69,11 +69,13 @@ public class NotificationService {
     @Transactional
     public void sendNotification(SendNotificationCommand sendNotificationCommand) {
         Long userId = sendNotificationCommand.userId();
+        String title = sendNotificationCommand.title();
         String content = sendNotificationCommand.content();
         NotificationType notificationType = sendNotificationCommand.notificationType();
 
         verifyExistsUser(userId);
         Notification notification = Notification.builder()
+            .title(title)
             .content(content)
             .userId(userId)
             .notificationType(notificationType)
