@@ -1,0 +1,551 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:sectlinks:
+:toc: left
+:toclevels: 2
+:sectnums:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+= Nabmart Application API Document
+
+== 회원(User)
+
+=== 회원 정보 조회
+
+==== Request
+
+include::{snippets}/find-user/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-user/http-response.adoc[]
+include::{snippets}/find-user/response-fields.adoc[]
+
+=== 회원 탈퇴
+
+==== Request
+
+include::{snippets}/delete-user/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/delete-user/http-response.adoc[]
+
+== 상품(Item)
+
+=== 대카테고리 상품 목록 조회
+
+==== Request
+
+include::{snippets}/find-items-by-main-category/http-request.adoc[]
+include::{snippets}/find-items-by-main-category/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-items-by-main-category/http-response.adoc[]
+
+=== 소카테고리 상품 목록 조회
+
+==== Request
+
+include::{snippets}/find-items-by-sub-category/http-request.adoc[]
+include::{snippets}/find-items-by-sub-category/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-items-by-sub-category/http-response.adoc[]
+
+=== 상품 상세 조회
+
+==== Request
+
+include::{snippets}/find-item-detail/http-request.adoc[]
+include::{snippets}/find-item-detail/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-item-detail/http-response.adoc[]
+include::{snippets}/find-item-detail/response-fields.adoc[]
+
+=== 신상품 조회
+
+==== Request
+
+include::{snippets}/find-new-items/http-request.adoc[]
+include::{snippets}/find-new-items/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-new-items/http-response.adoc[]
+include::{snippets}/find-new-items/response-fields.adoc[]
+
+=== 인기 상품 조회
+
+==== Request
+
+include::{snippets}/find-hot-items/http-request.adoc[]
+include::{snippets}/find-hot-items/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-hot-items/http-response.adoc[]
+include::{snippets}/find-hot-items/response-fields.adoc[]
+
+=== 상품 수정
+
+==== Request
+
+include::{snippets}/update-item/http-request.adoc[]
+include::{snippets}/update-item/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/update-item/http-response.adoc[]
+
+=== 상품 등록
+
+==== Request
+
+include::{snippets}/register-item/http-request.adoc[]
+include::{snippets}/register-item/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/register-item/http-response.adoc[]
+
+=== 상품 삭제
+
+==== Request
+
+include::{snippets}/delete-item/http-request.adoc[]
+include::{snippets}/delete-item/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/delete-item/http-response.adoc[]
+
+=== 신상품 조회
+
+==== Request
+
+include::{snippets}/find-new-items/http-request.adoc[]
+include::{snippets}/find-new-items/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-new-items/http-response.adoc[]
+include::{snippets}/find-new-items/response-fields.adoc[]
+
+== 쿠폰(Coupon)
+
+=== 쿠폰 등록
+
+==== Request
+
+include::{snippets}/register-coupon/http-request.adoc[]
+include::{snippets}/register-coupon/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/register-coupon/http-response.adoc[]
+
+=== 쿠폰 발급
+
+==== Request
+
+include::{snippets}/register-user-coupon/http-request.adoc[]
+include::{snippets}/register-user-coupon/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/register-user-coupon/http-response.adoc[]
+
+=== 쿠폰 조회
+
+==== Request
+
+include::{snippets}/find-coupons/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-coupons/http-response.adoc[]
+include::{snippets}/find-coupons/response-fields.adoc[]
+
+=== 발행된 쿠폰 조회
+
+==== Request
+
+include::{snippets}/find-issued-coupons/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-issued-coupons/http-response.adoc[]
+include::{snippets}/find-issued-coupons/response-fields.adoc[]
+
+== 카테고리(Category)
+
+=== 대카테고리 등록
+
+==== Request
+
+include::{snippets}/save-main-category/http-request.adoc[]
+include::{snippets}/save-main-category/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/save-main-category/http-response.adoc[]
+
+=== 소카테고리 등록
+
+==== Request
+
+include::{snippets}/save-sub-category/http-request.adoc[]
+include::{snippets}/save-sub-category/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/save-sub-category/http-response.adoc[]
+
+=== 대카테고리 목록 조회
+
+==== Request
+
+include::{snippets}/find-all-main-categories/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-all-main-categories/http-response.adoc[]
+include::{snippets}/find-all-main-categories/response-fields.adoc[]
+
+=== 소카테고리 목록 조회
+
+==== Request
+
+include::{snippets}/find-all-sub-categories/http-request.adoc[]
+include::{snippets}/find-all-sub-categories/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-all-sub-categories/http-response.adoc[]
+include::{snippets}/find-all-sub-categories/response-fields.adoc[]
+
+== 이벤트(Event)
+
+=== 이벤트 등록
+
+==== Request
+
+include::{snippets}/register-event/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/register-event/http-response.adoc[]
+
+=== 이벤트 목록 조회
+
+==== Request
+
+include::{snippets}/find-events/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-events/http-response.adoc[]
+include::{snippets}/find-events/response-fields.adoc[]
+
+=== 이벤트 상세 조회
+
+==== Request
+
+include::{snippets}/find-event-detail/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-event-detail/http-response.adoc[]
+include::{snippets}/find-event-detail/response-fields.adoc[]
+
+=== 이벤트 상품 등록
+
+==== Request
+
+include::{snippets}/register-event-items/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/register-event-items/http-response.adoc[]
+
+== 리뷰(Review)
+
+=== 리뷰 등록
+
+==== Request
+
+include::{snippets}/register-review/http-request.adoc[]
+include::{snippets}/register-review/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/register-review/http-response.adoc[]
+
+=== 리뷰 삭제
+
+==== Request
+
+include::{snippets}/delete-review/http-request.adoc[]
+include::{snippets}/delete-review/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/delete-review/http-response.adoc[]
+
+=== 리뷰 수정
+
+==== Request
+
+include::{snippets}/update-review/http-request.adoc[]
+include::{snippets}/update-review/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/update-review/http-response.adoc[]
+
+=== 회원 리뷰 목록 조회
+
+==== Request
+
+include::{snippets}/find-reviews-by-user/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-reviews-by-user/http-response.adoc[]
+include::{snippets}/find-reviews-by-user/response-fields.adoc[]
+
+=== 상품 리뷰 목록 조회
+
+==== Request
+
+include::{snippets}/find-reviews-by-item/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-reviews-by-item/http-response.adoc[]
+include::{snippets}/find-reviews-by-item/response-fields.adoc[]
+
+== 장바구니(Cart)
+
+=== 장바구니 상품 등록
+
+==== Request
+
+include::{snippets}/register-cart-item/http-request.adoc[]
+include::{snippets}/register-cart-item/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/register-cart-item/http-response.adoc[]
+
+=== 장바구니 상품 삭제
+
+==== Request
+
+include::{snippets}/delete-cart-item/http-request.adoc[]
+include::{snippets}/delete-cart-item/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/delete-cart-item/http-response.adoc[]
+
+=== 장바구니 상품 수량 수정
+
+==== Request
+
+include::{snippets}/update-cart-item/http-request.adoc[]
+include::{snippets}/update-cart-item/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/update-cart-item/http-response.adoc[]
+
+=== 장바구니 상품 목록 조회
+
+==== Request
+
+include::{snippets}/find-cart-items/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-cart-items/http-response.adoc[]
+include::{snippets}/find-cart-items/response-fields.adoc[]
+
+== 주문(Order)
+
+=== 주문 상세 조회
+
+==== Request
+
+include::{snippets}/find-order/http-request.adoc[]
+include::{snippets}/find-order/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-order/http-response.adoc[]
+include::{snippets}/find-order/response-fields.adoc[]
+
+=== 주문 목록 조회
+
+==== Request
+
+include::{snippets}/find-orders/http-request.adoc[]
+include::{snippets}/find-orders/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-orders/http-response.adoc[]
+include::{snippets}/find-orders/response-fields.adoc[]
+
+=== 주문 생성
+
+==== Request
+
+include::{snippets}/create-order/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/create-order/http-response.adoc[]
+include::{snippets}/create-order/response-fields.adoc[]
+
+=== 주문 쿠폰 적용
+
+==== Request
+
+include::{snippets}/update-order-by-coupon/http-request.adoc[]
+include::{snippets}/update-order-by-coupon/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/update-order-by-coupon/http-response.adoc[]
+include::{snippets}/update-order-by-coupon/response-fields.adoc[]
+
+=== 주문 삭제
+
+==== Request
+
+include::{snippets}/delete-order/http-request.adoc[]
+include::{snippets}/delete-order/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/delete-order/http-response.adoc[]
+
+== 결제(Payment)
+
+=== 결제
+
+==== Request
+
+include::{snippets}/pay/http-request.adoc[]
+include::{snippets}/pay/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/pay/http-response.adoc[]
+include::{snippets}/pay/response-fields.adoc[]
+
+=== 결제 성공
+
+==== Request
+
+include::{snippets}/pay-success/http-request.adoc[]
+include::{snippets}/pay-success/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/pay-success/http-response.adoc[]
+include::{snippets}/pay-success/response-fields.adoc[]
+
+=== 결제 실패
+
+==== Request
+
+include::{snippets}/pay-fail/http-request.adoc[]
+include::{snippets}/pay-fail/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/pay-fail/http-response.adoc[]
+include::{snippets}/pay-fail/response-fields.adoc[]
+
+== 배달(Delivery)
+
+=== 배달 현황 조회
+
+==== Request
+
+include::{snippets}/find-delivery/http-request.adoc[]
+include::{snippets}/find-delivery/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-delivery/http-response.adoc[]
+include::{snippets}/find-delivery/response-fields.adoc[]
+
+=== 배차 요청
+
+==== Request
+
+include::{snippets}/accept-delivery/http-request.adoc[]
+include::{snippets}/accept-delivery/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/accept-delivery/http-response.adoc[]
+
+=== 배달 시작
+
+==== Request
+
+include::{snippets}/start-delivery/http-request.adoc[]
+include::{snippets}/start-delivery/path-parameters.adoc[]
+include::{snippets}/start-delivery/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/start-delivery/http-response.adoc[]
+
+=== 배달 완료
+
+==== Request
+
+include::{snippets}/complete-delivery/http-request.adoc[]
+include::{snippets}/complete-delivery/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/complete-delivery/http-response.adoc[]
+
+=== 대기상태 배달 목록 조회
+
+==== Request
+
+include::{snippets}/find-waiting-deliveries/http-request.adoc[]
+include::{snippets}/find-waiting-deliveries/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-waiting-deliveries/http-response.adoc[]
+include::{snippets}/find-waiting-deliveries/response-fields.adoc[]
+
+=== 라이더 배달 목록 조회
+
+==== Request
+
+include::{snippets}/find-rider-deliveries/http-request.adoc[]
+include::{snippets}/find-rider-deliveries/query-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-rider-deliveries/http-response.adoc[]
+include::{snippets}/find-rider-deliveries/response-fields.adoc[]

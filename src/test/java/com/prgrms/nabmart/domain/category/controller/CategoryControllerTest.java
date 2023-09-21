@@ -4,10 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -53,9 +50,7 @@ public class CategoryControllerTest extends BaseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/main-categories/1"))
                 .andDo(print())
-                .andDo(document(
-                    "Save MainCategory",
-                    requestFields(
+                .andDo(restDocs.document(requestFields(
                         fieldWithPath("name").type(STRING)
                             .description("대카테고리명")
                     )
@@ -85,9 +80,7 @@ public class CategoryControllerTest extends BaseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/sub-categories/1"))
                 .andDo(print())
-                .andDo(document(
-                    "Save SubCategory",
-                    requestFields(
+                .andDo(restDocs.document(requestFields(
                         fieldWithPath("mainCategoryId").type(NUMBER)
                             .description("대카테고리 Id"),
                         fieldWithPath("name").type(STRING)
@@ -115,9 +108,7 @@ public class CategoryControllerTest extends BaseControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andDo(document(
-                    "Find All MainCategories",
-                    responseFields(
+                .andDo(restDocs.document(responseFields(
                         fieldWithPath("mainCategoryNames").type(ARRAY)
                             .description("대카테고리 리스트")
                     )
@@ -131,7 +122,7 @@ public class CategoryControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        public void findSubCategories() throws Exception {
+        public void findAllSubCategories() throws Exception {
             // Given
             Long mainCategoryId = 1L;
             FindSubCategoriesResponse subCategoriesResponse = CategoryFixture.findSubCategoriesResponse();
@@ -142,12 +133,7 @@ public class CategoryControllerTest extends BaseControllerTest {
             mockMvc.perform(get("/api/v1/categories/{mainCategoryId}", mainCategoryId)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document(
-                    "Find SubCategories By MainCategory",
-                    preprocessRequest(
-                        prettyPrint()
-                    ),
-                    pathParameters(
+                .andDo(restDocs.document(pathParameters(
                         parameterWithName("mainCategoryId").description("대카테고리 Id")
                     ),
                     responseFields(

@@ -2,9 +2,10 @@ package com.prgrms.nabmart.domain.event.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,8 +49,7 @@ class EventControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isCreated())
-                .andDo(document("Register Event"
-                ));
+                .andDo(restDocs.document());
         }
     }
 
@@ -74,7 +74,7 @@ class EventControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isOk())
-                .andDo(document("Find Events",
+                .andDo(restDocs.document(
                     responseFields(
                         fieldWithPath("events[].eventId").type(JsonFieldType.NUMBER)
                             .description("이벤트 ID"),
@@ -118,7 +118,7 @@ class EventControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isOk())
-                .andDo(document("Find Event Detail",
+                .andDo(restDocs.document(
                         responseFields(
                             fieldWithPath("event.eventId").type(JsonFieldType.NUMBER)
                                 .description("이벤트 ID"),
@@ -167,8 +167,7 @@ class EventControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isCreated())
-                .andDo(document("Register Event Items"
-                ));
+                .andDo(restDocs.document());
         }
     }
 }

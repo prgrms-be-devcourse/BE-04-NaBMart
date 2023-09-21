@@ -3,7 +3,6 @@ package com.prgrms.nabmart.domain.item.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
@@ -120,7 +119,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isOk())
-                .andDo(document("Find Item Detail",
+                .andDo(restDocs.document(
                     pathParameters(
                         parameterWithName("itemId").description("상품 ID")
                     ),
@@ -173,7 +172,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isOk())
-                .andDo(document("Find New Items",
+                .andDo(restDocs.document(
                     queryParameters(
                         parameterWithName("lastItemId").description("마지막에 조회한 아이템의 특성값"),
                         parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
@@ -225,7 +224,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isOk())
-                .andDo(document("Find Hot Items",
+                .andDo(restDocs.document(
                     queryParameters(
                         parameterWithName("lastItemId").description("마지막에 조회한 아이템의 특성값"),
                         parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
@@ -273,8 +272,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isNoContent())
-                .andDo(document(
-                    "Update Item",
+                .andDo(restDocs.document(
                     requestFields(
                         fieldWithPath("name").type(STRING)
                             .description("상품명"),
@@ -317,8 +315,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isCreated())
-                .andDo(document(
-                        "Register Item",
+                .andDo(restDocs.document(
                         requestFields(
                             fieldWithPath("name").type(STRING)
                                 .description("상품명"),
@@ -359,8 +356,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isNoContent())
-                .andDo(document(
-                    "Delete Item",
+                .andDo(restDocs.document(
                     pathParameters(
                         parameterWithName("itemId").description("상품 ID")
                     ))
@@ -380,7 +376,6 @@ class ItemControllerTest extends BaseControllerTest {
             // Given
             given(itemService.findNewItemsWithRedis(any())).willReturn(findNewItemsResponse);
 
-
             // When
             ResultActions resultActions = mockMvc.perform(
                 get("/api/v1/items/new-items")
@@ -392,7 +387,7 @@ class ItemControllerTest extends BaseControllerTest {
 
             // Then
             resultActions.andExpect(status().isOk())
-                .andDo(document("Find New Items with Redis",
+                .andDo(restDocs.document(
                     queryParameters(
                         parameterWithName("lastIdx").description("마지막에 조회한 아이템의 특성값"),
                         parameterWithName("lastItemId").description("마지막에 조회한 아이템 ID"),
