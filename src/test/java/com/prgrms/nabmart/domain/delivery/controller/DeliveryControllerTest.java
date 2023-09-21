@@ -25,7 +25,7 @@ import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.controller.request.RegisterDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
@@ -88,10 +88,10 @@ class DeliveryControllerTest extends BaseControllerTest {
         void findDelivery() throws Exception {
             //given
             Long orderId = 1L;
-            FindDeliveryDetailResponse findDeliveryDetailResponse
+            FindDeliveryByOrderResponse findDeliveryByOrderResponse
                 = DeliveryFixture.findDeliveryDetailResponse();
 
-            given(deliveryService.findDelivery(any())).willReturn(findDeliveryDetailResponse);
+            given(deliveryService.findDeliveryByOrder(any())).willReturn(findDeliveryByOrderResponse);
 
             //when
             ResultActions resultActions = mockMvc

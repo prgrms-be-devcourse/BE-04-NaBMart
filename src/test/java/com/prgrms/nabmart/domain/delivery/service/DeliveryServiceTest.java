@@ -21,12 +21,12 @@ import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
@@ -155,10 +155,10 @@ class DeliveryServiceTest {
     }
 
     @Nested
-    @DisplayName("findDelivery 메서드 실행 시")
-    class FindDeliveryTest {
+    @DisplayName("findDeliveryByOrder 메서드 실행 시")
+    class FindDeliveryByOrderTest {
 
-        FindDeliveryCommand findDeliveryCommand = DeliveryFixture.findDeliveryCommand();
+        FindDeliveryByOrderCommand findDeliveryByOrderCommand = DeliveryFixture.findDeliveryCommand();
 
         @Test
         @DisplayName("성공")
@@ -169,21 +169,21 @@ class DeliveryServiceTest {
                 .willReturn(Optional.ofNullable(delivery));
 
             //when
-            FindDeliveryDetailResponse findDeliveryDetailResponse
-                = deliveryService.findDelivery(findDeliveryCommand);
+            FindDeliveryByOrderResponse findDeliveryByOrderResponse
+                = deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand);
 
             //then
-            assertThat(findDeliveryDetailResponse.deliveryStatus())
+            assertThat(findDeliveryByOrderResponse.deliveryStatus())
                 .isEqualTo(delivery.getDeliveryStatus());
-            assertThat(findDeliveryDetailResponse.createdAt())
+            assertThat(findDeliveryByOrderResponse.createdAt())
                 .isEqualTo(delivery.getCreatedAt());
-            assertThat(findDeliveryDetailResponse.arrivedAt())
+            assertThat(findDeliveryByOrderResponse.arrivedAt())
                 .isEqualTo(delivery.getArrivedAt());
-            assertThat(findDeliveryDetailResponse.orderName())
+            assertThat(findDeliveryByOrderResponse.orderName())
                 .isEqualTo(delivery.getOrder().getName());
-            assertThat(findDeliveryDetailResponse.orderPrice())
+            assertThat(findDeliveryByOrderResponse.orderPrice())
                 .isEqualTo(delivery.getOrder().getPrice());
-            assertThat(findDeliveryDetailResponse.riderRequest())
+            assertThat(findDeliveryByOrderResponse.riderRequest())
                 .isEqualTo(delivery.getOrder().getRiderRequest());
         }
 
@@ -195,7 +195,7 @@ class DeliveryServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryCommand))
+            assertThatThrownBy(() -> deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand))
                 .isInstanceOf(NotFoundUserException.class);
         }
 
@@ -209,7 +209,7 @@ class DeliveryServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryCommand))
+            assertThatThrownBy(() -> deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand))
                 .isInstanceOf(NotFoundDeliveryException.class);
         }
 
@@ -235,7 +235,7 @@ class DeliveryServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryCommand))
+            assertThatThrownBy(() -> deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand))
                 .isInstanceOf(UnauthorizedDeliveryException.class);
         }
     }

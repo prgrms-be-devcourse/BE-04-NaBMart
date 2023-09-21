@@ -14,12 +14,12 @@ import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.notification.NotificationType;
@@ -92,11 +92,12 @@ public class DeliveryService {
     }
 
     @Transactional(readOnly = true)
-    public FindDeliveryDetailResponse findDelivery(FindDeliveryCommand findDeliveryCommand) {
-        User user = findUserByUserId(findDeliveryCommand.userId());
-        Delivery delivery = findDeliveryByOrderWithOrder(findDeliveryCommand.orderId());
+    public FindDeliveryByOrderResponse findDeliveryByOrder(
+        FindDeliveryByOrderCommand findDeliveryByOrderCommand) {
+        User user = findUserByUserId(findDeliveryByOrderCommand.userId());
+        Delivery delivery = findDeliveryByOrderWithOrder(findDeliveryByOrderCommand.orderId());
         checkAuthority(delivery, user);
-        return FindDeliveryDetailResponse.from(delivery);
+        return FindDeliveryByOrderResponse.from(delivery);
     }
 
     private void checkAuthority(final Delivery delivery, final User user) {
