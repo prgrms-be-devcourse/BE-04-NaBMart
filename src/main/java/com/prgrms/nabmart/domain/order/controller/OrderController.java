@@ -1,7 +1,9 @@
 package com.prgrms.nabmart.domain.order.controller;
 
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
+import com.prgrms.nabmart.domain.order.controller.request.FindPayedOrdersRequest;
 import com.prgrms.nabmart.domain.order.exception.OrderException;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse;
 import com.prgrms.nabmart.domain.order.service.OrderService;
 import com.prgrms.nabmart.domain.order.service.request.CreateOrdersCommand;
 import com.prgrms.nabmart.domain.order.service.request.UpdateOrderByCouponCommand;
@@ -9,6 +11,7 @@ import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
 import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
+import com.prgrms.nabmart.domain.payment.service.request.FindPayedOrdersCommand;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
@@ -81,6 +84,17 @@ public class OrderController {
     ) {
         orderService.deleteOrder(orderId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/payed")
+    public ResponseEntity<FindPayedOrdersResponse> findPayedOrders(
+        @RequestBody @Valid FindPayedOrdersRequest findPayedOrdersRequest,
+        @LoginUser Long userId) {
+        FindPayedOrdersCommand command = FindPayedOrdersCommand.of(
+            userId,
+            findPayedOrdersRequest.page());
+        FindPayedOrdersResponse orders = orderService.findPayedOrders(command);
+        return ResponseEntity.ok(orders);
     }
 
     @ExceptionHandler(OrderException.class)
