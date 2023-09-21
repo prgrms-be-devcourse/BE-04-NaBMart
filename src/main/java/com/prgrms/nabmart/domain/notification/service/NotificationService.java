@@ -10,7 +10,6 @@ import com.prgrms.nabmart.domain.notification.service.request.SendNotificationCo
 import com.prgrms.nabmart.domain.notification.service.response.NotificationResponse;
 import com.prgrms.nabmart.domain.user.exception.NotFoundUserException;
 import com.prgrms.nabmart.domain.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -63,8 +62,7 @@ public class NotificationService {
             log.error("알림 전송에 실패했습니다.", ex);
         }
     }
-
-    @Transactional
+    
     public void sendNotification(SendNotificationCommand sendNotificationCommand) {
         Long userId = sendNotificationCommand.userId();
         String title = sendNotificationCommand.title();
