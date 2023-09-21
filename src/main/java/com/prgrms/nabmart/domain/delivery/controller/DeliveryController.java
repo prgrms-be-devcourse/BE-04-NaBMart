@@ -8,12 +8,13 @@ import com.prgrms.nabmart.domain.delivery.exception.DeliveryException;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryDetailCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
@@ -58,12 +59,23 @@ public class DeliveryController {
     }
 
     @GetMapping("/orders/{orderId}/deliveries")
-    public ResponseEntity<FindDeliveryDetailResponse> findDelivery(
+    public ResponseEntity<FindDeliveryByOrderResponse> findDeliveryByOrder(
         @PathVariable final Long orderId,
         @LoginUser final Long userId) {
-        FindDeliveryCommand findDeliveryCommand = FindDeliveryCommand.of(userId, orderId);
-        FindDeliveryDetailResponse findDeliveryDetailResponse
-            = deliveryService.findDelivery(findDeliveryCommand);
+        FindDeliveryByOrderCommand findDeliveryByOrderCommand
+            = FindDeliveryByOrderCommand.of(userId, orderId);
+        FindDeliveryByOrderResponse findDeliveryByOrderResponse
+            = deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand);
+        return ResponseEntity.ok(findDeliveryByOrderResponse);
+    }
+
+    @GetMapping("/deliveries/{deliveryId}")
+    public ResponseEntity<FindDeliveryDetailResponse> findDelivery(
+        @PathVariable final Long deliveryId) {
+        FindDeliveryDetailCommand findDeliveryDetailCommand
+            = FindDeliveryDetailCommand.from(deliveryId);
+        FindDeliveryDetailResponse findDeliveryDetailResponse = deliveryService.findDelivery(
+            findDeliveryDetailCommand);
         return ResponseEntity.ok(findDeliveryDetailResponse);
     }
 

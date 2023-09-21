@@ -11,6 +11,7 @@ import static org.mockito.BDDMockito.then;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.Rider;
+import com.prgrms.nabmart.domain.delivery.controller.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyRegisteredDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
@@ -21,18 +22,23 @@ import com.prgrms.nabmart.domain.delivery.repository.DeliveryRepository;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryDetailCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
+import com.prgrms.nabmart.domain.item.Item;
+import com.prgrms.nabmart.domain.item.support.ItemFixture;
 import com.prgrms.nabmart.domain.notification.service.NotificationService;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.OrderItem;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.order.support.OrderFixture;
@@ -57,6 +63,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
@@ -155,10 +162,10 @@ class DeliveryServiceTest {
     }
 
     @Nested
-    @DisplayName("findDelivery 메서드 실행 시")
-    class FindDeliveryTest {
+    @DisplayName("findDeliveryByOrder 메서드 실행 시")
+    class FindDeliveryByOrderTest {
 
-        FindDeliveryCommand findDeliveryCommand = DeliveryFixture.findDeliveryCommand();
+        FindDeliveryByOrderCommand findDeliveryByOrderCommand = DeliveryFixture.findDeliveryCommand();
 
         @Test
         @DisplayName("성공")
@@ -169,21 +176,21 @@ class DeliveryServiceTest {
                 .willReturn(Optional.ofNullable(delivery));
 
             //when
-            FindDeliveryDetailResponse findDeliveryDetailResponse
-                = deliveryService.findDelivery(findDeliveryCommand);
+            FindDeliveryByOrderResponse findDeliveryByOrderResponse
+                = deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand);
 
             //then
-            assertThat(findDeliveryDetailResponse.deliveryStatus())
+            assertThat(findDeliveryByOrderResponse.deliveryStatus())
                 .isEqualTo(delivery.getDeliveryStatus());
-            assertThat(findDeliveryDetailResponse.createdAt())
+            assertThat(findDeliveryByOrderResponse.createdAt())
                 .isEqualTo(delivery.getCreatedAt());
-            assertThat(findDeliveryDetailResponse.arrivedAt())
+            assertThat(findDeliveryByOrderResponse.arrivedAt())
                 .isEqualTo(delivery.getArrivedAt());
-            assertThat(findDeliveryDetailResponse.orderName())
+            assertThat(findDeliveryByOrderResponse.orderName())
                 .isEqualTo(delivery.getOrder().getName());
-            assertThat(findDeliveryDetailResponse.orderPrice())
+            assertThat(findDeliveryByOrderResponse.orderPrice())
                 .isEqualTo(delivery.getOrder().getPrice());
-            assertThat(findDeliveryDetailResponse.riderRequest())
+            assertThat(findDeliveryByOrderResponse.riderRequest())
                 .isEqualTo(delivery.getOrder().getRiderRequest());
         }
 
@@ -195,7 +202,7 @@ class DeliveryServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryCommand))
+            assertThatThrownBy(() -> deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand))
                 .isInstanceOf(NotFoundUserException.class);
         }
 
@@ -209,7 +216,7 @@ class DeliveryServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryCommand))
+            assertThatThrownBy(() -> deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand))
                 .isInstanceOf(NotFoundDeliveryException.class);
         }
 
@@ -235,7 +242,7 @@ class DeliveryServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryCommand))
+            assertThatThrownBy(() -> deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand))
                 .isInstanceOf(UnauthorizedDeliveryException.class);
         }
     }
@@ -597,6 +604,61 @@ class DeliveryServiceTest {
             assertThatThrownBy(
                 () -> deliveryService.findRiderDeliveries(findRiderDeliveriesCommand))
                 .isInstanceOf(NotFoundRiderException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("findDelivery 메서드 실행 시")
+    class FindDeliveryTest {
+
+        Item item = ItemFixture.item();
+        int orderItemQuantity = 5;
+        OrderItem orderItem = new OrderItem(item, orderItemQuantity);
+        Order order = new Order(user, List.of(orderItem));
+        FindDeliveryDetailCommand findDeliveryDetailCommand =
+            new FindDeliveryDetailCommand(1L);
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            ReflectionTestUtils.setField(order, "status", OrderStatus.PAYED);
+            Delivery delivery = Delivery.builder()
+                .order(order)
+                .estimateMinutes(60)
+                .build();
+
+            given(deliveryRepository.findByIdWithOrderAndItems(any())).willReturn(
+                Optional.ofNullable(delivery));
+
+            //when
+            FindDeliveryDetailResponse result = deliveryService.findDelivery(
+                findDeliveryDetailCommand);
+
+            //then
+            assertThat(result.deliveryStatus()).isEqualTo(delivery.getDeliveryStatus());
+            assertThat(result.address()).isEqualTo(delivery.getAddress());
+            assertThat(result.deliveryFee()).isEqualTo(delivery.getDeliveryFee());
+            assertThat(result.arrivedAt()).isEqualTo(delivery.getArrivedAt());
+            assertThat(result.orderName()).isEqualTo(order.getName());
+            assertThat(result.riderRequest()).isEqualTo(delivery.getRiderRequest());
+            assertThat(result.items()).hasSize(1);
+            assertThat(result.items().get(0).name()).isEqualTo(item.getName());
+            assertThat(result.items().get(0).quantity()).isEqualTo(orderItemQuantity);
+            assertThat(result.items().get(0).name()).isEqualTo(item.getName());
+        }
+
+        @Test
+        @DisplayName("예외: 존재하지 않는 배달")
+        void throwExceptionWhenNotFoundDelivery() {
+            //given
+            given(deliveryRepository.findByIdWithOrderAndItems(any())).willReturn(
+                Optional.empty());
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.findDelivery(findDeliveryDetailCommand))
+                .isInstanceOf(NotFoundDeliveryException.class);
         }
     }
 }

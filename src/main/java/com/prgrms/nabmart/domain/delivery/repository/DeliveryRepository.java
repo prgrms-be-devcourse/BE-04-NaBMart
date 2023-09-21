@@ -41,4 +41,11 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     List<Delivery> findAllByUser(@Param("user") User user);
 
     boolean existsByOrder(Order order);
+
+    @Query("select d from Delivery d"
+        + " join fetch d.order o"
+        + " join fetch o.orderItems oi"
+        + " join fetch oi.item i"
+        + " where d.deliveryId = :deliveryId")
+    Optional<Delivery> findByIdWithOrderAndItems(@Param("deliveryId") Long deliveryId);
 }

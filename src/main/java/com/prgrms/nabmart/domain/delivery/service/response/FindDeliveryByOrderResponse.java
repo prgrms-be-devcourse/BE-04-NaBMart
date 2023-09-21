@@ -4,7 +4,7 @@ import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import java.time.LocalDateTime;
 
-public record FindDeliveryDetailResponse(
+public record FindDeliveryByOrderResponse(
     Long deliveryId,
     DeliveryStatus deliveryStatus,
     LocalDateTime createdAt,
@@ -14,8 +14,8 @@ public record FindDeliveryDetailResponse(
     int orderPrice,
     String riderRequest) {
 
-    public static FindDeliveryDetailResponse from(final Delivery delivery) {
-        return new FindDeliveryDetailResponse(
+    public static FindDeliveryByOrderResponse from(final Delivery delivery) {
+        return new FindDeliveryByOrderResponse(
             delivery.getDeliveryId(),
             delivery.getDeliveryStatus(),
             delivery.getCreatedAt(),
