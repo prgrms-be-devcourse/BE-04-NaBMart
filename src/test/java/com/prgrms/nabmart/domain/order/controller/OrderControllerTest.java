@@ -10,14 +10,19 @@ import static com.prgrms.nabmart.domain.user.support.UserFixture.user;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -28,6 +33,9 @@ import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.coupon.UserCoupon;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
+import com.prgrms.nabmart.domain.order.controller.request.FindPayedOrdersRequest;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse.FindPayedOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
@@ -221,6 +229,50 @@ public class OrderControllerTest extends BaseControllerTest {
             result
                 .andExpect(status().isNoContent())
                 .andDo(restDocs.document(
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("결제 완료된 주문 목록 조회 api 호출 시")
+    class FindPayedOrdersTest {
+
+        @Test
+        @DisplayName("성공")
+        void findPayedOrders() throws Exception {
+            //given
+            int page = 0;
+            FindPayedOrdersRequest findPayedOrdersRequest = new FindPayedOrdersRequest(page);
+            FindPayedOrderResponse findPayedOrderResponse
+                = new FindPayedOrderResponse(1L, "비비고 왕교자 외 2개", 20000);
+            FindPayedOrdersResponse findPayedOrdersResponse = new FindPayedOrdersResponse(
+                List.of(findPayedOrderResponse), 0, 1);
+
+            given(orderService.findPayedOrders(any())).willReturn(findPayedOrdersResponse);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(get("/api/v1/orders/payed")
+                .header(AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(findPayedOrdersRequest)));
+
+            //then
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    requestFields(
+                        fieldWithPath("page").type(NUMBER).description("페이지 번호")
+                    ),
+                    responseFields(
+                        fieldWithPath("orders").type(ARRAY).description("주문 목록"),
+                        fieldWithPath("orders[].orderId").type(NUMBER).description("주문 ID"),
+                        fieldWithPath("orders[].name").type(STRING).description("주문 이름"),
+                        fieldWithPath("orders[].price").type(NUMBER).description("주문 가격"),
+                        fieldWithPath("page").type(NUMBER).description("페이지 번호"),
+                        fieldWithPath("totalElements").type(NUMBER).description("총 요소 개수")
+                    )
                 ));
         }
     }

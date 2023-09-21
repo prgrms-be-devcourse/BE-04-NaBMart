@@ -8,7 +8,9 @@ import java.util.List;
 public enum UserRole {
     ROLE_USER(Constants.ROLE_USER, List.of(Constants.ROLE_USER)),
     ROLE_RIDER(Constants.ROLE_RIDER, List.of(Constants.ROLE_RIDER)),
-    ROLE_ADMIN(Constants.ROLE_ADMIN, List.of(Constants.ROLE_ADMIN, Constants.ROLE_USER));
+    ROLE_EMPLOYEE(Constants.ROLE_EMPLOYEE, List.of(Constants.ROLE_EMPLOYEE)),
+    ROLE_ADMIN(Constants.ROLE_ADMIN,
+        List.of(Constants.ROLE_ADMIN, Constants.ROLE_EMPLOYEE, Constants.ROLE_USER));
 
     private final String value;
     private final List<String> authorities;
@@ -21,6 +23,7 @@ public enum UserRole {
     private static class Constants {
         private static final String ROLE_USER = "ROLE_USER";
         private static final String ROLE_RIDER = "ROLE_RIDER";
+        private static final String ROLE_EMPLOYEE = "ROLE_EMPLOYEE";
         private static final String ROLE_ADMIN = "ROLE_ADMIN";
     }
 }

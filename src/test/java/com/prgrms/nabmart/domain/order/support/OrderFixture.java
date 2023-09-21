@@ -43,6 +43,14 @@ public class OrderFixture {
 
         return order;
     }
+    
+    public static Order payedOrder(long orderId, User user) {
+        Order order = payingOrder(orderId, user);
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+        ReflectionTestUtils.setField(order, "status", OrderStatus.PAYED);
+
+        return order;
+    }
 
     public static Order deliveringOrder(long orderId, User user) {
         Order order = new Order(user, List.of(orderItem()));

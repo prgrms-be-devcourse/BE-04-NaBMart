@@ -6,11 +6,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.Rider;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
+import com.prgrms.nabmart.domain.delivery.exception.AlreadyRegisteredDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.NotFoundRiderException;
@@ -22,6 +24,7 @@ import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryComman
 import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
@@ -29,6 +32,8 @@ import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesRe
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
+import com.prgrms.nabmart.domain.order.repository.OrderRepository;
 import com.prgrms.nabmart.domain.order.support.OrderFixture;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.domain.user.UserGrade;
@@ -67,11 +72,82 @@ class DeliveryServiceTest {
     @Mock
     RiderRepository riderRepository;
 
+    @Mock
+    OrderRepository orderRepository;
+
     User user = UserFixture.user();
     Order order = deliveringOrder(1L, user);
     Rider rider = DeliveryFixture.rider();
     Delivery delivery = DeliveryFixture.acceptedDelivery(order, rider);
     TemporalUnitOffset withInOneSeconds = within(1, ChronoUnit.SECONDS);
+
+    @Nested
+    @DisplayName("registerDelivery 메서드 실행 시")
+    class RegisterDeliveryTest {
+
+        User employee = UserFixture.employee();
+        Order order = OrderFixture.payedOrder(1L, user);
+        RegisterDeliveryCommand registerDeliveryCommand = RegisterDeliveryCommand.of(
+            1L,
+            1L,
+            60);
+
+        @Test
+        @DisplayName("성공")
+        void success() {
+            //given
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(employee));
+            given(orderRepository.findByIdPessimistic(any()))
+                .willReturn(Optional.ofNullable(order));
+            given(deliveryRepository.existsByOrder(any())).willReturn(false);
+
+            //when
+            deliveryService.registerDelivery(registerDeliveryCommand);
+
+            //then
+            then(deliveryRepository).should().save(any());
+        }
+
+        @Test
+        @DisplayName("예외: 로그인 유저가 employee가 아님")
+        void throwExceptionWhenLoginUserIsNotEmployee() {
+            //given
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(user));
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.registerDelivery(registerDeliveryCommand))
+                .isInstanceOf(UnauthorizedDeliveryException.class);
+        }
+
+        @Test
+        @DisplayName("예외: 이미 배달이 만들어진 주문")
+        void throwExceptionWhenAlreadyRegisteredDelivery() {
+            //given
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(employee));
+            given(orderRepository.findByIdPessimistic(any()))
+                .willReturn(Optional.ofNullable(order));
+            given(deliveryRepository.existsByOrder(any())).willReturn(true);
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.registerDelivery(registerDeliveryCommand))
+                .isInstanceOf(AlreadyRegisteredDeliveryException.class);
+        }
+
+        @Test
+        @DisplayName("예외: 존재하지 않는 order")
+        void throwExceptionWhenNotFoundOrder() {
+            //given
+            given(userRepository.findById(any())).willReturn(Optional.ofNullable(employee));
+            given(orderRepository.findByIdPessimistic(any())).willReturn(Optional.empty());
+
+            //when
+            //then
+            assertThatThrownBy(() -> deliveryService.registerDelivery(registerDeliveryCommand))
+                .isInstanceOf(NotFoundOrderException.class);
+        }
+    }
 
     @Nested
     @DisplayName("findDelivery 메서드 실행 시")
@@ -94,7 +170,7 @@ class DeliveryServiceTest {
             //then
             assertThat(findDeliveryDetailResponse.deliveryStatus())
                 .isEqualTo(delivery.getDeliveryStatus());
-            assertThat(findDeliveryDetailResponse.arrivedAt())
+            assertThat(findDeliveryDetailResponse.createdAt())
                 .isEqualTo(delivery.getCreatedAt());
             assertThat(findDeliveryDetailResponse.arrivedAt())
                 .isEqualTo(delivery.getArrivedAt());
