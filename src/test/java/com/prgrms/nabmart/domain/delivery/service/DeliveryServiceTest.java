@@ -31,6 +31,7 @@ import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesRe
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.support.DeliveryFixture;
+import com.prgrms.nabmart.domain.notification.service.NotificationService;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.exception.NotFoundOrderException;
 import com.prgrms.nabmart.domain.order.repository.OrderRepository;
@@ -75,6 +76,9 @@ class DeliveryServiceTest {
     @Mock
     OrderRepository orderRepository;
 
+    @Mock
+    NotificationService notificationService;
+
     User user = UserFixture.user();
     Order order = deliveringOrder(1L, user);
     Rider rider = DeliveryFixture.rider();
@@ -106,6 +110,7 @@ class DeliveryServiceTest {
 
             //then
             then(deliveryRepository).should().save(any());
+            then(notificationService).should().sendNotification(any());
         }
 
         @Test
@@ -263,6 +268,24 @@ class DeliveryServiceTest {
         }
 
         @Test
+        @DisplayName("성공: 배달 시작 알림 전송")
+        void successThenNotify() {
+            //given
+            int deliveryEstimateMinutes = 20;
+            StartDeliveryCommand startDeliveryCommand
+                = StartDeliveryCommand.of(1L, deliveryEstimateMinutes, 1L);
+
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
+            given(deliveryRepository.findById(any())).willReturn(Optional.ofNullable(delivery));
+
+            //when
+            deliveryService.startDelivery(startDeliveryCommand);
+
+            //then
+            then(notificationService).should().sendNotification(any());
+        }
+
+        @Test
         @DisplayName("예외: 존재하지 않는 라이더")
         void throwExceptionWhenNotFoundRider() {
             //given
@@ -347,6 +370,20 @@ class DeliveryServiceTest {
             LocalDateTime now = LocalDateTime.now();
             assertThat(delivery.getArrivedAt()).isCloseTo(now, withInOneSeconds);
             assertThat(delivery.getDeliveryStatus()).isEqualTo(DeliveryStatus.DELIVERED);
+        }
+
+        @Test
+        @DisplayName("성공: 배달 완료 알림 전송")
+        void successThenNotify() {
+            //given
+            given(riderRepository.findById(any())).willReturn(Optional.ofNullable(rider));
+            given(deliveryRepository.findById(any())).willReturn(Optional.ofNullable(delivery));
+
+            //when
+            deliveryService.completeDelivery(completeDeliveryCommand);
+
+            //then
+            then(notificationService).should().sendNotification(any());
         }
 
         @Test
