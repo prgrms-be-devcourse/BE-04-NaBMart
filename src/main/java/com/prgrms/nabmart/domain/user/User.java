@@ -107,4 +107,8 @@ public class User extends BaseTimeEntity {
     public int hashCode() {
         return Objects.hash(getProvider(), getProviderId());
     }
+
+    public boolean isEmployee() {
+        return userRole == UserRole.ROLE_EMPLOYEE;
+    }
 }

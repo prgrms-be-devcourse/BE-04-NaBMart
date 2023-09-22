@@ -5,8 +5,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -20,9 +22,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
+import com.prgrms.nabmart.domain.delivery.controller.FindDeliveryDetailResponse.OrderItemResponse;
+import com.prgrms.nabmart.domain.delivery.controller.request.RegisterDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse.FindRiderDeliveryResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
@@ -38,18 +42,57 @@ import org.springframework.test.web.servlet.ResultActions;
 class DeliveryControllerTest extends BaseControllerTest {
 
     @Nested
-    @DisplayName("배달 현황 조회 API 호출 시")
-    class FindDeliveryTest {
+    @DisplayName("배달 생성 API 호출 시")
+    class RegisterDeliveryTest {
 
         @Test
         @DisplayName("성공")
-        void findDelivery() throws Exception {
+        void registerDelivery() throws Exception {
+            //given
+            RegisterDeliveryRequest registerDeliveryRequest
+                = new RegisterDeliveryRequest(60);
+
+            given(deliveryService.registerDelivery(any())).willReturn(1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                post("/api/v1/orders/{orderId}/deliveries", 1L)
+                .header(AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerDeliveryRequest)));
+
+            //then
+            resultActions.andExpect(status().isCreated())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("orderId").description("주문 ID")
+                    ),
+                    requestFields(
+                        fieldWithPath("estimateMinutes").type(NUMBER).description("배달 예상 시간(분)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("생성된 리소스 위치")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("배달 현황 조회 API 호출 시")
+    class FindDeliveryByOrderTest {
+
+        @Test
+        @DisplayName("성공")
+        void findDeliveryByOrder() throws Exception {
             //given
             Long orderId = 1L;
-            FindDeliveryDetailResponse findDeliveryDetailResponse
+            FindDeliveryByOrderResponse findDeliveryByOrderResponse
                 = DeliveryFixture.findDeliveryDetailResponse();
 
-            given(deliveryService.findDelivery(any())).willReturn(findDeliveryDetailResponse);
+            given(deliveryService.findDeliveryByOrder(any())).willReturn(findDeliveryByOrderResponse);
 
             //when
             ResultActions resultActions = mockMvc
@@ -302,6 +345,61 @@ class DeliveryControllerTest extends BaseControllerTest {
                             .description("배달비"),
                         fieldWithPath("page").type(NUMBER).description("페이지"),
                         fieldWithPath("totalElements").type(NUMBER).description("총 요소 갯수")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("배달 상세 조회(라이더, 직원) API 조회")
+    class FindDeliveryTest {
+
+        @Test
+        @DisplayName("성공")
+        void findDelivery() throws Exception {
+            //given
+            Long deliveryId = 1L;
+            OrderItemResponse orderItemResponse = new OrderItemResponse("비비고 왕교자", 2, 5990);
+            FindDeliveryDetailResponse findDeliveryDetailResponse = new FindDeliveryDetailResponse(
+                1L,
+                DeliveryStatus.ACCEPTING_ORDER,
+                LocalDateTime.now().plusMinutes(30),
+                "address",
+                "비비고 왕교자 외 2개",
+                30000,
+                "배달 요청 사항",
+                3000,
+                List.of(orderItemResponse));
+
+            given(deliveryService.findDelivery(any())).willReturn(findDeliveryDetailResponse);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/v1/deliveries/{deliveryId}", deliveryId)
+                    .header(AUTHORIZATION, accessToken));
+
+            //then
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("deliveryId").description("배달 ID")
+                    ),
+                    responseFields(
+                        fieldWithPath("deliveryId").type(NUMBER).description("배달 ID"),
+                        fieldWithPath("deliveryStatus").type(STRING).description("배달 상태"),
+                        fieldWithPath("arrivedAt").type(STRING).description("배달 예상 도착 시간"),
+                        fieldWithPath("address").type(STRING).description("배달지 주소"),
+                        fieldWithPath("orderName").type(STRING).description("주문 이름"),
+                        fieldWithPath("orderPrice").type(NUMBER).description("주문 가격"),
+                        fieldWithPath("riderRequest").type(STRING).description("배달 요청 사항"),
+                        fieldWithPath("deliveryFee").type(NUMBER).description("배달비"),
+                        fieldWithPath("items").type(ARRAY).description("상품 목록"),
+                        fieldWithPath("items[].name").type(STRING).description("상품 이름"),
+                        fieldWithPath("items[].quantity").type(NUMBER).description("상품 갯수"),
+                        fieldWithPath("items[].price").type(NUMBER).description("상품 가격")
                     )
                 ));
         }

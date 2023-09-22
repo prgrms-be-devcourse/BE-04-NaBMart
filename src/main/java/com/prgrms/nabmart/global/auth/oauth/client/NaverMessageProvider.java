@@ -1,5 +1,8 @@
 package com.prgrms.nabmart.global.auth.oauth.client;
 
+import static com.prgrms.nabmart.global.auth.oauth.constant.OAuthConstant.*;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
 import com.prgrms.nabmart.domain.user.service.response.FindUserDetailResponse;
 import com.prgrms.nabmart.global.auth.exception.OAuthUnlinkFailureException;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthHttpMessage;
@@ -7,7 +10,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,7 +21,6 @@ import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@Slf4j
 public class NaverMessageProvider implements OAuthHttpMessageProvider {
 
     private static final String UNLINK_URI = "https://nid.naver.com/oauth2.0/token?"
@@ -28,26 +29,14 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
     private static final String REFRESH_ACCESS_TOKEN_URI = "https://nid.naver.com/oauth2.0/token?"
         + "grant_type=refresh_token&client_id={client_id}&"
         + "client_secret={client_secret}&refresh_token={refresh_token}";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String CLIENT_ID = "client_id";
-    private static final String CLIENT_SECRET = "client_secret";
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String GRANT_TYPE = "grant_type";
-    private static final String SERVICE_PROVIDER = "service_provider";
-    private static final String REFRESH_TOKEN = "refresh_token";
-    private static final String EXPIRES_IN = "expires_in";
-    private static final String DELETE = "delete";
-    private static final String NAVER = "NAVER";
-    private static final String RESULT = "result";
-    private static final String SUCCESS = "success";
 
     @Override
-    public OAuthHttpMessage createUserUnlinkRequest(
+    public OAuthHttpMessage createUnlinkUserRequest(
         final FindUserDetailResponse userDetailResponse,
         final OAuth2AuthorizedClient authorizedClient) {
         String accessToken = getAccessToken(authorizedClient);
-        HttpEntity<MultiValueMap<String, String>> unlinkHttpMessage = createUnlinkOAuthUserMessage();
-        Map<String, String> unlinkUriVariables = createUnlinkUriVariables(
+        HttpEntity<MultiValueMap<String, String>> unlinkHttpMessage = createUnlinkUserMessage();
+        Map<String, String> unlinkUriVariables = createUnlinkUserUriVariables(
             authorizedClient.getClientRegistration(), accessToken);
         return new OAuthHttpMessage(UNLINK_URI, unlinkHttpMessage, unlinkUriVariables);
     }
@@ -56,7 +45,7 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
         return authorizedClient.getAccessToken().getTokenValue();
     }
 
-    private HttpEntity<MultiValueMap<String, String>> createUnlinkOAuthUserMessage() {
+    private HttpEntity<MultiValueMap<String, String>> createUnlinkUserMessage() {
         HttpHeaders header = createHeader();
         return new HttpEntity<>(header);
     }
@@ -67,7 +56,7 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
         return headers;
     }
 
-    private Map<String, String> createUnlinkUriVariables(
+    private Map<String, String> createUnlinkUserUriVariables(
         final ClientRegistration clientRegistration,
         final String accessToken) {
         Map<String, String> urlVariables = new HashMap<>();
@@ -80,7 +69,7 @@ public class NaverMessageProvider implements OAuthHttpMessageProvider {
     }
 
     @Override
-    public void checkSuccessUnlinkRequest(Map<String, Object> unlinkResponse) {
+    public void verifySuccessUnlinkUserRequest(Map<String, Object> unlinkResponse) {
         Optional.ofNullable(unlinkResponse.get(RESULT))
             .filter(result -> result.equals(SUCCESS))
             .orElseThrow(() -> new OAuthUnlinkFailureException("소셜 로그인 연동 해제가 실패하였습니다."));

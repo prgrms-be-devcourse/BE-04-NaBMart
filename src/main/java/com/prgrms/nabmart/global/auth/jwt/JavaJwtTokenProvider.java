@@ -69,6 +69,8 @@ public class JavaJwtTokenProvider implements TokenProvider {
             log.info("SignatureVerificationException: 토큰의 서명이 유효하지 않습니다.");
         } catch (TokenExpiredException ex) {
             log.info("TokenExpiredException: 토큰이 만료되었습니다.");
+        } catch (MissingClaimException ex) {
+            log.info("MissingClaimException: 유효값이 클레임이 포함되어 있지 않습니다.");
         } catch (JWTVerificationException ex) {
             log.info("JWTVerificationException: 유효하지 않은 토큰입니다.");
         }

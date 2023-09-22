@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.global.auth.controller.request.SignupRiderRequest;
-import com.prgrms.nabmart.global.auth.controller.request.RiderLoginRequest;
+import com.prgrms.nabmart.global.auth.controller.request.LoginRiderRequest;
 import com.prgrms.nabmart.global.auth.service.response.RiderLoginResponse;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -69,15 +69,15 @@ class RiderAuthenticationControllerTest extends BaseControllerTest {
         @DisplayName("성공")
         void riderLogin() throws Exception {
             //given
-            RiderLoginRequest riderLoginRequest = AuthFixture.riderLoginRequest();
+            LoginRiderRequest loginRiderRequest = AuthFixture.riderLoginRequest();
             RiderLoginResponse riderLoginResponse = new RiderLoginResponse("accessToken");
 
-            given(riderAuthenticationService.riderLogin(any())).willReturn(riderLoginResponse);
+            given(riderAuthenticationService.loginRider(any())).willReturn(riderLoginResponse);
 
             //when
             ResultActions resultActions = mockMvc.perform(post("/api/v1/riders/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(riderLoginRequest))
+                .content(objectMapper.writeValueAsString(loginRiderRequest))
                 .accept(MediaType.APPLICATION_JSON));
 
             //then

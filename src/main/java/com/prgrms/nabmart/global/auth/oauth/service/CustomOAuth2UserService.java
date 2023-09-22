@@ -7,7 +7,7 @@ import com.prgrms.nabmart.domain.user.service.request.RegisterUserCommand;
 import com.prgrms.nabmart.domain.user.service.response.RegisterUserResponse;
 import com.prgrms.nabmart.global.auth.oauth.dto.CustomOAuth2User;
 import com.prgrms.nabmart.global.auth.oauth.dto.OAuthUserInfo;
-import com.prgrms.nabmart.global.auth.oauth.handler.OAuthProvider;
+import com.prgrms.nabmart.global.auth.oauth.OAuthProvider;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

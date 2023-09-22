@@ -4,6 +4,7 @@ import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryExcep
 import com.prgrms.nabmart.domain.delivery.exception.InvalidDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.UnauthorizedDeliveryException;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import com.prgrms.nabmart.domain.user.User;
 import com.prgrms.nabmart.global.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -68,14 +69,28 @@ public class Delivery extends BaseTimeEntity {
     @Column
     private Integer deliveryFee;
 
+    @Column
+    private Long userId;
+
     @Builder
-    public Delivery(final Order order) {
+    public Delivery(final Order order, final int estimateMinutes) {
+        validateOrderStatus(order);
+        validateEstimateMinutes(estimateMinutes);
         this.order = order;
         this.deliveryStatus = DeliveryStatus.ACCEPTING_ORDER;
         this.address = order.getAddress();
         this.orderPrice = order.getPrice();
         this.riderRequest = order.getRiderRequest();
         this.deliveryFee = order.getDeliveryFee();
+        this.arrivedAt = LocalDateTime.now().plusMinutes(estimateMinutes);
+        this.userId = order.getUser().getUserId();
+        order.updateOrderStatus(OrderStatus.DELIVERING);
+    }
+
+    private void validateOrderStatus(Order order) {
+        if(!order.isPayed()) {
+            throw new InvalidDeliveryException("결제 완료된 주문이 아닙니다.");
+        }
     }
 
     public boolean isOwnByUser(final User user) {

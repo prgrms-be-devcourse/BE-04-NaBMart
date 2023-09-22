@@ -4,7 +4,7 @@ import com.prgrms.nabmart.domain.delivery.Rider;
 import com.prgrms.nabmart.global.auth.exception.DuplicateUsernameException;
 import com.prgrms.nabmart.domain.delivery.repository.RiderRepository;
 import com.prgrms.nabmart.global.auth.service.request.SignupRiderCommand;
-import com.prgrms.nabmart.global.auth.service.request.RiderLoginCommand;
+import com.prgrms.nabmart.global.auth.service.request.LoginRiderCommand;
 import com.prgrms.nabmart.domain.user.UserRole;
 import com.prgrms.nabmart.global.auth.exception.InvalidPasswordException;
 import com.prgrms.nabmart.global.auth.exception.InvalidUsernameException;
@@ -48,22 +48,22 @@ public class RiderAuthenticationService {
     }
 
     @Transactional(readOnly = true)
-    public RiderLoginResponse riderLogin(RiderLoginCommand riderLoginCommand) {
-        Rider rider = findRiderByUsername(riderLoginCommand);
-        checkRiderPassword(riderLoginCommand, rider);
+    public RiderLoginResponse loginRider(LoginRiderCommand loginRiderCommand) {
+        Rider rider = findRiderByUsername(loginRiderCommand);
+        verifyRiderPassword(loginRiderCommand, rider);
         CreateTokenCommand createTokenCommand
             = CreateTokenCommand.of(rider.getRiderId(), UserRole.ROLE_RIDER);
         String accessToken = tokenProvider.createToken(createTokenCommand);
         return RiderLoginResponse.from(accessToken);
     }
 
-    private Rider findRiderByUsername(RiderLoginCommand riderLoginCommand) {
-        return riderRepository.findByUsername(riderLoginCommand.username())
+    private Rider findRiderByUsername(LoginRiderCommand loginRiderCommand) {
+        return riderRepository.findByUsername(loginRiderCommand.username())
             .orElseThrow(() -> new InvalidUsernameException("사용자의 정보와 일치하지 않습니다."));
     }
 
-    private void checkRiderPassword(RiderLoginCommand riderLoginCommand, final Rider rider) {
-        if (!passwordEncoder.matches(riderLoginCommand.password(), rider.getPassword())) {
+    private void verifyRiderPassword(LoginRiderCommand loginRiderCommand, final Rider rider) {
+        if (!passwordEncoder.matches(loginRiderCommand.password(), rider.getPassword())) {
             throw new InvalidPasswordException("사용자의 정보와 일치하지 않습니다.");
         }
     }

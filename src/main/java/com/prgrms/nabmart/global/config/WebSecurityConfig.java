@@ -46,6 +46,7 @@ public class WebSecurityConfig {
                 .requestMatchers(requestPermitAll()).permitAll()
                 .requestMatchers(requestHasRoleUser()).hasRole("USER")
                 .requestMatchers(requestHasRoleRider()).hasRole("RIDER")
+                .requestMatchers(requestHasRoleEmployee()).hasRole("EMPLOYEE")
                 .requestMatchers(requestHasRoleAdmin()).hasRole("ADMIN")
                 .anyRequest().denyAll())
             .csrf(AbstractHttpConfigurer::disable)
@@ -65,6 +66,7 @@ public class WebSecurityConfig {
 
     private RequestMatcher[] requestPermitAll() {
         List<RequestMatcher> requestMatchers = List.of(
+            antMatcher(GET, "/api/v1/notifications/**"),
             antMatcher(POST, "/oauth2/authorization/**"),
             antMatcher(POST, "/api/v1/riders/**"),
             antMatcher(GET, "/api/v1/categories/**"),
@@ -92,6 +94,15 @@ public class WebSecurityConfig {
     private RequestMatcher[] requestHasRoleRider() {
         List<RequestMatcher> requestMatchers = List.of(
             antMatcher("/api/v1/deliveries/**")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] requestHasRoleEmployee() {
+        List<RequestMatcher> requestMatchers = List.of(
+            antMatcher(POST, "/api/v1/orders/*/deliveries"),
+            antMatcher(GET, "/api/v1/orders/payed"),
+            antMatcher(GET, "/api/v1/deliveries/[0-9]+")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

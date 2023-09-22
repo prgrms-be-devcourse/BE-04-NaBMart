@@ -14,7 +14,7 @@ import com.prgrms.nabmart.global.auth.exception.InvalidPasswordException;
 import com.prgrms.nabmart.global.auth.exception.InvalidUsernameException;
 import com.prgrms.nabmart.global.auth.jwt.TokenProvider;
 import com.prgrms.nabmart.global.auth.jwt.dto.Claims;
-import com.prgrms.nabmart.global.auth.service.request.RiderLoginCommand;
+import com.prgrms.nabmart.global.auth.service.request.LoginRiderCommand;
 import com.prgrms.nabmart.global.auth.service.request.SignupRiderCommand;
 import com.prgrms.nabmart.global.auth.service.response.RiderLoginResponse;
 import com.prgrms.nabmart.global.auth.support.AuthFixture;
@@ -86,7 +86,7 @@ class RiderAuthenticationServiceTest {
     @DisplayName("riderLogin 메서드 실행 시")
     class RiderLoginTest {
 
-        RiderLoginCommand riderLoginCommand = AuthFixture.riderLoginCommand();
+        LoginRiderCommand loginRiderCommand = AuthFixture.riderLoginCommand();
         Rider rider = AuthFixture.rider();
 
         @Test
@@ -98,7 +98,7 @@ class RiderAuthenticationServiceTest {
 
             //when
             RiderLoginResponse riderLoginResponse
-                = riderAuthenticationService.riderLogin(riderLoginCommand);
+                = riderAuthenticationService.loginRider(loginRiderCommand);
 
             //then
             Claims claims = tokenProvider.validateToken(riderLoginResponse.accessToken());
@@ -115,7 +115,7 @@ class RiderAuthenticationServiceTest {
 
             //when
             //then
-            assertThatThrownBy(() -> riderAuthenticationService.riderLogin(riderLoginCommand))
+            assertThatThrownBy(() -> riderAuthenticationService.loginRider(loginRiderCommand))
                 .isInstanceOf(InvalidUsernameException.class);
         }
 
@@ -124,14 +124,14 @@ class RiderAuthenticationServiceTest {
         void throwExceptionWhenInvalidPassword() {
             //given
             String invalidPassword = "invalidPassword123";
-            RiderLoginCommand riderLoginCommand
-                = new RiderLoginCommand(rider.getUsername(), invalidPassword);
+            LoginRiderCommand loginRiderCommand
+                = new LoginRiderCommand(rider.getUsername(), invalidPassword);
 
             given(riderRepository.findByUsername(any())).willReturn(Optional.ofNullable(rider));
 
             //when
             //then
-            assertThatThrownBy(() -> riderAuthenticationService.riderLogin(riderLoginCommand))
+            assertThatThrownBy(() -> riderAuthenticationService.loginRider(loginRiderCommand))
                 .isInstanceOf(InvalidPasswordException.class);
         }
     }

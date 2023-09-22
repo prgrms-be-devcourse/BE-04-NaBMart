@@ -1,22 +1,26 @@
 package com.prgrms.nabmart.domain.delivery.controller;
 
 import com.prgrms.nabmart.domain.delivery.controller.request.FindRiderDeliveriesRequest;
+import com.prgrms.nabmart.domain.delivery.controller.request.RegisterDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.controller.request.StartDeliveryRequest;
 import com.prgrms.nabmart.domain.delivery.exception.AlreadyAssignedDeliveryException;
 import com.prgrms.nabmart.domain.delivery.exception.DeliveryException;
 import com.prgrms.nabmart.domain.delivery.service.DeliveryService;
 import com.prgrms.nabmart.domain.delivery.service.request.AcceptDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.CompleteDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryDetailCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindRiderDeliveriesCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.FindWaitingDeliveriesCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.RegisterDeliveryCommand;
 import com.prgrms.nabmart.domain.delivery.service.request.StartDeliveryCommand;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindRiderDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.global.auth.LoginUser;
 import com.prgrms.nabmart.global.util.ErrorTemplate;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,15 +40,42 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class DeliveryController {
 
+    private static final String BASE_URI = "/api/v1/deliveries/";
+
     private final DeliveryService deliveryService;
 
+    @PostMapping("/orders/{orderId}/deliveries")
+    public ResponseEntity<Void> registerDelivery(
+        @PathVariable final Long orderId,
+        @RequestBody final RegisterDeliveryRequest registerDeliveryRequest,
+        @LoginUser final Long userId) {
+        RegisterDeliveryCommand registerDeliveryCommand = RegisterDeliveryCommand.of(
+            orderId,
+            userId,
+            registerDeliveryRequest.estimateMinutes());
+        Long deliveryId = deliveryService.registerDelivery(registerDeliveryCommand);
+        URI location = URI.create(BASE_URI + deliveryId);
+        return ResponseEntity.created(location).build();
+    }
+
     @GetMapping("/orders/{orderId}/deliveries")
-    public ResponseEntity<FindDeliveryDetailResponse> findDelivery(
+    public ResponseEntity<FindDeliveryByOrderResponse> findDeliveryByOrder(
         @PathVariable final Long orderId,
         @LoginUser final Long userId) {
-        FindDeliveryCommand findDeliveryCommand = FindDeliveryCommand.of(userId, orderId);
-        FindDeliveryDetailResponse findDeliveryDetailResponse
-            = deliveryService.findDelivery(findDeliveryCommand);
+        FindDeliveryByOrderCommand findDeliveryByOrderCommand
+            = FindDeliveryByOrderCommand.of(userId, orderId);
+        FindDeliveryByOrderResponse findDeliveryByOrderResponse
+            = deliveryService.findDeliveryByOrder(findDeliveryByOrderCommand);
+        return ResponseEntity.ok(findDeliveryByOrderResponse);
+    }
+
+    @GetMapping("/deliveries/{deliveryId}")
+    public ResponseEntity<FindDeliveryDetailResponse> findDelivery(
+        @PathVariable final Long deliveryId) {
+        FindDeliveryDetailCommand findDeliveryDetailCommand
+            = FindDeliveryDetailCommand.from(deliveryId);
+        FindDeliveryDetailResponse findDeliveryDetailResponse = deliveryService.findDelivery(
+            findDeliveryDetailCommand);
         return ResponseEntity.ok(findDeliveryDetailResponse);
     }
 

@@ -19,6 +19,7 @@ public class UserFixture {
     private static final String ADDRESS = "기본 배송지";
     private static final UserRole USER_ROLE = UserRole.ROLE_USER;
     private static final UserGrade USER_GRADE = UserGrade.NORMAL;
+    private static final UserRole EMPLOYEE = UserRole.ROLE_EMPLOYEE;
 
     public static User user() {
         return User.builder()
@@ -45,6 +46,18 @@ public class UserFixture {
 
         ReflectionTestUtils.setField(user, "userId", USER_ID);
         return user;
+    }
+
+    public static User employee() {
+        return User.builder()
+            .nickname(NICKNAME)
+            .email(EMAIL)
+            .provider(PROVIDER)
+            .providerId(PROVIDER_ID)
+            .userRole(EMPLOYEE)
+            .userGrade(USER_GRADE)
+            .address(ADDRESS)
+            .build();
     }
 
     public static RegisterUserCommand registerUserCommand() {

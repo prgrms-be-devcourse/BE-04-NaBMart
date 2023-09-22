@@ -3,11 +3,12 @@ package com.prgrms.nabmart.domain.delivery.support;
 import com.prgrms.nabmart.domain.delivery.Delivery;
 import com.prgrms.nabmart.domain.delivery.DeliveryStatus;
 import com.prgrms.nabmart.domain.delivery.Rider;
-import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryCommand;
+import com.prgrms.nabmart.domain.delivery.service.request.FindDeliveryByOrderCommand;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse;
 import com.prgrms.nabmart.domain.delivery.service.response.FindWaitingDeliveriesResponse.FindWaitingDeliveryResponse;
-import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryDetailResponse;
+import com.prgrms.nabmart.domain.delivery.service.response.FindDeliveryByOrderResponse;
 import com.prgrms.nabmart.domain.order.Order;
+import com.prgrms.nabmart.domain.order.OrderStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -33,6 +34,7 @@ public final class DeliveryFixture {
     private static final String RIDER_ADDRESS = "address";
 
     public static Delivery waitingDelivery(Order order) {
+        order.updateOrderStatus(OrderStatus.PAYED);
         return Delivery.builder()
             .order(order)
             .build();
@@ -50,12 +52,12 @@ public final class DeliveryFixture {
         return delivery;
     }
 
-    public static FindDeliveryCommand findDeliveryCommand() {
-        return new FindDeliveryCommand(USER_ID, ORDER_ID);
+    public static FindDeliveryByOrderCommand findDeliveryCommand() {
+        return new FindDeliveryByOrderCommand(USER_ID, ORDER_ID);
     }
 
-    public static FindDeliveryDetailResponse findDeliveryDetailResponse() {
-        return new FindDeliveryDetailResponse(
+    public static FindDeliveryByOrderResponse findDeliveryDetailResponse() {
+        return new FindDeliveryByOrderResponse(
             DELIVERY_ID,
             DELIVERY_STATUS,
             NOW,
