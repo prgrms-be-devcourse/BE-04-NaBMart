@@ -1,5 +1,9 @@
 package com.prgrms.nabmart.base;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -124,6 +128,11 @@ public abstract class BaseControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .alwaysDo(print())
             .alwaysDo(restDocs)
+            .alwaysDo(
+                document("{method-name}",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()))
+            )
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .addFilter(new JwtAuthenticationFilter(jwtAuthenticationProvider))
             .apply(MockMvcRestDocumentation.documentationConfiguration(provider))

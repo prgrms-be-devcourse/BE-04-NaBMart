@@ -130,7 +130,7 @@ class CartItemControllerTest extends BaseControllerTest {
 
             @Test
             @DisplayName("성공")
-            void findCartItemsByUserId() throws Exception {
+            void findCartItems() throws Exception {
                 // given
                 Long userId = 1L;
                 Long cartId = 1L;

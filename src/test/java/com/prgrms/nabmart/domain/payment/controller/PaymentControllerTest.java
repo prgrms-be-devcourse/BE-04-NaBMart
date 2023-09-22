@@ -4,7 +4,6 @@ import static com.prgrms.nabmart.domain.order.support.OrderFixture.pendingOrder;
 import static com.prgrms.nabmart.domain.payment.support.PaymentDtoFixture.paymentRequestResponse;
 import static com.prgrms.nabmart.domain.user.support.UserFixture.userWithUserId;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -43,7 +42,7 @@ public class PaymentControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        void postPay() throws Exception {
+        void pay() throws Exception {
             // given
             User user = userWithUserId();
             Order order = pendingOrder(1, user);
@@ -65,7 +64,7 @@ public class PaymentControllerTest extends BaseControllerTest {
             // then
             result
                 .andExpect(status().isOk())
-                .andDo(document("post-pay",
+                .andDo(restDocs.document(
                     pathParameters(
                         parameterWithName("orderId").description("주문 ID")
                     ),
@@ -111,8 +110,7 @@ public class PaymentControllerTest extends BaseControllerTest {
             // then
             result
                 .andExpect(status().isOk())
-                .andDo(document("get-pay-success",
-                    queryParameters(
+                .andDo(restDocs.document(queryParameters(
                         parameterWithName("orderId").description("주문 ID"),
                         parameterWithName("paymentKey").description("결제 키"),
                         parameterWithName("amount").description("금액")
@@ -131,7 +129,7 @@ public class PaymentControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        void pay() throws Exception {
+        void payFail() throws Exception {
             // given
             User user = userWithUserId();
             Order order = pendingOrder(1, user);
@@ -151,7 +149,7 @@ public class PaymentControllerTest extends BaseControllerTest {
             // then
             result
                 .andExpect(status().isOk())
-                .andDo(document("get-pay-fail",
+                .andDo(restDocs.document(
                     queryParameters(
                         parameterWithName("orderId").description("주문 ID"),
                         parameterWithName("message").description("에러 메시지")

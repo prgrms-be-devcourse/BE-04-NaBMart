@@ -71,7 +71,8 @@ public class WebSecurityConfig {
             antMatcher(POST, "/api/v1/riders/**"),
             antMatcher(GET, "/api/v1/categories/**"),
             antMatcher(GET, "/api/v1/items/**"),
-            antMatcher(GET, "/api/v1/events/**"));
+            antMatcher(GET, "/api/v1/events/**"),
+            antMatcher(GET, "/docs/**"));
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 

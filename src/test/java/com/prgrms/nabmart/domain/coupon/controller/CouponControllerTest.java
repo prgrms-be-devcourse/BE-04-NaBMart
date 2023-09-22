@@ -2,9 +2,6 @@ package com.prgrms.nabmart.domain.coupon.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
@@ -59,20 +56,16 @@ class CouponControllerTest extends BaseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/coupons/1"))
                 .andDo(print())
-                .andDo(document("Register coupon",
-                        preprocessRequest(
-                            prettyPrint()
-                        ),
-                        requestFields(
-                            fieldWithPath("name").type(STRING).description("couponName"),
-                            fieldWithPath("discount").type(NUMBER)
-                                .description("discount"),
-                            fieldWithPath("description").type(STRING)
-                                .description("couponDescription"),
-                            fieldWithPath("minOrderPrice").type(NUMBER)
-                                .description("minOrderPrice"),
-                            fieldWithPath("endAt").type(STRING)
-                                .description("endAt (yyyy-MM-dd)"))
+                .andDo(restDocs.document(requestFields(
+                        fieldWithPath("name").type(STRING).description("couponName"),
+                        fieldWithPath("discount").type(NUMBER)
+                            .description("discount"),
+                        fieldWithPath("description").type(STRING)
+                            .description("couponDescription"),
+                        fieldWithPath("minOrderPrice").type(NUMBER)
+                            .description("minOrderPrice"),
+                        fieldWithPath("endAt").type(STRING)
+                            .description("endAt (yyyy-MM-dd)"))
                     )
                 );
         }
@@ -103,14 +96,10 @@ class CouponControllerTest extends BaseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/my-coupons/1"))
                 .andDo(print())
-                .andDo(document("Register userCoupon",
-                        preprocessRequest(
-                            prettyPrint()
-                        ),
-                        requestFields(
-                            fieldWithPath("userId").type(NUMBER).description("userId"),
-                            fieldWithPath("couponId").type(NUMBER)
-                                .description("couponId"))
+                .andDo(restDocs.document(requestFields(
+                        fieldWithPath("userId").type(NUMBER).description("userId"),
+                        fieldWithPath("couponId").type(NUMBER)
+                            .description("couponId"))
                     )
                 );
         }

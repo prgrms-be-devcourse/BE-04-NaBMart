@@ -14,7 +14,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -76,7 +75,7 @@ public class OrderControllerTest extends BaseControllerTest {
             // then
             result
                 .andExpect(status().isOk())
-                .andDo(document("get-order",
+                .andDo(restDocs.document(
                     pathParameters(
                         parameterWithName("orderId").description("주문 ID")
                     ),
@@ -116,7 +115,7 @@ public class OrderControllerTest extends BaseControllerTest {
             // then
             result
                 .andExpect(status().isOk())
-                .andDo(document("get-orders",
+                .andDo(restDocs.document(
                     queryParameters(
                         parameterWithName("page").description("페이지 번호")
                     ),
@@ -182,7 +181,7 @@ public class OrderControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공")
-        void createOrder() throws Exception {
+        void updateOrderByCoupon() throws Exception {
             // given
             User user = user();
             UserCoupon userCoupon = userCoupon(user);
@@ -202,6 +201,9 @@ public class OrderControllerTest extends BaseControllerTest {
             result
                 .andExpect(status().isOk())
                 .andDo(restDocs.document(
+                    pathParameters(
+                        parameterWithName("orderId").description("주문 ID")
+                    ),
                     responseFields(
                         fieldWithPath("totalPrice").type(NUMBER).description("쿠폰 적용후 총 가격"),
                         fieldWithPath("discountPrice").type(NUMBER).description("쿠폰 할인 금액")
@@ -229,6 +231,9 @@ public class OrderControllerTest extends BaseControllerTest {
             result
                 .andExpect(status().isNoContent())
                 .andDo(restDocs.document(
+                    pathParameters(
+                        parameterWithName("orderId").description("주문 ID")
+                    )
                 ));
         }
     }
