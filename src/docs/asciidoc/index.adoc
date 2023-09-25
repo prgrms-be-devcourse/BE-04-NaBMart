@@ -412,7 +412,7 @@ include::{snippets}/find-orders/response-fields.adoc[]
 
 include::{snippets}/find-payed-orders/http-request.adoc[]
 include::{snippets}/find-payed-orders/request-headers.adoc[]
-include::{snippets}/find-payed-orders/request-fields.adoc[]
+include::{snippets}/find-payed-orders/query-parameters.adoc[]
 
 ==== Response
 
