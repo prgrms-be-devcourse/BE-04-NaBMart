@@ -54,7 +54,8 @@
 
 
 ## ERD
-![찐찐최종 B마트](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/f0b8c2f8-21c2-42b8-ab8a-a62a5569d839)
+![찐찐최종 B마트](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/89d0890f-0e6e-450a-b206-af881b4910da)
+
 
 
 ## Environment Variables
