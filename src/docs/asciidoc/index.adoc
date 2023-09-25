@@ -406,6 +406,19 @@ include::{snippets}/find-orders/query-parameters.adoc[]
 include::{snippets}/find-orders/http-response.adoc[]
 include::{snippets}/find-orders/response-fields.adoc[]
 
+=== 결제 완료된 주문 목록 조회(직원)
+
+==== Request
+
+include::{snippets}/find-payed-orders/http-request.adoc[]
+include::{snippets}/find-payed-orders/request-headers.adoc[]
+include::{snippets}/find-payed-orders/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/find-payed-orders/http-response.adoc[]
+include::{snippets}/find-payed-orders/response-fields.adoc[]
+
 === 주문 생성
 
 ==== Request
@@ -480,11 +493,39 @@ include::{snippets}/pay-fail/response-fields.adoc[]
 
 == 배달(Delivery)
 
-=== 배달 현황 조회
+=== 배달 생성
+
+==== Request
+
+include::{snippets}/register-delivery/http-request.adoc[]
+include::{snippets}/register-delivery/request-headers.adoc[]
+include::{snippets}/register-delivery/path-parameters.adoc[]
+include::{snippets}/register-delivery/request-fields.adoc[]
+
+
+==== Response
+
+include::{snippets}/register-delivery/http-response.adoc[]
+include::{snippets}/register-delivery/response-headers.adoc[]
+
+=== 배달 현황 조회(유저)
+
+==== Request
+
+include::{snippets}/find-delivery-by-order/http-request.adoc[]
+include::{snippets}/find-delivery-by-order/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-delivery-by-order/http-response.adoc[]
+include::{snippets}/find-delivery-by-order/response-fields.adoc[]
+
+=== 배달 상세 조회(라이더, 직원)
 
 ==== Request
 
 include::{snippets}/find-delivery/http-request.adoc[]
+include::{snippets}/find-delivery/request-headers.adoc[]
 include::{snippets}/find-delivery/path-parameters.adoc[]
 
 ==== Response
@@ -549,3 +590,16 @@ include::{snippets}/find-rider-deliveries/query-parameters.adoc[]
 
 include::{snippets}/find-rider-deliveries/http-response.adoc[]
 include::{snippets}/find-rider-deliveries/response-fields.adoc[]
+
+== 알림(Notification)
+
+=== 알림 연결
+
+==== Request
+
+include::{snippets}/connect-notification/http-request.adoc[]
+include::{snippets}/connect-notification/request-headers.adoc[]
+
+==== Response
+
+include::{snippets}/connect-notification/http-response.adoc[]
