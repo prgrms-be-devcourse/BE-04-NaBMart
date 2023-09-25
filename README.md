@@ -54,7 +54,8 @@
 
 
 ## ERD
-![찐찐최종 B마트](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/89d0890f-0e6e-450a-b206-af881b4910da)
+![B마트_ERD](https://github.com/prgrms-be-devcourse/BE-04-NaBMart/assets/70627982/89ddfea4-be0c-470f-be55-3fc11aff9679)
+
 
 
 
