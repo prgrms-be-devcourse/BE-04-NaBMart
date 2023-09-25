@@ -119,3 +119,10 @@ TOSS_SECRET_KEY=
         </td>
     </tr>
 </table>
+
+
+## API 명세서
+[API DOCS🗂](https://www.notion.so/e81ef4dd063149e0a161cb1119a9e602?v=1199d4e7df0d4277882ac007574b428b)
+
+## 이슈/해결 아카이빙
+[이슈/해결 아카이빙🔨](https://www.notion.so/71c4c7be0df94e0897f5d97fdc0eced1?pvs=4)
