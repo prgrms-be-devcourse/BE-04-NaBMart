@@ -21,7 +21,6 @@ import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -32,12 +31,11 @@ import com.prgrms.nabmart.base.BaseControllerTest;
 import com.prgrms.nabmart.domain.coupon.UserCoupon;
 import com.prgrms.nabmart.domain.order.Order;
 import com.prgrms.nabmart.domain.order.controller.request.CreateOrderRequest;
-import com.prgrms.nabmart.domain.order.controller.request.FindPayedOrdersRequest;
-import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse;
-import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse.FindPayedOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.CreateOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrderDetailResponse;
 import com.prgrms.nabmart.domain.order.service.response.FindOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse;
+import com.prgrms.nabmart.domain.order.service.response.FindPayedOrdersResponse.FindPayedOrderResponse;
 import com.prgrms.nabmart.domain.order.service.response.UpdateOrderByCouponResponse;
 import com.prgrms.nabmart.domain.user.User;
 import java.util.List;
@@ -247,7 +245,6 @@ public class OrderControllerTest extends BaseControllerTest {
         void findPayedOrders() throws Exception {
             //given
             int page = 0;
-            FindPayedOrdersRequest findPayedOrdersRequest = new FindPayedOrdersRequest(page);
             FindPayedOrderResponse findPayedOrderResponse
                 = new FindPayedOrderResponse(1L, "비비고 왕교자 외 2개", 20000);
             FindPayedOrdersResponse findPayedOrdersResponse = new FindPayedOrdersResponse(
@@ -258,8 +255,7 @@ public class OrderControllerTest extends BaseControllerTest {
             //when
             ResultActions resultActions = mockMvc.perform(get("/api/v1/orders/payed")
                 .header(AUTHORIZATION, accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(findPayedOrdersRequest)));
+                .param("page", String.valueOf(page)));
 
             //then
             resultActions.andExpect(status().isOk())
@@ -267,8 +263,8 @@ public class OrderControllerTest extends BaseControllerTest {
                     requestHeaders(
                         headerWithName(AUTHORIZATION).description("액세스 토큰")
                     ),
-                    requestFields(
-                        fieldWithPath("page").type(NUMBER).description("페이지 번호")
+                    queryParameters(
+                        parameterWithName("page").description("페이지 번호")
                     ),
                     responseFields(
                         fieldWithPath("orders").type(ARRAY).description("주문 목록"),
