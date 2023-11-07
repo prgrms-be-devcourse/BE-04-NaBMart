@@ -127,7 +127,7 @@ TOSS_SECRET_KEY=
 [API DOCS🗂](https://www.notion.so/e81ef4dd063149e0a161cb1119a9e602?v=1199d4e7df0d4277882ac007574b428b)
 
 ## 이슈/해결 아카이빙
-[이슈/해결 아카이빙🔨](https://www.notion.so/71c4c7be0df94e0897f5d97fdc0eced1?pvs=4)  
+[이슈/해결 아카이빙🔨](https://backend-devcourse.notion.site/9e8698fc02064844ae7f252482a4bc37?pvs=4)  
 - [낙관적 락과 동시성 테스트 하기](https://backend-devcourse.notion.site/1bcabbf25fcd46aa97acdd2039565a62?pvs=4)  
 - [무한 스크롤 개선기](https://backend-devcourse.notion.site/2c8a01ff213b44db93325e78eeea5e28?pvs=4)  
 - [Toss Pay 연동하기](https://backend-devcourse.notion.site/Toss-Pay-fcedbe30842042ac94d23d983da9a3b2?pvs=4)  
