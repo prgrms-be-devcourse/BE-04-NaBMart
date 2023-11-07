@@ -127,4 +127,14 @@ TOSS_SECRET_KEY=
 [API DOCS🗂](https://www.notion.so/e81ef4dd063149e0a161cb1119a9e602?v=1199d4e7df0d4277882ac007574b428b)
 
 ## 이슈/해결 아카이빙
-[이슈/해결 아카이빙🔨](https://www.notion.so/71c4c7be0df94e0897f5d97fdc0eced1?pvs=4)
+[이슈/해결 아카이빙🔨](https://www.notion.so/71c4c7be0df94e0897f5d97fdc0eced1?pvs=4)  
+- [낙관적 락과 동시성 테스트 하기](https://backend-devcourse.notion.site/1bcabbf25fcd46aa97acdd2039565a62?pvs=4)  
+- [무한 스크롤 개선기](https://backend-devcourse.notion.site/2c8a01ff213b44db93325e78eeea5e28?pvs=4)  
+- [Toss Pay 연동하기](https://backend-devcourse.notion.site/Toss-Pay-fcedbe30842042ac94d23d983da9a3b2?pvs=4)  
+- [낙관적 락과 동시성 테스트 하기](https://backend-devcourse.notion.site/2c8a01ff213b44db93325e78eeea5e28?pvs=4)  
+- [리뷰에서 활용하는 Redis](https://www.notion.so/backend-devcourse/Redis-bdc58dba600c4084b0ab77dcf0a82238)  
+- [Redis testContainer 설정 방법](https://backend-devcourse.notion.site/Redis-testContainer-68407c4ce52549daa65526bade155c9e?pvs=4)  
+- [트러블슈팅 in Redis의 List 자료구조](https://backend-devcourse.notion.site/in-Redis-List-1b5bc99110b249048767cb15530ae7de?pvs=4)  
+- [분산 환경에서 스케줄링한 작업이 한 번만 실행되도록 보장하기](https://backend-devcourse.notion.site/74c17904c5a4497bbf64ebde5578339d?pvs=4)  
+- [MySql 동시성 문제해결 낙관적 락, 비관적 락??](https://backend-devcourse.notion.site/MySql-ced47b1f4e274ea39a994ce31de3ff16?pvs=4)  
+- [QueryDSL, OrderSpecifier을 이용하여 정렬하기](https://backend-devcourse.notion.site/QueryDSL-OrderSpecifier-0a3c3bd2046141d7bca1ddd6379fc1d2?pvs=4)  
