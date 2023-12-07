@@ -128,10 +128,9 @@ TOSS_SECRET_KEY=
 
 ## 이슈/해결 아카이빙
 [이슈/해결 아카이빙🔨](https://backend-devcourse.notion.site/9e8698fc02064844ae7f252482a4bc37?pvs=4)  
-- [낙관적 락과 동시성 테스트 하기](https://backend-devcourse.notion.site/1bcabbf25fcd46aa97acdd2039565a62?pvs=4)  
-- [무한 스크롤 개선기](https://backend-devcourse.notion.site/2c8a01ff213b44db93325e78eeea5e28?pvs=4)  
-- [Toss Pay 연동하기](https://backend-devcourse.notion.site/Toss-Pay-fcedbe30842042ac94d23d983da9a3b2?pvs=4)  
+- [무한 스크롤 개선기](https://backend-devcourse.notion.site/1bcabbf25fcd46aa97acdd2039565a62?pvs=4)  
 - [낙관적 락과 동시성 테스트 하기](https://backend-devcourse.notion.site/2c8a01ff213b44db93325e78eeea5e28?pvs=4)  
+- [Toss Pay 연동하기](https://backend-devcourse.notion.site/Toss-Pay-fcedbe30842042ac94d23d983da9a3b2?pvs=4)  
 - [리뷰에서 활용하는 Redis](https://www.notion.so/backend-devcourse/Redis-bdc58dba600c4084b0ab77dcf0a82238)  
 - [Redis testContainer 설정 방법](https://backend-devcourse.notion.site/Redis-testContainer-68407c4ce52549daa65526bade155c9e?pvs=4)  
 - [트러블슈팅 in Redis의 List 자료구조](https://backend-devcourse.notion.site/in-Redis-List-1b5bc99110b249048767cb15530ae7de?pvs=4)  
